@@ -1,0 +1,48 @@
+CREATE USER admin WITH PASSWORD '$PASSWD$';
+CREATE DATABASE foundyourdog_$ENV$;
+\connect foundyourdog_$ENV$
+
+GRANT ALL PRIVILEGES ON DATABASE foundyourdog_$ENV$ TO admin;
+
+CREATE TABLE IF NOT EXISTS users (
+    user_uuid uuid primary key,
+    email text not null,
+    password_hash text not null,
+    confirmation_token text not null,
+    confirmed bool,
+    signup_date date,
+    confirm_date date,
+    deactivate_date date,
+    phone1 text,
+    phone2 text,
+    inapp_notifications bool
+);
+
+CREATE TABLE IF NOT EXISTS incidents (
+    incident_uuid uuid primary key,
+    map_latitude float,
+    map_longitude float,
+    dog_uuid uuid,
+    incident_date date,
+    resolution text
+);
+
+CREATE TABLE IF NOT EXISTS dogs (
+	dog_uuid uuid primary key,
+	basic_type text,
+	gender text,
+	intact bool,
+	owner_id uuid,
+	tags text
+);
+
+CREATE TABLE IF NOT EXISTS images (
+	image_uuid uuid primary key,
+	user_id uuid not null,
+	image_location text,
+	upload_date date,
+	tags text,
+	dog_id uuid not null
+);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
