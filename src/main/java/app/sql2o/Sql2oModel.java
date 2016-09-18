@@ -50,16 +50,16 @@ public class Sql2oModel implements Model {
         try (Connection conn = sql2o.open()) {
             conn.createQuery("insert into users(email, handle, password_hash, confirmation_token, phone1, phone2, inapp_notifications)" +
             				 "   VALUES (:email, :handle, :password_hash, :confirmation_token, :phone1, :phone2, :inapp_notifications)")
-                    .addParameter("email", u.email)
-                    .addParameter("handle", u.handle)
-                    .addParameter("password_hash", u.password_hash)
-                    .addParameter("confirmation_token", u.confirmation_token)
-                    .addParameter("phone1", u.phone1)
-                    .addParameter("phone2", u.phone2)
-                    .addParameter("inapp_notifications", u.inapp_notifications)
+                    .addParameter("email", u.getEmail())
+                    .addParameter("handle", u.getHandle())
+                    .addParameter("password_hash", u.getPassword_hash())
+                    .addParameter("confirmation_token", u.getConfirmation_token())
+                    .addParameter("phone1", u.getPhone1())
+                    .addParameter("phone2", u.getPhone2())
+                    .addParameter("inapp_notifications", u.getInapp_notifications())
                     .executeUpdate();
-            List<Integer> ids = conn.createQuery("select id from users where email is :email")
-            		.addParameter("email", u.email)
+            List<Integer> ids = conn.createQuery("select id from users where email=:email")
+            		.addParameter("email", u.getEmail())
             		.executeScalarList(Integer.class);
             if (ids.size() == 1) {
             	return ids.get(0);

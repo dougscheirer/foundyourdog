@@ -3,20 +3,26 @@ package app.model;
 import java.sql.Date;
 import java.util.UUID;
 
+import app.Validatable;
 import lombok.Data;
 
 @Data
-public class User {
-	public int id;
-	public String email;
-	public String handle;
-	public String password_hash;
-	public String confirmation_token;
-	public Boolean confirmed;
-	public Date signup_date;
-	public Date confirm_date;
-	public Date deactivate_date;
-	public String phone1;
-	public String phone2;
-	public Boolean inapp_notifications;
+public class User implements Validatable{
+	private int id;
+	private String email;
+	private String handle;
+	private String password_hash;
+	private String confirmation_token;
+	private Boolean confirmed;
+	private Date signup_date;
+	private Date confirm_date;
+	private Date deactivate_date;
+	private String phone1;
+	private String phone2;
+	private Boolean inapp_notifications;
+	
+	@Override
+	public boolean isValid() {
+		return true;
+	}
 }

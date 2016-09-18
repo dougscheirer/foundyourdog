@@ -1,13 +1,18 @@
 package app;
 
 import static spark.Spark.*;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.Sql2oException;
 import org.sql2o.quirks.PostgresQuirks;
 
 import com.beust.jcommander.JCommander;
 
+import app.handlers.CreateUserHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
 import freemarker.cache.ClassTemplateLoader;
@@ -19,33 +24,41 @@ public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
 
 	public static void main(String[] args) {
-        CommandLineOptions options = new CommandLineOptions();
-        new JCommander(options, args);
+		CommandLineOptions options = new CommandLineOptions();
+		new JCommander(options, args);
 
-        logger.finest("Options.debug = " + options.debug);
-        logger.finest("Options.database = " + options.database);
-        logger.finest("Options.dbHost = " + options.dbHost);
-        logger.finest("Options.dbUsername = " + options.dbUsername);
-        logger.finest("Options.dbPort = " + options.dbPort);
-        logger.finest("Options.servicePort = " + options.servicePort);
+		logger.finest("Options.debug = " + options.debug);
+		logger.finest("Options.database = " + options.database);
+		logger.finest("Options.dbHost = " + options.dbHost);
+		logger.finest("Options.dbUsername = " + options.dbUsername);
+		logger.finest("Options.dbPort = " + options.dbPort);
+		logger.finest("Options.servicePort = " + options.servicePort);
 
-        port(options.servicePort);
+		port(options.servicePort);
 
-        Sql2o sql2o = new Sql2o("jdbc:postgresql://" + options.dbHost + ":" + options.dbPort + "/" + options.database,
-                options.dbUsername, options.dbPassword, new PostgresQuirks() {
-            {
-            }
-        });
+		Sql2o sql2o = new Sql2o("jdbc:postgresql://" + options.dbHost + ":" + options.dbPort + "/" + options.database,
+				options.dbUsername, options.dbPassword, new PostgresQuirks() {
+					{
+					}
+				});
 
-        Model model = new Sql2oModel(sql2o);
-        FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
-        Configuration freeMarkerConfiguration = new Configuration();
-        freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(Main.class, "/"));
-        freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
+		// do a basic DB connection test on the users table, quit if it fails
+        try (Connection conn = sql2o.open()) {
+        	conn.createQuery("select * from users limit 1")
+        		.executeAndFetchTable();
+		} catch (Sql2oException e) {
+			logger.log(Level.SEVERE, e.toString(), e);
+			return;
+		}
+        
+		Model model = new Sql2oModel(sql2o);
 
 		Spark.staticFileLocation("/public");
 
 		// add all of the handlers here
-		get("/hello", (req, res) -> "hello");
+		post("/users/new", new CreateUserHandler(model));
+		// get("/users", new UsersIndexHandler(model));
+		// put("/users/:id", new UpdateUserHanlder(model));
+		// delete("/users/:id", new DeleteUserHandler(model));
 	}
 }
