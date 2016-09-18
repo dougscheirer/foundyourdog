@@ -7,7 +7,10 @@
   "dependencies": {
     "flux": "^2.1.1",
     "react": "^15.3.1",
-    "react-dom" : "^15.3.1"
+    "react-dom" : "^15.3.1",
+    "es6-promise" : "^3.3.1",
+    "object-assign" : "^4.1.0",
+    "react-bootstrap" : "^0.30.3"
   },
   "devDependencies": {
     "browserify": "^13.1.0",

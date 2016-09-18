@@ -1,16 +1,9 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
 var Flux = require("flux");
-$ = require("jquery");
+$ = jQuery = require("jquery");
+var Bootstrap = require("bootstrap");
 
-var HelloWorld = React.createClass({
-	  render: function(){
-	    return (
-	      <div>
-	        Hello World!
-	      </div>
-	    )
-	  }
-	});
+var App = require("./components/App.react")
 
-ReactDOM.render(<HelloWorld />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
