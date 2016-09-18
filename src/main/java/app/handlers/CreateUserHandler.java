@@ -21,7 +21,6 @@ public class CreateUserHandler extends AbstractRequestHandler<User> {
 		// create a confirmation token
 		value.setConfirmation_token(UUID.randomUUID().toString());
 		int userId = model.createUser(value);
-		return new Answer(200, Integer.toString(userId));
+		return new Answer(200, "{\"id\":\"" + userId + "\"}");
 	}
-
 }

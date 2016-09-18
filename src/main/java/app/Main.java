@@ -13,6 +13,7 @@ import org.sql2o.quirks.PostgresQuirks;
 import com.beust.jcommander.JCommander;
 
 import app.handlers.CreateUserHandler;
+import app.handlers.GetUsersIndexHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
 import freemarker.cache.ClassTemplateLoader;
@@ -57,7 +58,7 @@ public class Main {
 
 		// add all of the handlers here
 		post("/users/new", new CreateUserHandler(model));
-		// get("/users", new UsersIndexHandler(model));
+		get("/users", new GetUsersIndexHandler(model));
 		// put("/users/:id", new UpdateUserHanlder(model));
 		// delete("/users/:id", new DeleteUserHandler(model));
 	}
