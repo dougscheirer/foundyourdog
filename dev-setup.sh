@@ -1,4 +1,5 @@
 #!/bin/bash
+apt-get update && apt-get install -y wget curl
 
 # grab java 8
 downloadlink=http://download.oracle.com/otn-pub/java/jdk/8u11-b12/jdk-8u11-linux-x64.tar.gz
@@ -24,7 +25,10 @@ apt-get install -y nodejs
 
 # install what's missing
 npm install
+npm install jquery bootstrap
+
 # build the base JS file
 npm run build
+
 # run this for continuous build 
 # npm start
