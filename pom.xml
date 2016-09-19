@@ -27,7 +27,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.6.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -58,6 +57,21 @@
 	<build>
 		<plugins>
 			<plugin>
+			    <groupId>com.heroku.sdk</groupId>
+			    <artifactId>heroku-maven-plugin</artifactId>
+			    <version>0.4.4</version>
+			    <configuration>
+			        <jdkVersion>1.8</jdkVersion>
+			        <!-- Use your own application name -->
+			        <appName>foundyourdog</appName> 
+			        <processTypes>
+			            <!-- Tell Heroku how to launch your application -->
+			            <!-- You might have to remove the ./ in front   -->
+			            <web>java -jar ./target/foundyourdog.jar</web>
+			        </processTypes>
+			    </configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
@@ -75,6 +89,48 @@
 							<goal>single</goal>
 						</goals>
 					</execution>
+			        <execution>
+			          <id>exec-npm-install</id>
+			          <phase>generate-sources</phase>
+			          <configuration>
+			            <executable>npm</executable>
+			            <arguments>
+			              <argument>install</argument>
+			            </arguments>
+			          </configuration>
+			          <goals>
+			            <goal>exec</goal>
+			          </goals>
+			        </execution>
+			        <execution>
+			          <id>exec-npm-install-special</id>
+			          <phase>generate-sources</phase>
+			          <configuration>
+			            <executable>npm</executable>
+			            <arguments>
+			              <argument>install</argument>
+			              <argument>jquery</argument>
+			              <argument>bootstrap</argument>
+			            </arguments>
+			          </configuration>
+			          <goals>
+			            <goal>exec</goal>
+			          </goals>
+			        </execution>
+			        <execution>
+			          <id>exec-npm-run-build</id>
+			          <phase>generate-sources</phase>
+			          <configuration>
+			            <executable>npm</executable>
+			            <arguments>
+			              <argument>run</argument>
+			              <argument>build</argument>
+			            </arguments>
+			          </configuration>
+			          <goals>
+			            <goal>exec</goal>
+			          </goals>
+			        </execution>
 				</executions>
 				<configuration>
 					<descriptorRefs>

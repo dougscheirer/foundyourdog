@@ -24,6 +24,14 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
 
+    static int getPortByEnv(int optionsPort) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+		return optionsPort;
+    }
+
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
@@ -33,9 +41,10 @@ public class Main {
 		logger.finest("Options.dbHost = " + options.dbHost);
 		logger.finest("Options.dbUsername = " + options.dbUsername);
 		logger.finest("Options.dbPort = " + options.dbPort);
-		logger.finest("Options.servicePort = " + options.servicePort);
+		int servicePort = getPortByEnv(options.servicePort);
+		logger.finest("servicePort = " + servicePort);
 
-		port(options.servicePort);
+		port(servicePort);
 
 		Sql2o sql2o = new Sql2o("jdbc:postgresql://" + options.dbHost + ":" + options.dbPort + "/" + options.database,
 				options.dbUsername, options.dbPassword, new PostgresQuirks() {
