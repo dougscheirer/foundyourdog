@@ -5,7 +5,6 @@ import java.util.Map;
 
 import app.Answer;
 import app.model.Model;
-import app.model.User;
 
 public class GetUsersIndexHandler extends AbstractRequestHandler<EmptyPayload> {
 

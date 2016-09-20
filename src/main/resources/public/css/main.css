@@ -1,0 +1,11 @@
+.jumbotron {
+	margin-left: 30%;
+	margin-right: 30%;
+}
+
+.homeimages {
+	a:hover {
+		border-width: 1px;
+		border-color: blue;
+	}
+}

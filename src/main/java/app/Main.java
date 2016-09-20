@@ -16,10 +16,7 @@ import app.handlers.CreateUserHandler;
 import app.handlers.GetUsersIndexHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.template.Configuration;
 import spark.Spark;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
@@ -66,7 +63,7 @@ public class Main {
 		Spark.staticFileLocation("/public");
 
 		// add all of the handlers here
-		get("/", (req, res) -> response.redirect("/index.html"));
+		redirect.get("/", "/index.html");
 		post("/users/new", new CreateUserHandler(model));
 		get("/users", new GetUsersIndexHandler(model));
 		// put("/users/:id", new UpdateUserHanlder(model));

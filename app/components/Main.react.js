@@ -1,6 +1,7 @@
 var React = require("react");
 var Jumbotron = require("react-bootstrap").Jumbotron;
 var Button = require("react-bootstrap").Button;
+var Route = require('react-router').Route
 
 var Main = React.createClass({ 
 
@@ -16,9 +17,11 @@ var Main = React.createClass({
   render: function() {
     return (
 		<Jumbotron>
-			<h1>Hello, world!</h1>
-			<p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-			<p><Button bsStyle="primary">Learn more</Button></p>
+			<div className="homeimages">
+				<a href="/found_dogs"><img className="home_img" src="img/found.jpg" alt="Found a dog" /></a>
+				<a href="missing_dogs"><img className="home_img" src="img/missing.jpg" alt="Missing a dog" /></a>
+			</div>
+			<div className="home_stats">Stats about our app</div>
 		</Jumbotron>    
 	);
   }

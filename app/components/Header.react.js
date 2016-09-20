@@ -21,13 +21,14 @@ var Header = React.createClass({
 	  <Navbar>
 	    <Navbar.Header>
 	      <Navbar.Brand>
-	        <a href="#">React-Bootstrap</a>
+	        <a href="/">iFYDO - i Found Your Dog O </a>
 	      </Navbar.Brand>
 	    </Navbar.Header>
-	    <Nav>
-	      <NavItem eventKey={1} href="#">Link</NavItem>
-	      <NavItem eventKey={2} href="#">Link</NavItem>
-	    </Nav>
+	    <Nav pullRight>
+	      <NavItem eventKey={1} href="/login">Sign in</NavItem>
+	      <NavItem eventKey={2} href="/signup">Sign up</NavItem>
+	      <NavItem eventKey={3} href="/feedback">Feedback</NavItem>
+  	    </Nav>
 	  </Navbar>
     );
   }
