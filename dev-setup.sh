@@ -1,7 +1,7 @@
 #!/bin/bash
 CURL=$(which curl)
 if [ "$CURL" == "" ]; then
-	apt-get update && apt-get install -y wget curl
+	apt-get update && apt-get install -y wget curl git tig
 fi
 
 # grab java 8
@@ -55,3 +55,7 @@ npm install -g jquery bootstrap
 
 # run this for continuous build 
 # npm start
+
+# TODO: docker install, grab and run postgres DB on localhost:5432
+# also for some reason loading it into eclipse on my Mac made the vbox build issues go away,
+# so probably figure that out
