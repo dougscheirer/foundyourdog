@@ -1,18 +1,14 @@
-package app.model;
+package app.handlers;
 
 import java.sql.Date;
-import java.util.UUID;
 
-import app.Validatable;
 import lombok.Data;
 
 @Data
-public class User implements Validatable {
+public class DetailUser {
 	private int id;
 	private String email;
 	private String handle;
-	private String password_hash;
-	private String confirmation_token;
 	private Boolean confirmed;
 	private Date signup_date;
 	private Date confirm_date;
@@ -20,9 +16,4 @@ public class User implements Validatable {
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;
-	
-	@Override
-	public boolean isValid() {
-		return true;
-	}
 }

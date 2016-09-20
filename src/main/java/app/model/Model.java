@@ -3,9 +3,12 @@ package app.model;
 import java.util.List;
 import java.util.Optional;
 
+import app.handlers.PublicUser;
+import app.handlers.DetailUser;
+
 public interface Model {
-	List<User> getAllUsers();
-	Optional<User> getUser(int id);
+	List<PublicUser> getAllPublicUsers();
+	Optional<DetailUser> getDetailUser(int id);
 	int createUser(User u);
 	int updateUser(User u);
 	int deleteUser(int id);
