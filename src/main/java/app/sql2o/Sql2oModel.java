@@ -25,7 +25,7 @@ public class Sql2oModel implements Model {
 	@Override
 	public List<PublicUser> getAllPublicUsers() {
         try (Connection conn = sql2o.open()) {
-            List<PublicUser> users = conn.createQuery("select * from users order by id")
+            List<PublicUser> users = conn.createQuery("select id, email, handle, confirmed, signup_date, confirm_date, deactivate_date from users order by id")
                     .executeAndFetch(PublicUser.class);
             return users;
         }
@@ -34,7 +34,7 @@ public class Sql2oModel implements Model {
 	@Override
 	public Optional<DetailUser> getDetailUser(int id) {
         try (Connection conn = sql2o.open()) {
-            List<DetailUser> users = conn.createQuery("select * from users where id=:id")
+            List<DetailUser> users = conn.createQuery("select id, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where id=:id")
             		.addParameter("id", id)
                     .executeAndFetch(DetailUser.class);
             if (users.size() > 0) {
