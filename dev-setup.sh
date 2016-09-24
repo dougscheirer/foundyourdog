@@ -47,8 +47,10 @@ else
 	echo "npm already installed"
 fi
 
+# increase the user watches, webpack is greedy
+echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
+
 # install what's missing
-npm install -g jquery bootstrap
 
 # build the base JS file
 # npm run build
