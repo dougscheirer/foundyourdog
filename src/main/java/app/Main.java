@@ -66,6 +66,7 @@ public class Main {
 		Spark.staticFileLocation("/public");
 
 		// add all of the handlers here
+		redirect.get("/", "/index.html");
 		post("/users/new", new CreateUserHandler(model));
 		get("/users", new GetUsersIndexHandler(model));
 		// put("/users/:id", new UpdateUserHanlder(model));
