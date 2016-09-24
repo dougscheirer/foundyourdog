@@ -1,9 +1,5 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var Flux = require("flux");
-$ = jQuery = require("jquery");
-var Bootstrap = require("bootstrap");
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.js';
 
-var App = require("./components/App.react")
-
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('root'));
