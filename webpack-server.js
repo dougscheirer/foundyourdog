@@ -29,7 +29,6 @@ if (isDeveloping) {
   });
 
   app.use("/api", function(req,res) {
-    //modify the url in any way you want
     var url = 'http://localhost:4567'+ req.url;
     var r = null;
     if(req.method === 'POST') {
@@ -40,6 +39,19 @@ if (isDeveloping) {
 
     req.pipe(r).pipe(res);
   });
+
+  app.use("/img", function(req,res) {
+    var url = 'http://localhost:4567'+ req.url;
+    var r = null;
+    if(req.method === 'POST') {
+       r = request.post({uri: url, json: req.body});
+    } else {
+       r = request(url);
+    }
+
+    req.pipe(r).pipe(res);
+  });
+
   app.use(middleware);
   app.use(webpackHotMiddleware(compiler));
   app.get('*', function response(req, res) {
