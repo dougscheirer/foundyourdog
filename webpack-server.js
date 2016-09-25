@@ -29,7 +29,6 @@ if (isDeveloping) {
   });
 
   app.use("/api", function(req,res) {
-    //modify the url in any way you want
     var url = 'http://localhost:4567'+ req.url;
     var r = null;
     if(req.method === 'POST') {
