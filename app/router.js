@@ -7,28 +7,42 @@ import SearchLayout from './components/search-layout';
 
 // Pages
 import Home from './components/home';
-import UserList from './components/user-list';
-import UserProfile from './components/user-profile';
-import WidgetList from './components/widget-list';
+import DogList from './components/dog-list';
+import DogProfile from './components/dog-profile';
+import Signup from './components/signup';
+import Signin from './components/signin';
+import Feedback from './components/feedback';
 
 export default (
   <Router history={browserHistory}>
     <Route component={MainLayout}>
       <Route path="/" component={Home} />
 
-      <Route path="users">
+      <Route path="lost">
         <Route component={SearchLayout}>
-          <IndexRoute component={UserList} />
+          <IndexRoute component={DogList} />
         </Route>
-        <Route path=":userId" component={UserProfile} />
+        <Route path=":dogId" component={DogProfile} />
       </Route>
 
-      <Route path="widgets">
+      <Route path="found">
         <Route component={SearchLayout}>
-          <IndexRoute component={WidgetList} />
+          <IndexRoute component={DogList} />
         </Route>
+        <Route path=":dogId" component={DogProfile} />
       </Route>
 
+      <Route path="dogs">
+        <Route path=":dogId" component={DogProfile} />
+      </Route>
+            
+      <Route path="signup" component={Signup}>
+      </Route>
+
+      <Route path="signin" component={Signin} />
+
+      <Route path="feedback" component={Feedback} />
+      
     </Route>
   </Router>
 );
