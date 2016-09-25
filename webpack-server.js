@@ -41,7 +41,7 @@ if (isDeveloping) {
   });
 
   app.use("/img", function(req,res) {
-    var url = 'http://localhost:4567'+ req.url;
+    var url = 'http://localhost:4567/img'+ req.url;
     var r = null;
     if(req.method === 'POST') {
        r = request.post({uri: url, json: req.body});

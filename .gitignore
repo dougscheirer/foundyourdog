@@ -4,3 +4,4 @@
 /**/bundle.min.js
 /.vagrant
 /build
+/**/*.log

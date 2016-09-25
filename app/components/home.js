@@ -8,8 +8,8 @@ const Home = React.createClass({
     return (
       <div className="home-page">
         <div className={style}>
-          <Link to="found"><img src="/img/found.png"></img></Link>
-          <Link to="lost"><img src="/img/lost.png"></img></Link>
+          <Link to="found"><img width="50%" src="/img/found.jpg"></img></Link>
+          <Link to="lost"><img width="50%" src="/img/lost.jpg"></img></Link>
         </div>
       </div>
     );
