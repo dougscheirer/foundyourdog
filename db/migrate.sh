@@ -1,5 +1,5 @@
 #!/bin/bash
-# migrate -p PASSWORD [-e ENV (default is dev)] [-d (drop the DB first)]
+# migrate -p PASSWORD [-i (init)] [-s (seed)] [-d (drop the DB first)] [-e ENV (default is dev)] 
 
 function die
 {
@@ -21,6 +21,12 @@ while [[ $# -gt 0 ]]; do
 	    -d)
 		    DROP="drop"
 		    ;;
+		-i)
+			INIT="init"
+			;;
+		-s)
+			SEED="seed"
+			;;
     	*)
             die "unknown option $key"
     ;;
@@ -39,9 +45,15 @@ if [ "$PASSWORD" == "" ]; then
 	PASSWORD="password"
 fi
 
-if [ "$DROP" == "drop" ]; then
+if [ "$DROP" != "" ]; then
 	psql -U postgres -h localhost -c "DROP DATABASE foundyourdog_$ENV"
 fi
 
 # init is the only thing ATM
-sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' ./init.db | psql -U postgres -h localhost
+if [ "$INIT" != "" ]; then
+	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' ./init.sql | psql -U postgres -h localhost
+fi
+
+if [ "$SEED" != "" ]; then
+	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' ./seed.sql | psql -U postgres -h localhost
+fi

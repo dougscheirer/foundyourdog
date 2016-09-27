@@ -11,5 +11,6 @@ public class Incident {
 	private float map_longitude;
 	private int dog_id;
 	private Date incident_date;
+	private String state;
 	private String resolution;
 }

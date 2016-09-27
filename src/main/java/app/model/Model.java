@@ -20,6 +20,7 @@ public interface Model {
 	int deleteDog(int id);
 	
 	List<Incident> getAllIncidents();
+	List<Incident> getAllIncidents(boolean lost);
 	Optional<Incident> getIncident(int id);
 	int createIncident(Incident i);
 	int updateIncident(Incident i);

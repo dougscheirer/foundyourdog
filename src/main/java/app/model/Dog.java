@@ -7,6 +7,7 @@ import lombok.Data;
 public class Dog {
 	private int id;
 	private String basic_type;
+	private String color;
 	private String gender;
 	private Boolean intact;
 	private int owner_id;

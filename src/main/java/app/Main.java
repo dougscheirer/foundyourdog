@@ -13,6 +13,8 @@ import org.sql2o.quirks.PostgresQuirks;
 import com.beust.jcommander.JCommander;
 
 import app.handlers.CreateUserHandler;
+import app.handlers.GetDogsHandler;
+import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUsersIndexHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
@@ -71,5 +73,7 @@ public class Main {
 		get("/users", new GetUsersIndexHandler(model));
 		// put("/users/:id", new UpdateUserHanlder(model));
 		// delete("/users/:id", new DeleteUserHandler(model));
+		get("/dogs/lost", new GetIncidentsHandler(true, model));
+		get("/dogs/found", new GetIncidentsHandler(false, model));
 	}
 }

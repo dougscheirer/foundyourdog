@@ -25,17 +25,19 @@ CREATE TABLE IF NOT EXISTS incidents (
     map_longitude float,
     dog_id integer,
     incident_date date,
+    state text not null,
     resolution text
 );
 
 CREATE TABLE IF NOT EXISTS dogs (
 	id SERIAL primary key,
 	basic_type text,
+    color text,
 	gender text,
-	intact bool,
+	intact text,
 	owner_id integer,
 	tags text,
-	name text not null,
+	name text,
 	added_date date
 );
 

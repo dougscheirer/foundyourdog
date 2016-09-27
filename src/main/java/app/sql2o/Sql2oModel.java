@@ -85,8 +85,17 @@ public class Sql2oModel implements Model {
 
 	@Override
 	public List<Dog> getAllDogs() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public List<Incident> getAllIncidents(boolean lost) {
+        try (Connection conn = sql2o.open()) {
+            List<Incident> incidents = conn.createQuery("select * from incidents where state=:state")
+            		.addParameter("state",  (lost) ? "lost" : "found")
+                    .executeAndFetch(Incident.class);
+            return incidents;
+        }
 	}
 
 	@Override

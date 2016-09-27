@@ -12,4 +12,10 @@
 .homemain {
   margin-left: 30%;
   margin-right: 30%;
+  height: 600px;
+}
+
+.map-gic {
+  height: 300px;
+  width: 100%;
 }

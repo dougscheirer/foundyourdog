@@ -23,7 +23,9 @@
     "file-loader": "^0.9.0",
     "jquery": "^3.1.1",
     "react": "^0.14.3",
+    "react-addons-update": "^15.3.2",
     "react-dom": "^0.14.3",
+    "react-google-maps": "^4.11.0",
     "react-router": "^2.0.1",
     "webpack": "^1.13.2"
   },
@@ -52,7 +54,6 @@
     "mocha-jsdom": "^1.0.0",
     "node-sass": "^3.10.0",
     "postcss-loader": "^0.6.0",
-    "react-addons-test-utils": "^0.14.3",
     "react-transform-hmr": "^1.0.0",
     "resolve-url-loader": "^1.6.0",
     "rimraf": "^2.4.3",
