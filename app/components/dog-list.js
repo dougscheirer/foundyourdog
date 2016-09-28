@@ -7,7 +7,7 @@ import update from "react-addons-update";
 import SimpleMap from "./google_map";
 import $ from 'jquery';
 
-export default class DogList extends Component {
+export class DogList extends Component {
   state = {
     markers: [{
       position: {
@@ -22,13 +22,17 @@ export default class DogList extends Component {
   handleMapClick = this.handleMapClick.bind(this);
   handleMarkerRightclick = this.handleMarkerRightclick.bind(this);
 
+  constructor(props) {
+    super(props);
+  }
+
   componentWillUnmount() {
     this.serverRequest.abort();
   }
 
   componentDidMount() {
     this.serverRequest = 
-      $.getJSON('/api/dogs/lost', 
+      $.getJSON('/api/dogs/' + props.type, 
         function (result) {
           var markers = [];
           for (var i in result) {
@@ -44,6 +48,23 @@ export default class DogList extends Component {
           }
           this.setState({ markers });
         }.bind(this));
+  }
+
+  state = {
+    zoomLevel: 4,
+    content: `Change the zoom level`,
+  }
+
+  handleZoomChanged() {
+    const zoomLevel = this.refs.map.getZoom();
+    if (zoomLevel !== this.state.zoomLevel) {
+      // Notice: Check zoomLevel equality here,
+      // or it will fire zoom_changed event infinitely
+      this.setState({
+        zoomLevel,
+        content: `Zoom: ${zoomLevel}`,
+      });
+    }
   }
 
   /*
@@ -80,14 +101,27 @@ export default class DogList extends Component {
   }
 
   render() {
+    console.log(this.state.markers);
     return (
         <SimpleMap
                 style={{height: "500px"}}
                 markers={this.state.markers}
                 onMapClick={this.handleMapClick}
                 onMarkerRightclick={this.handleMarkerRightclick}
+                onZoomChanged={this.handleZoomChanged}
               />
       );
   }
 };
 
+export class FoundDogList extends Component {
+    render() {
+        return (<DogList type="found"/>);
+    }
+}
+
+export class LostDogList extends Component {
+    render() {
+        return (<DogList type="lost"/>);
+    }
+}

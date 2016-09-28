@@ -5,8 +5,18 @@ import styles from './home.css';
 export default function SimpleMap (props) {
   console.log(props);
   var style = "jumbotron " + styles.homemain;
+  var markers = null;
+  if (!!props.markers) {
+    markers = props.markers.map(function(marker, index) {
+              return (
+                <Marker
+                  {...marker}
+                  onRightclick={() => props.onMarkerRightclick(index)} />
+              );
+            });
+  }
   return (
-    <div className={style} style={{paddingTop: "0px", paddingBottom: "0px"}}>
+    <div className={style}>
     <section style={{height: "100%"}}>
       <GoogleMapLoader
         containerElement={
@@ -24,13 +34,7 @@ export default function SimpleMap (props) {
             defaultCenter={{ lat: 37.9688918, lng: -122.1025406 }}
             onClick={props.onMapClick}
           >
-            {props.markers.map((marker, index) => {
-              return (
-                <Marker
-                  {...marker}
-                  onRightclick={() => props.onMarkerRightclick(index)} />
-              );
-            })}
+            {markers}
           </GoogleMap>
         }
       />
