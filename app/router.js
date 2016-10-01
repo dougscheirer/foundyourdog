@@ -3,7 +3,7 @@ import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 
 // Layouts
 import MainLayout from './components/main-layout';
-import SearchLayout from './components/search-layout';
+import { LostSearchLayout, FoundSearchLayout } from './components/search-layout';
 
 // Pages
 import Home from './components/home';
@@ -19,14 +19,14 @@ export default (
       <Route path="/" component={Home} />
 
       <Route path="lost">
-        <Route component={SearchLayout}>
+        <Route component={LostSearchLayout}>
           <IndexRoute component={LostDogList} />
         </Route>
         <Route path=":dogId" component={DogProfile} />
       </Route>
 
       <Route path="found">
-        <Route component={SearchLayout}>
+        <Route component={FoundSearchLayout}>
           <IndexRoute component={FoundDogList} />
         </Route>
         <Route path=":dogId" component={DogProfile} />

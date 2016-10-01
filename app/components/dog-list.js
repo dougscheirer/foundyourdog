@@ -9,22 +9,12 @@ import $ from 'jquery';
 
 export class DogList extends Component {
   state = {
-    markers: [{
-      position: {
-        lat: 37.9688918,
-        lng: -122.1025406
-      },
-      key: `here`,
-      defaultAnimation: 2,
-    }],
   };
 
   handleMapClick = this.handleMapClick.bind(this);
   handleMarkerRightclick = this.handleMarkerRightclick.bind(this);
-
-  constructor(props) {
-    super(props);
-  }
+  handleMarkerClick = this.handleMarkerClick.bind(this);
+  handleZoomChanged = this.handleZoomChanged.bind(this);
 
   componentWillUnmount() {
     this.serverRequest.abort();
@@ -32,7 +22,7 @@ export class DogList extends Component {
 
   componentDidMount() {
     this.serverRequest = 
-      $.getJSON('/api/dogs/' + props.type, 
+      $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost"), 
         function (result) {
           var markers = [];
           for (var i in result) {
@@ -43,6 +33,10 @@ export class DogList extends Component {
                 lng: incident['map_longitude']
               },
               key: incident['id'],
+              dog_id: incident['dog_id'],
+              date: incident['incident_date'],
+              state: incident['state'],
+              resolution: incident['resolution'],
               defaultAnimation: 2
             });
           }
@@ -56,6 +50,7 @@ export class DogList extends Component {
   }
 
   handleZoomChanged() {
+    // TODO: the refs thing doesn't work, don't know why
     const zoomLevel = this.refs.map.getZoom();
     if (zoomLevel !== this.state.zoomLevel) {
       // Notice: Check zoomLevel equality here,
@@ -72,6 +67,7 @@ export class DogList extends Component {
    * Go and try click now.
    */
   handleMapClick(event) {
+    // TODO: record the location for later
     let { markers } = this.state;
     markers = update(markers, {
       $push: [
@@ -85,29 +81,29 @@ export class DogList extends Component {
     this.setState({ markers });
   }
 
+  handleMarkerClick(index, event) {
+    let { markers } = this.state;
+    let selected = markers[index];
+    this.setState({ markers, selected });
+  }
+
   handleMarkerRightclick(index, event) {
     /*
      * All you modify is data, and the view is driven by data.
      * This is so called data-driven-development. (And yes, it's now in
      * web front end and even with google maps API.)
      */
-    let { markers } = this.state;
-    markers = update(markers, {
-      $splice: [
-        [index, 1],
-      ],
-    });
-    this.setState({ markers });
   }
 
   render() {
     console.log(this.state.markers);
     return (
         <SimpleMap
-                style={{height: "500px"}}
                 markers={this.state.markers}
+                selected={this.state.selected}
                 onMapClick={this.handleMapClick}
                 onMarkerRightclick={this.handleMarkerRightclick}
+                onMarkerClick={this.handleMarkerClick}
                 onZoomChanged={this.handleZoomChanged}
               />
       );
@@ -116,12 +112,12 @@ export class DogList extends Component {
 
 export class FoundDogList extends Component {
     render() {
-        return (<DogList type="found"/>);
+        return (<DogList showtype="lost"/>);
     }
 }
 
 export class LostDogList extends Component {
     render() {
-        return (<DogList type="lost"/>);
+        return (<DogList showtype="lost"/>);
     }
 }
