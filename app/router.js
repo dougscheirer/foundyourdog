@@ -22,6 +22,7 @@ export default (
         <Route component={LostSearchLayout}>
           <IndexRoute component={LostDogList} />
         </Route>
+        <Route path="new" component={Signin} />
         <Route path=":dogId" component={DogProfile} />
       </Route>
 
@@ -29,6 +30,7 @@ export default (
         <Route component={FoundSearchLayout}>
           <IndexRoute component={FoundDogList} />
         </Route>
+        <Route path="new" component={Signin} />
         <Route path=":dogId" component={DogProfile} />
       </Route>
 

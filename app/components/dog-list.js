@@ -4,8 +4,9 @@ import {
 } from "react";
 
 import update from "react-addons-update";
-import SimpleMap from "./google_map";
+import SimpleMap from "./simple_map";
 import $ from 'jquery';
+import { browserHistory } from 'react-router';
 
 export class DogList extends Component {
   state = {
@@ -15,14 +16,21 @@ export class DogList extends Component {
   handleMarkerRightclick = this.handleMarkerRightclick.bind(this);
   handleMarkerClick = this.handleMarkerClick.bind(this);
   handleZoomChanged = this.handleZoomChanged.bind(this);
+  handleNewReport = this.handleNewReport.bind(this);
 
   componentWillUnmount() {
-    this.serverRequest.abort();
+    if (this.serverRequest) {
+      this.serverRequest.abort();
+    }
   }
 
-  componentDidMount() {
-    this.serverRequest = 
-      $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost"), 
+  getServerData(location, zoom) {
+    if (location != null) {
+      console.log("Fetching server data based on " + location.lat + " / " + location.lng);
+      this.setState( { center: location } );
+    }
+
+      this.serverRequest = $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost" + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom), 
         function (result) {
           var markers = [];
           for (var i in result) {
@@ -44,13 +52,19 @@ export class DogList extends Component {
         }.bind(this));
   }
 
-  state = {
-    zoomLevel: 4,
-    content: `Change the zoom level`,
+  componentDidMount() {
+    // fire off a geolocation request and re-center the map
+    this.getServerData(null, 16);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          this.getServerData({ lat: position.coords.latitude, lng: position.coords.longitude });
+        }.bind(this));
+    }
   }
 
   handleZoomChanged() {
     // TODO: the refs thing doesn't work, don't know why
+    //       when it does, change the query based on the area of the zoom
     const zoomLevel = this.refs.map.getZoom();
     if (zoomLevel !== this.state.zoomLevel) {
       // Notice: Check zoomLevel equality here,
@@ -62,23 +76,16 @@ export class DogList extends Component {
     }
   }
 
-  /*
-   * This is called when you click on the map.
-   * Go and try click now.
-   */
   handleMapClick(event) {
-    // TODO: record the location for later
-    let { markers } = this.state;
-    markers = update(markers, {
-      $push: [
+    // center the map on the location
+    let newreport = 
         {
           position: event.latLng,
           defaultAnimation: 2,
           key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
-        },
-      ],
-    });
-    this.setState({ markers });
+          label: "!"
+        }
+    this.setState({ newreport });
   }
 
   handleMarkerClick(index, event) {
@@ -88,23 +95,31 @@ export class DogList extends Component {
   }
 
   handleMarkerRightclick(index, event) {
-    /*
-     * All you modify is data, and the view is driven by data.
-     * This is so called data-driven-development. (And yes, it's now in
-     * web front end and even with google maps API.)
-     */
+  }
+
+  handleNewReport(e) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      console.log("new report");
+      console.log("position");
+      browserHistory.push(this.props.showtype + "/new");
+    }
   }
 
   render() {
     console.log(this.state.markers);
     return (
         <SimpleMap
+                showtype={this.props.showtype}
+                center={this.state.center}
                 markers={this.state.markers}
                 selected={this.state.selected}
+                newreport={this.state.newreport}
                 onMapClick={this.handleMapClick}
                 onMarkerRightclick={this.handleMarkerRightclick}
                 onMarkerClick={this.handleMarkerClick}
                 onZoomChanged={this.handleZoomChanged}
+                onNewReport={this.handleNewReport}
               />
       );
   }

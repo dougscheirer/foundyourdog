@@ -11,12 +11,14 @@ const Home = React.createClass({
           <tbody>
             <tr>
               <td>
-                <Link to="found"><img width="50%" src="/img/found.jpg"></img></Link>
-                <p>I found a dog</p>
+                <Link to="found"><img width="100%" src="/img/found.jpg"></img>
+                  <p>I found a dog</p>
+                </Link>
               </td>
               <td>
-                <Link to="lost"><img width="50%" src="/img/lost.jpg"></img></Link>
-                <p>I lost a dog</p>
+                <Link to="lost"><img width="100%" src="/img/lost.jpg"></img>
+                  <p>I lost a dog</p>
+                </Link>
               </td>
             </tr>
           </tbody>
