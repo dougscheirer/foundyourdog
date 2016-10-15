@@ -17,6 +17,7 @@ export class DogList extends Component {
   handleMarkerClick = this.handleMarkerClick.bind(this);
   handleZoomChanged = this.handleZoomChanged.bind(this);
   handleNewReport = this.handleNewReport.bind(this);
+  handleCenterChanged = this.handleCenterChanged.bind(this);
 
   componentWillUnmount() {
     if (this.serverRequest) {
@@ -30,26 +31,29 @@ export class DogList extends Component {
       this.setState( { center: location } );
     }
 
-      this.serverRequest = $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost" + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom), 
-        function (result) {
-          var markers = [];
-          for (var i in result) {
-            var incident = result[i];
-            markers.push({
-              position: {
-                lat: incident['map_latitude'],
-                lng: incident['map_longitude']
-              },
-              key: incident['id'],
-              dog_id: incident['dog_id'],
-              date: incident['incident_date'],
-              state: incident['state'],
-              resolution: incident['resolution'],
-              defaultAnimation: 2
-            });
-          }
-          this.setState({ markers });
-        }.bind(this));
+    this.serverRequest = $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost" + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom), 
+      function (result) {
+        var markers = [];
+        for (var i in result) {
+          var incident = result[i];
+          markers.push({
+            position: {
+              lat: incident['map_latitude'],
+              lng: incident['map_longitude']
+            },
+            key: incident['id'],
+            dog_id: incident['dog_id'],
+            date: incident['incident_date'],
+            state: incident['state'],
+            resolution: incident['resolution'],
+            defaultAnimation: 2
+          });
+        }
+        this.setState({ markers });
+      }.bind(this))
+      .fail( function(error) {
+        console.log(error);
+      });
   }
 
   componentDidMount() {
@@ -57,8 +61,13 @@ export class DogList extends Component {
     this.getServerData(null, 16);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
+          console.log(position);
           this.getServerData({ lat: position.coords.latitude, lng: position.coords.longitude });
-        }.bind(this));
+        }.bind(this),
+        function (error) {
+          console.log("geolocation error: ");
+          console.log(error);
+        });
     }
   }
 
@@ -73,6 +82,12 @@ export class DogList extends Component {
         zoomLevel,
         content: `Zoom: ${zoomLevel}`,
       });
+    }
+  }
+
+  handleCenterChanged() {
+    if (this.map != null) {
+      this.getServerData({ lat: this.map.map.getCenter().lat(), lng: this.map.map.getCenter().lng() }, this.map.map.getZoom());
     }
   }
 
@@ -110,11 +125,13 @@ export class DogList extends Component {
     console.log(this.state.markers);
     return (
         <SimpleMap
+                ref={(map) => this.map = map}
                 showtype={this.props.showtype}
                 center={this.state.center}
                 markers={this.state.markers}
                 selected={this.state.selected}
                 newreport={this.state.newreport}
+                onCenterChanged={this.handleCenterChanged}
                 onMapClick={this.handleMapClick}
                 onMarkerRightclick={this.handleMarkerRightclick}
                 onMarkerClick={this.handleMarkerClick}

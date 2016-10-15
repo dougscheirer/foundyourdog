@@ -6,6 +6,10 @@ function die
 	echo "$1" && exit 1
 }
 
+if [ "$1" == "" ]; then
+	die "migrate.sh [-p password] [-e environment] [-d (drop)] [-i (init)] [-s (seed)]"
+fi
+
 while [[ $# -gt 0 ]]; do
 	key="$1"
 	echo "key is $key"

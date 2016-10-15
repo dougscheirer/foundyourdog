@@ -45,6 +45,7 @@ export default (
 
       <Route path="feedback" component={Feedback} />
       
+      <Route path="*" component={Home} />
     </Route>
   </Router>
 );

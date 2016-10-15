@@ -4,11 +4,6 @@
   border: 1px solid blue;
 }
 
-.bap {
-  background-color: red;
-  height: 25px;
-}
-
 .search {
   margin-left: 30%;
   margin-right: 30%;
@@ -25,22 +20,5 @@
   margin-right: 30%;
   padding-top: 0px;
   padding-bottom: 0px;
-  height: 600px;
 }
 
-.left_pane {
-  left: 0;
-  top: 0;
-  width: 50%;
-}
-
-.right_pane {
-  right: 0;
-  top: 0;
-  width: 50%;
-}
-
-.map-gic {
-  height: 300px;
-  width: 100%;
-}

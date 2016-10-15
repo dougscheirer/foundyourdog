@@ -21,16 +21,16 @@ export default class SimpleMap extends Component {
       var style = styles.map;
       var info = [], markers = [];
       var zoom = this.props.zoom || 16;
-      var center = this.props.center || { lat: 39.9688918, lng: -122.1025406 }
+      var center = this.props.center || { lat: 0, lng: 0 }
       if (!!this.props.markers) {
         markers = this.props.markers.map(function(marker, index) {
                   return (
                     <Marker
                       {...marker}
-                      onClick={() => props.onMarkerClick(index)} 
-                      onRightclick={() => props.onMarkerRightclick(index)} />
+                      onClick={() => this.props.onMarkerClick(index)} 
+                      onRightclick={() => this.props.onMarkerRightclick(index)} />
                   );
-                });
+                }.bind(this));
       }
       
       if (!!this.props.selected) {
@@ -52,8 +52,7 @@ export default class SimpleMap extends Component {
         var marker = this.props.newreport;
         var callback = this.props.onNewReport;
         info =  <InfoWindow 
-                  {...marker}
-                  visible="false">
+                  {...marker}>
                   <div className="incident-info">
                     <a href="#" onClick={callback}> Click here to start a new report </a>
                   </div>
@@ -74,11 +73,13 @@ export default class SimpleMap extends Component {
             }
             googleMapElement={
               <GoogleMap
-                ref={(map) => console.log(map)}
+                ref={(map) => this.map = map}
                 defaultZoom={zoom}
                 defaultCenter={ center }
                 center={ center }
                 onClick={this.props.onMapClick}
+                onDragEnd={this.props.onCenterChanged}
+                onIdle={this.props.onCenterChanged}
               >
                 {markers}
                 {info}
