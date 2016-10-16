@@ -12,6 +12,7 @@ import DogProfile from './components/dog-profile';
 import Signup from './components/signup';
 import Signin from './components/signin';
 import Feedback from './components/feedback';
+import { NewFound, NewLost } from "./components/NewReport";
 
 export default (
   <Router history={browserHistory}>
@@ -22,7 +23,7 @@ export default (
         <Route component={LostSearchLayout}>
           <IndexRoute component={LostDogList} />
         </Route>
-        <Route path="new" component={Signin} />
+        <Route path="new" component={NewLost} />
         <Route path=":dogId" component={DogProfile} />
       </Route>
 
@@ -30,7 +31,7 @@ export default (
         <Route component={FoundSearchLayout}>
           <IndexRoute component={FoundDogList} />
         </Route>
-        <Route path="new" component={Signin} />
+        <Route path="new" component={NewFound} />
         <Route path=":dogId" component={DogProfile} />
       </Route>
 

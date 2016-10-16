@@ -23,10 +23,20 @@ CREATE TABLE IF NOT EXISTS incidents (
     id SERIAL primary key,
     map_latitude float,
     map_longitude float,
+    reporter_id integer,
     dog_id integer,
     incident_date date,
     state text not null,
-    resolution text
+    resolution id
+);
+
+CREATE TABLE IF NOT EXISTS resolutions (
+    id SERIAL primary key,
+    incident_id integer,
+    dog_id integer,
+    dog_id_owner integer,
+    resolve_date date,
+    resolve_text text
 );
 
 CREATE TABLE IF NOT EXISTS dogs (

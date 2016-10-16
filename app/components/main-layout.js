@@ -19,7 +19,7 @@ const MainLayout = React.createClass({
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav">
-              <li className="active"><Link to="/">Home</Link></li>
+              <li><Link to="/">Home</Link></li>
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li><Link to="/signin">Sign in<span className="sr-only">(current)</span></Link></li>

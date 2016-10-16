@@ -3,7 +3,6 @@ import {
   Component,
 } from "react";
 
-import update from "react-addons-update";
 import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
@@ -29,31 +28,30 @@ export class DogList extends Component {
     if (location != null) {
       console.log("Fetching server data based on " + location.lat + " / " + location.lng);
       this.setState( { center: location } );
-    }
-
-    this.serverRequest = $.getJSON('/api/dogs/' + ((this.props.showtype == "lost") ? "found" : "lost" + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom), 
-      function (result) {
-        var markers = [];
-        for (var i in result) {
-          var incident = result[i];
-          markers.push({
-            position: {
-              lat: incident['map_latitude'],
-              lng: incident['map_longitude']
-            },
-            key: incident['id'],
-            dog_id: incident['dog_id'],
-            date: incident['incident_date'],
-            state: incident['state'],
-            resolution: incident['resolution'],
-            defaultAnimation: 2
-          });
-        }
-        this.setState({ markers });
-      }.bind(this))
-      .fail( function(error) {
-        console.log(error);
+      this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom, 
+        function (result) {
+          var markers = [];
+          for (var i in result) {
+            var incident = result[i];
+            markers.push({
+              position: {
+                lat: incident['map_latitude'],
+                lng: incident['map_longitude']
+              },
+              key: incident['id'],
+              dog_id: incident['dog_id'],
+              date: incident['incident_date'],
+              state: incident['state'],
+              resolution: incident['resolution'],
+              defaultAnimation: 2
+            });
+          }
+          this.setState({ markers });
+        }.bind(this))
+        .fail( function(error) {
+          console.log(error);
       });
+    }
   }
 
   componentDidMount() {
@@ -117,7 +115,8 @@ export class DogList extends Component {
       e.preventDefault();
       console.log("new report");
       console.log("position");
-      browserHistory.push(this.props.showtype + "/new");
+      // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
+      browserHistory.push((this.props.showtype == "lost" ? "found" : "lost") + "/new");
     }
   }
 
@@ -150,6 +149,6 @@ export class FoundDogList extends Component {
 
 export class LostDogList extends Component {
     render() {
-        return (<DogList showtype="lost"/>);
+        return (<DogList showtype="found"/>);
     }
 }
