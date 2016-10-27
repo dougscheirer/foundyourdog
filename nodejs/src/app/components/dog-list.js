@@ -26,12 +26,15 @@ export class DogList extends Component {
 
   getServerData(location, zoom) {
     if (location != null) {
+      if (!!!zoom) {
+        zoom = 16;
+      }
       console.log("Fetching server data based on " + location.lat + " / " + location.lng);
       this.setState( { center: location } );
       this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom, 
         function (result) {
           var markers = [];
-          for (var i in result) {
+          for (var i=0; i<result.length; i++) {
             var incident = result[i];
             markers.push({
               position: {
@@ -116,7 +119,7 @@ export class DogList extends Component {
       console.log("new report");
       console.log("position");
       // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
-      browserHistory.push((this.props.showtype == "lost" ? "found" : "lost") + "/new");
+      browserHistory.push((this.props.showtype === "lost" ? "found" : "lost") + "/new");
     }
   }
 

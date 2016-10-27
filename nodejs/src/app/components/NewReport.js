@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router';
 import $ from 'jquery';
+import { DateField } from "react-date-picker";
 
 export class NewFound extends Component {
 
@@ -25,7 +25,6 @@ export class NewFound extends Component {
 			date: ReactDOM.findDOMNode(this.refs.date).value,
 			name: ReactDOM.findDOMNode(this.refs.name).value,
 			basic_type: ReactDOM.findDOMNode(this.refs.basic_type).value,
-			name: ReactDOM.findDOMNode(this.refs.name).value,
 			color: ReactDOM.findDOMNode(this.refs.color).value,
 			other_info: ReactDOM.findDOMNode(this.refs.other_info).value,
 			breeding_status: ReactDOM.findDOMNode(this.refs.breeding_status).value
@@ -139,7 +138,6 @@ export class NewLost extends Component {
 			date: ReactDOM.findDOMNode(this.refs.date).value,
 			name: ReactDOM.findDOMNode(this.refs.name).value,
 			basic_type: ReactDOM.findDOMNode(this.refs.basic_type).value,
-			name: ReactDOM.findDOMNode(this.refs.name).value,
 			color: ReactDOM.findDOMNode(this.refs.color).value,
 			other_info: ReactDOM.findDOMNode(this.refs.other_info).value,
 			breeding_status: ReactDOM.findDOMNode(this.refs.breeding_status).value
@@ -171,7 +169,7 @@ export class NewLost extends Component {
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="date">Date</label>  
 					  <div className="col-md-4">
-					  <input ref="date" name="date" type="text" placeholder="datepicker" className="form-control input-md" required="" />
+					  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 					    
 					  </div>
 					</div>

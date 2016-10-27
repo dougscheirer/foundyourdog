@@ -1,8 +1,6 @@
 import { default as React, Component } from 'react';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
-import styles from './home.css';
-
-import Signin from "./signin"
+import './home.css';
 
 export default class SimpleMap extends Component {
     newReport() {
@@ -18,10 +16,11 @@ export default class SimpleMap extends Component {
     }
         
     render() {
-      var style = styles.map;
+      var style = "map";
       var info = [], markers = [];
       var zoom = this.props.zoom || 16;
       var center = this.props.center || { lat: 0, lng: 0 }
+      var index = 0;
       if (!!this.props.markers) {
         markers = this.props.markers.map(function(marker, index) {
                   return (
@@ -38,7 +37,7 @@ export default class SimpleMap extends Component {
             info = <InfoWindow 
                       {...marker}
                       visible="false"
-                      onRightclick={() => props.onMarkerRightclick(index)}>
+                      onRightclick={() => this.props.onMarkerRightclick(index)}>
                       <div className="incident-info">
                       {marker.date} : 
                       {marker.dog_id} :

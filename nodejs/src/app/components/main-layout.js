@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import 'bootstrap-loader'
+import 'bootstrap-loader';
 
 const MainLayout = React.createClass({
   render: function() {

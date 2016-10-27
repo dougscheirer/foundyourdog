@@ -69,11 +69,11 @@ public class Main {
 
 		// add all of the handlers here
 		redirect.get("/", "/index.html");
-		post("/users/new", new CreateUserHandler(model));
-		get("/users", new GetUsersIndexHandler(model));
-		// put("/users/:id", new UpdateUserHanlder(model));
-		// delete("/users/:id", new DeleteUserHandler(model));
-		get("/dogs/lost", new GetIncidentsHandler(true, model));
-		get("/dogs/found", new GetIncidentsHandler(false, model));
+		post("/api/users/new", new CreateUserHandler(model));
+		get("/api/users", new GetUsersIndexHandler(model));
+		// put("/api/users/:id", new UpdateUserHanlder(model));
+		// delete("/api/users/:id", new DeleteUserHandler(model));
+		get("/api/dogs/lost", new GetIncidentsHandler(true, model));
+		get("/api/dogs/found", new GetIncidentsHandler(false, model));
 	}
 }

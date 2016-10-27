@@ -5,8 +5,8 @@
 }
 
 .search {
-  margin-left: 30%;
-  margin-right: 30%;
+  margin-left: 1%;
+  margin-right: 1%;
 }
 
 .map {
@@ -22,3 +22,6 @@
   padding-bottom: 0px;
 }
 
+.form-group {
+  width: 100%;
+}
