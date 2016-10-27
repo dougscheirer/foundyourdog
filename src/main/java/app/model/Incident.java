@@ -13,4 +13,5 @@ public class Incident {
 	private Date incident_date;
 	private String state;
 	private String resolution;
+	private int reporter_id;
 }

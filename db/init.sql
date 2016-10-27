@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS incidents (
     dog_id integer,
     incident_date date,
     state text not null,
-    resolution id
+    resolution integer
 );
 
 CREATE TABLE IF NOT EXISTS resolutions (

@@ -10,9 +10,10 @@ if [ "$1" == "" ]; then
 	die "migrate.sh [-p password] [-e environment] [-d (drop)] [-i (init)] [-s (seed)]"
 fi
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 while [[ $# -gt 0 ]]; do
 	key="$1"
-	echo "key is $key"
 	case $key in
     	-p)
 		    PASSWORD="$2"
@@ -50,14 +51,14 @@ if [ "$PASSWORD" == "" ]; then
 fi
 
 if [ "$DROP" != "" ]; then
-	psql -U postgres -h localhost -c "DROP DATABASE foundyourdog_$ENV"
+	PGPASSWORD=$PASSWORD psql -U postgres -h localhost -c "DROP DATABASE foundyourdog_$ENV"
 fi
 
 # init is the only thing ATM
 if [ "$INIT" != "" ]; then
-	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' ./init.sql | psql -U postgres -h localhost
+	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' $DIR/init.sql | PGPASSWORD=$PASSWORD psql -U postgres -h localhost
 fi
 
 if [ "$SEED" != "" ]; then
-	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' ./seed.sql | psql -U postgres -h localhost
+	sed -e 's/\$PASSWD\$/'$PASSWORD'/g' -e 's/\$ENV\$/'$ENV'/g' $DIR/seed.sql | PGPASSWORD=$PASSWORD psql -U postgres -h localhost
 fi
