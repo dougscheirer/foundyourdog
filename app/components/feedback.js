@@ -1,27 +1,25 @@
-var React = require('react');
-var DatePicker = require('react-datepicker');
-var moment = require('moment');
+import React from 'react';
+import 'react-date-picker/index.css';
+import { Calendar } from 'react-date-picker';
 
-const Feedback = React.createClass({
-  displayName: 'Example',
+export default class Feedback extends React.Component {
 
-  getInitialState: function() {
-    return {
-      startDate: moment()
-    };
-  },
+  constructor(props) {
+  	super(props);
+  	this.state = {
+  		startDate: '10/27/2016'
+  	}
+  }
 
-  handleChange: function(date) {
+  handleChange(date) {
     this.setState({
       startDate: date
     });
-  },
+  }
 
-  render: function() {
-    return <DatePicker
+  render() {
+    return <Calendar
         selected={this.state.startDate}
         onChange={this.handleChange} />;
   }
-});
-
-export default Feedback;
+}
