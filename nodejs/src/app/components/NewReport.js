@@ -183,7 +183,8 @@ export class NewLost extends NewFormBase {
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
 					  <div className="col-md-4">
-						  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
+					  <input name="name" ref="name" type="text" placeholder="dog's name" className="form-control input-md" />
+
 					  </div>
 					</div>
 
