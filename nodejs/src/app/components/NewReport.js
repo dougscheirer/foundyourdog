@@ -4,6 +4,7 @@ import $ from 'jquery';
 import { DateField } from "react-date-picker";
 import toastr from 'toastr';
 import 'toastr/build/toastr.css';
+import 'react-date-picker/index.css';
 
 class NewFormBase extends Component {
 
