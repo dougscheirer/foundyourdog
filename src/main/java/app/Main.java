@@ -69,11 +69,12 @@ public class Main {
 
 		// add all of the handlers here
 		redirect.get("/", "/index.html");
+		// TODO: group the /api/... stuff under one route path? 
 		post("/api/users/new", new CreateUserHandler(model));
 		get("/api/users", new GetUsersIndexHandler(model));
 		// put("/api/users/:id", new UpdateUserHanlder(model));
 		// delete("/api/users/:id", new DeleteUserHandler(model));
-		get("/api/dogs/lost", new GetIncidentsHandler(true, model));
-		get("/api/dogs/found", new GetIncidentsHandler(false, model));
+		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
+		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
 	}
 }

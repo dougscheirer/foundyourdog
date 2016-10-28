@@ -7,7 +7,7 @@ import { LostSearchLayout, FoundSearchLayout } from './components/search-layout'
 
 // Pages
 import Home from './components/home';
-import { FoundDogList, LostDogList } from './components/dog-list';
+import { FoundDogs, LostDogs } from './components/dog-list';
 import DogProfile from './components/dog-profile';
 import Signup from './components/signup';
 import Signin from './components/signin';
@@ -21,7 +21,7 @@ export default (
 
       <Route path="lost">
         <Route component={LostSearchLayout}>
-          <IndexRoute component={LostDogList} />
+          <IndexRoute component={LostDogs} />
         </Route>
         <Route path="new" component={NewLost} />
         <Route path=":dogId" component={DogProfile} />
@@ -29,7 +29,7 @@ export default (
 
       <Route path="found">
         <Route component={FoundSearchLayout}>
-          <IndexRoute component={FoundDogList} />
+          <IndexRoute component={FoundDogs} />
         </Route>
         <Route path="new" component={NewFound} />
         <Route path=":dogId" component={DogProfile} />

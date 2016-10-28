@@ -12,9 +12,13 @@ import app.model.User;
 public class GetIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {
 	private boolean lost = false;
 	
-	public GetIncidentsHandler(boolean lost, Model model) {
+	public enum IncidentType {
+		LOST,
+		FOUND
+	}
+	public GetIncidentsHandler(IncidentType type, Model model) {
 		super(EmptyPayload.class, model);
-		this.lost = lost; 
+		this.lost = (type == IncidentType.LOST) ? true : false; 
 	}
 
 	@Override

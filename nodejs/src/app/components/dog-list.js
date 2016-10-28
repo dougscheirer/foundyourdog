@@ -1,11 +1,9 @@
-import {
-  default as React,
-  Component,
-} from "react";
+import React, { Component } from "react";
 
 import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
+import ListMapToggle from "./listMapToggle";
 
 export class DogList extends Component {
   state = {
@@ -123,33 +121,84 @@ export class DogList extends Component {
 
   render() {
     console.log(this.state.markers);
-    return (
-        <SimpleMap
-                ref={(map) => this.map = map}
-                showtype={this.props.showtype}
-                center={this.state.center}
-                markers={this.state.markers}
-                selected={this.state.selected}
-                newreport={this.state.newreport}
-                onCenterChanged={this.handleCenterChanged}
-                onMapClick={this.handleMapClick}
-                onMarkerRightclick={this.handleMarkerRightclick}
-                onMarkerClick={this.handleMarkerClick}
-                onZoomChanged={this.handleZoomChanged}
-                onNewReport={this.handleNewReport}
-              />
-      );
+    if (this.props.displaytype === "list") {
+      var rows = [];
+      this.state.markers.forEach((marker) => {
+        rows.push(<tr>
+            <td>{marker.date}</td>
+            <td>{marker.dog_id}</td>
+            <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
+            <td>{marker.resolution}</td>
+            <td>{marker.state}</td>
+            </tr>);
+      });
+      return (
+        <div>
+          <table style={{width: "100%"}}>
+          <thead>
+            <th>Date</th>
+            <th>DogId</th>
+            <th>Position</th>
+            <th>Resolution</th>
+            <th>State</th>
+          </thead>
+          <tbody>
+          {  rows }
+          </tbody>
+          </table>
+        </div>);
+    } else {
+      return (
+          <SimpleMap
+                  ref={(map) => this.map = map}
+                  showtype={this.props.showtype}
+                  center={this.state.center}
+                  markers={this.state.markers}
+                  selected={this.state.selected}
+                  newreport={this.state.newreport}
+                  onCenterChanged={this.handleCenterChanged}
+                  onMapClick={this.handleMapClick}
+                  onMarkerRightclick={this.handleMarkerRightclick}
+                  onMarkerClick={this.handleMarkerClick}
+                  onZoomChanged={this.handleZoomChanged}
+                  onNewReport={this.handleNewReport}
+                />
+        );
+    }
   }
 };
 
-export class FoundDogList extends Component {
-    render() {
-        return (<DogList showtype="lost"/>);
+class BaseDogs extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        displaytype: 'map'
+      }
+    }
+
+    handleToggle = this.handleToggle.bind(this);
+
+    handleToggle(displayType) {
+      this.setState({ displaytype: displayType });
     }
 }
 
-export class LostDogList extends Component {
+export class FoundDogs extends BaseDogs {
     render() {
-        return (<DogList showtype="found"/>);
+        return (
+          <div>
+            <ListMapToggle displaytype={this.state.displaytype} onToggle={this.handleToggle}/>
+            <DogList showtype="lost" displaytype={this.state.displaytype}/>
+          </div>);
+    }
+}
+
+export class LostDogs extends BaseDogs {
+    render() {
+        return (
+          <div>
+            <ListMapToggle displaytype={this.state.displaytype} onToggle={this.handleToggle}/>
+            <DogList showtype="found" displaytype={this.state.displaytype}/>
+          </div>);
     }
 }

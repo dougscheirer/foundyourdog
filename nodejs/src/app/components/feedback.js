@@ -20,8 +20,6 @@ export default class Feedback extends React.Component {
   handleChange = this.handleChange.bind(this);
   
   render() {
-    return <Calendar
-        selected={this.state.startDate}
-        onChange={this.handleChange} />;
+    return (<h1>Feedback</h1>);
   }
 }
