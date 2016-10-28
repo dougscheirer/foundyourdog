@@ -40,7 +40,6 @@ export class NewFound extends Component {
 				console.log('success');
 			}}).fail(function(e) {
 				console.log("failed");
-				console.log(e);
 			});
 	};
 
@@ -153,7 +152,6 @@ export class NewLost extends Component {
 				console.log('success');
 			}}).fail(function(e) {
 				console.log("failed");
-				console.log(e);
 			});
 	}
 

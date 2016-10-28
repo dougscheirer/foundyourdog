@@ -52,7 +52,7 @@ export class DogList extends Component {
           this.setState({ markers });
         }.bind(this))
         .fail( function(error) {
-          console.log(error);
+          console.log("failed to get server data");
       });
     }
   }
@@ -116,8 +116,6 @@ export class DogList extends Component {
   handleNewReport(e) {
     if (e && e.preventDefault) {
       e.preventDefault();
-      console.log("new report");
-      console.log("position");
       // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
       browserHistory.push((this.props.showtype === "lost" ? "found" : "lost") + "/new");
     }
