@@ -38,14 +38,14 @@ export default (
       <Route path="dogs">
         <Route path=":dogId" component={DogProfile} />
       </Route>
-            
+
       <Route path="signup" component={Signup}>
       </Route>
 
       <Route path="signin" component={Signin} />
 
       <Route path="feedback" component={Feedback} />
-      
+
       <Route path="*" component={Home} />
     </Route>
   </Router>

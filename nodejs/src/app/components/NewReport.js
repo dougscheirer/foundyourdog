@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { DateField } from "react-date-picker";
+import toastr from 'toastr';
+import 'toastr/build/toastr.css';
 
 class NewFormBase extends Component {
 
 	getSelected = this.getSelected.bind(this);
 	handleValidateAndSubmit = this.handleValidateAndSubmit.bind(this);
+	validate = this.validate.bind(this);
 
-	handleValidateAndSubmit(e) {
-		e.preventDefault();
+	validate() {
 		var formdata = {
-			date: ReactDOM.findDOMNode(this.refs.date).value,
+			date: this.refs.date.getInput().value,
 			name: ReactDOM.findDOMNode(this.refs.name).value,
 			basic_type: ReactDOM.findDOMNode(this.refs.basic_type).value,
 			color: ReactDOM.findDOMNode(this.refs.color).value,
@@ -19,6 +21,24 @@ class NewFormBase extends Component {
 			breeding_status: ReactDOM.findDOMNode(this.refs.breeding_status).value
 		};
 		formdata.gender = this.getSelected('gender');
+
+		// required: date, name (sometimes), basic_type, color
+		let errors = false;
+		if (!!!formdata.color) { toastr.error('Color is required'); errors = true; }
+		if (!!!formdata.basic_type) { toastr.error('Breed is required'); errors = true; }
+		if (!!!formdata.name && this.nameRequired) { toastr.error('Name is required'); errors = true; }
+		if (!!!formdata.date) { toastr.error('Date is required'); errors = true; }
+
+		return errors ? null : formdata;
+	}
+
+	handleValidateAndSubmit(e) {
+		e.preventDefault();
+		let formdata = this.validate();
+		if (!!!formdata) {
+			return;
+		}
+
 		$.ajax({
 		    url: this.submitUrl,
 		    type: "POST",
@@ -28,7 +48,7 @@ class NewFormBase extends Component {
     		success: function (x,h,r) {
 				console.log('success');
 			}}).fail(function(e) {
-				console.log("failed");
+				toastr.error("The server responded with an error, please try again later.")
 			});
 	}
 
@@ -48,6 +68,7 @@ class NewFormBase extends Component {
 export class NewFound extends NewFormBase {
 	constructor(props) {
 		super(props);
+		this.nameRequired = false;
 		this.submitUrl = "/api/found/new";
 	}
 
@@ -62,35 +83,43 @@ export class NewFound extends NewFormBase {
 					<legend style={{textAlign: "center"}}>I found a dog</legend>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="date">Date</label>   
+					  <label className="col-md-4 control-label" htmlFor="date">Date</label>
 					  <div className="col-md-4">
 	  				    <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 					  </div>
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="name">Name</label>  
+					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
 					  <div className="col-md-4">
 					  <input name="name" ref="name" type="text" placeholder="dog's name, if known" className="form-control input-md" />
-					    
+
 					  </div>
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="basic_type">Basic type</label>  
+					  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
 					  <div className="col-md-4">
 					  <input ref="basic_type" name="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
-					    
+
+					  </div>
+					</div>
+
+					<div className="form-group">
+					  <label className="col-md-4 control-label" htmlFor="color">Color</label>
+					  <div className="col-md-4">
+					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
+
 					  </div>
 					</div>
 
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
-					  <div className="col-md-4"> 
+					  <div className="col-md-4">
 					    <label className="radio-inline" htmlFor="gender">
 					      <input name="gender" type="radio" ref="gender" value="M" defaultChecked="true" />
 					      M
-					    </label> 
+					    </label>
 					    <label className="radio-inline" htmlFor="gender">
 					      <input name="gender" type="radio" ref="gender" value="F" />
 					      F
@@ -99,26 +128,18 @@ export class NewFound extends NewFormBase {
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>  
+					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
 					  <div className="col-md-4">
 					  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
-					    
+
 					  </div>
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="color">Color</label>  
-					  <div className="col-md-4">
-					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
-					    
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>  
+					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
 					  <div className="col-md-4">
 					  <input name="other_info" ref="other_info" type="text" placeholder="anything addition you want to add" className="form-control input-md" />
-					    
+
 					  </div>
 					</div>
 
@@ -138,6 +159,7 @@ export class NewFound extends NewFormBase {
 export class NewLost extends NewFormBase {
 	constructor(props) {
 		super(props);
+		this.nameRequired = true;
 		this.submitUrl = "/api/lost/new"
 	}
 
@@ -151,27 +173,43 @@ export class NewLost extends NewFormBase {
 					<legend style={{textAlign: "center"}}>I lost a dog</legend>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="date">Date</label>  
+					  <label className="col-md-4 control-label" htmlFor="date">Date</label>
 					  <div className="col-md-4">
 						  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 					  </div>
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="basic_type">Basic type</label>  
+					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
+					  <div className="col-md-4">
+					  <input ref="name" name="name" type="text" placeholder="your dog's name" className="form-control input-md" />
+
+					  </div>
+					</div>
+
+					<div className="form-group">
+					  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
 					  <div className="col-md-4">
 					  <input name="basic_type" ref="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
-					    
+
+					  </div>
+					</div>
+
+					<div className="form-group">
+					  <label className="col-md-4 control-label" htmlFor="color">Color</label>
+					  <div className="col-md-4">
+					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
+
 					  </div>
 					</div>
 
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
-					  <div className="col-md-4"> 
+					  <div className="col-md-4">
 					    <label className="radio-inline" htmlFor="gender">
 					      <input type="radio" name="gender" ref="gender" value="M" defaultChecked="true" />
 					      M
-					    </label> 
+					    </label>
 					    <label className="radio-inline" htmlFor="gender">
 					      <input type="radio" name="gender" ref="gender" value="F" />
 					      F
@@ -180,34 +218,18 @@ export class NewLost extends NewFormBase {
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>  
+					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
 					  <div className="col-md-4">
 					  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
-					    
+
 					  </div>
 					</div>
 
 					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="color">Color</label>  
-					  <div className="col-md-4">
-					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
-					    
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="name">Name</label>  
-					  <div className="col-md-4">
-					  <input ref="name" name="name" type="text" placeholder="dog's name, if known" className="form-control input-md" />
-					    
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>  
+					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
 					  <div className="col-md-4">
 					  <input ref="other_info" name="other_info" type="text" placeholder="anything addition you want to add" className="form-control input-md" />
-					    
+
 					  </div>
 					</div>
 

@@ -14,7 +14,7 @@ export default class SimpleMap extends Component {
     componentWillUnmount() {
         window.onNewReport = null;
     }
-        
+
     render() {
       var style = "map";
       var info = [], markers = [];
@@ -26,22 +26,22 @@ export default class SimpleMap extends Component {
                   return (
                     <Marker
                       {...marker}
-                      onClick={() => this.props.onMarkerClick(index)} 
+                      onClick={() => this.props.onMarkerClick(index)}
                       onRightclick={() => this.props.onMarkerRightclick(index)} />
                   );
                 }.bind(this));
       }
-      
+
       if (!!this.props.selected) {
             let marker = this.props.selected;
-            info = <InfoWindow 
+            info = <InfoWindow
                       {...marker}
                       visible="false"
                       onRightclick={() => this.props.onMarkerRightclick(index)}>
                       <div className="incident-info">
-                      {marker.date} : 
+                      {marker.date} :
                       {marker.dog_id} :
-                      {marker.state} : 
+                      {marker.state} :
                       {marker.resolution} :
                       </div>
                     </InfoWindow>
@@ -50,13 +50,13 @@ export default class SimpleMap extends Component {
       if (!!this.props.newreport) {
         var marker = this.props.newreport;
         var callback = this.props.onNewReport;
-        info =  <InfoWindow 
+        info =  <InfoWindow
                   {...marker}>
                   <div className="incident-info">
                     <a href="#" onClick={callback}> Click here to start a new report </a>
                   </div>
                 </InfoWindow>
-      } 
+      }
 
       return (
         <div className={style}>

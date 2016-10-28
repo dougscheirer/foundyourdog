@@ -29,7 +29,7 @@ export class DogList extends Component {
       }
       console.log("Fetching server data based on " + location.lat + " / " + location.lng);
       this.setState( { center: location } );
-      this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom, 
+      this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom,
         function (result) {
           var markers = [];
           for (var i=0; i<result.length; i++) {
@@ -92,7 +92,7 @@ export class DogList extends Component {
 
   handleMapClick(event) {
     // center the map on the location
-    let newreport = 
+    let newreport =
         {
           position: event.latLng,
           defaultAnimation: 2,
