@@ -8,27 +8,28 @@ import 'react-date-picker/index.css';
 
 class NewFormBase extends Component {
 
-	getSelected = this.getSelected.bind(this);
-	handleValidateAndSubmit = this.handleValidateAndSubmit.bind(this);
-	validate = this.validate.bind(this);
+	getSelected = 				this.getSelected.bind(this);
+	handleValidateAndSubmit = 	this.handleValidateAndSubmit.bind(this);
+	validate = 					this.validate.bind(this);
 
 	validate() {
-		var formdata = {
-			date: this.refs.date.getInput().value,
-			name: ReactDOM.findDOMNode(this.refs.name).value,
-			basic_type: ReactDOM.findDOMNode(this.refs.basic_type).value,
-			color: ReactDOM.findDOMNode(this.refs.color).value,
-			other_info: ReactDOM.findDOMNode(this.refs.other_info).value,
-			breeding_status: ReactDOM.findDOMNode(this.refs.breeding_status).value
+		const formdata = {
+			date: 				this.refs.date.getInput().value,
+			name: 				ReactDOM.findDOMNode(this.refs.name).value,
+			basic_type: 		ReactDOM.findDOMNode(this.refs.basic_type).value,
+			color: 				ReactDOM.findDOMNode(this.refs.color).value,
+			other_info: 		ReactDOM.findDOMNode(this.refs.other_info).value,
+			breeding_status: 	ReactDOM.findDOMNode(this.refs.breeding_status).value,
+			gender: 			this.getSelected('gender')
 		};
-		formdata.gender = this.getSelected('gender');
 
 		// required: date, name (sometimes), basic_type, color
 		let errors = false;
-		if (!!!formdata.color) { toastr.error('Color is required'); errors = true; }
+		if (!!!formdata.color) 		{ toastr.error('Color is required'); errors = true; }
 		if (!!!formdata.basic_type) { toastr.error('Breed is required'); errors = true; }
-		if (!!!formdata.name && this.nameRequired) { toastr.error('Name is required'); errors = true; }
-		if (!!!formdata.date) { toastr.error('Date is required'); errors = true; }
+		if (!!!formdata.name && this.nameRequired)
+									{ toastr.error('Name is required'); errors = true; }
+		if (!!!formdata.date) 		{ toastr.error('Date is required'); errors = true; }
 
 		return errors ? null : formdata;
 	}
@@ -54,27 +55,19 @@ class NewFormBase extends Component {
 	}
 
 	getSelected(fieldName) {
-		var i;
-		var fields = document.getElementsByName(fieldName);
-		var selectedFields = [];
-		for (i = 0; i < fields.length; i++) {
+		let fields = document.getElementsByName(fieldName);
+		let selectedFields = [];
+		for (let i = 0; i < fields.length; i++) {
 		  if (fields[i].checked === true) {
 		    selectedFields.push(fields[i].value);
 		  }
 		}
 		return selectedFields.join(', ');
 	}
-}
-
-export class NewFound extends NewFormBase {
-	constructor(props) {
-		super(props);
-		this.nameRequired = false;
-		this.submitUrl = "/api/found/new";
-	}
 
     render() {
-    	// TODO: load defaults
+    	const name_placeholder = this.nameRequired ? "dog's name" : "dog's name, if known";
+
         return (
         	<div>
     	    	<div name="image-uploader"></div>
@@ -93,7 +86,7 @@ export class NewFound extends NewFormBase {
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
 					  <div className="col-md-4">
-					  <input name="name" ref="name" type="text" placeholder="dog's name, if known" className="form-control input-md" />
+					  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
 
 					  </div>
 					</div>
@@ -154,7 +147,15 @@ export class NewFound extends NewFormBase {
 				</fieldset>
 			</form>
 		</div>);
-	    }
+    }
+}
+
+export class NewFound extends NewFormBase {
+	constructor(props) {
+		super(props);
+		this.nameRequired = false;
+		this.submitUrl = "/api/found/new";
+	}
 }
 
 export class NewLost extends NewFormBase {
@@ -163,86 +164,4 @@ export class NewLost extends NewFormBase {
 		this.nameRequired = true;
 		this.submitUrl = "/api/lost/new"
 	}
-
-    render() {
-        return (
-        	<div>
-	        	<div id="image-uploader"></div>
-	        	<form className="form-horizontal" action="new" method="post">
-				<fieldset>
-
-					<legend style={{textAlign: "center"}}>I lost a dog</legend>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="date">Date</label>
-					  <div className="col-md-4">
-						  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
-					  <div className="col-md-4">
-					  <input name="name" ref="name" type="text" placeholder="dog's name" className="form-control input-md" />
-
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
-					  <div className="col-md-4">
-					  <input name="basic_type" ref="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
-
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="color">Color</label>
-					  <div className="col-md-4">
-					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
-
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
-					  <div className="col-md-4">
-					    <label className="radio-inline" htmlFor="gender">
-					      <input type="radio" name="gender" ref="gender" value="M" defaultChecked="true" />
-					      M
-					    </label>
-					    <label className="radio-inline" htmlFor="gender">
-					      <input type="radio" name="gender" ref="gender" value="F" />
-					      F
-					    </label>
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
-					  <div className="col-md-4">
-					  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
-
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
-					  <div className="col-md-4">
-					  <input ref="other_info" name="other_info" type="text" placeholder="anything addition you want to add" className="form-control input-md" />
-
-					  </div>
-					</div>
-
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="submit"></label>
-					  <div className="col-md-4">
-					    <button id="submit" onClick={this.handleValidateAndSubmit} name="submit" className="btn btn-primary">Add report</button>
-					  </div>
-					</div>
-
-				</fieldset>
-			</form>
-		</div>);
-    }
 }
