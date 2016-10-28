@@ -10,7 +10,6 @@ export class DogList extends Component {
   };
 
   handleMapClick = this.handleMapClick.bind(this);
-  handleMarkerRightclick = this.handleMarkerRightclick.bind(this);
   handleMarkerClick = this.handleMarkerClick.bind(this);
   handleZoomChanged = this.handleZoomChanged.bind(this);
   handleNewReport = this.handleNewReport.bind(this);
@@ -108,14 +107,14 @@ export class DogList extends Component {
     this.setState({ markers, selected });
   }
 
-  handleMarkerRightclick(index, event) {
-  }
-
   handleNewReport(e) {
     if (e && e.preventDefault) {
       e.preventDefault();
       // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
-      browserHistory.push((this.props.showtype === "lost" ? "found" : "lost") + "/new");
+      browserHistory.push(
+        (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
+          "lat=" + this.state.newreport.position.lat() +
+          "&lng=" + this.state.newreport.position.lng() );
     }
   }
 
@@ -149,6 +148,7 @@ export class DogList extends Component {
         </div>);
     } else {
       return (
+          <div className="search-map">
           <SimpleMap
                   ref={(map) => this.map = map}
                   showtype={this.props.showtype}
@@ -158,11 +158,11 @@ export class DogList extends Component {
                   newreport={this.state.newreport}
                   onCenterChanged={this.handleCenterChanged}
                   onMapClick={this.handleMapClick}
-                  onMarkerRightclick={this.handleMarkerRightclick}
                   onMarkerClick={this.handleMarkerClick}
                   onZoomChanged={this.handleZoomChanged}
                   onNewReport={this.handleNewReport}
                 />
+          </div>
         );
     }
   }

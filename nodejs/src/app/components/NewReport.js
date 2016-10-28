@@ -5,12 +5,19 @@ import { DateField } from "react-date-picker";
 import toastr from 'toastr';
 import 'toastr/build/toastr.css';
 import 'react-date-picker/index.css';
+import SimpleMap from "./simple_map";
+import Dropzone from "react-dropzone";
 
 class NewFormBase extends Component {
 
 	getSelected = 				this.getSelected.bind(this);
 	handleValidateAndSubmit = 	this.handleValidateAndSubmit.bind(this);
 	validate = 					this.validate.bind(this);
+	uploadPhoto = 				this.uploadPhoto.bind(this);
+
+	uploadPhoto(files) {
+		console.log("TODO: photo upload");
+	}
 
 	validate() {
 		const formdata = {
@@ -67,84 +74,113 @@ class NewFormBase extends Component {
 
     render() {
     	const name_placeholder = this.nameRequired ? "dog's name" : "dog's name, if known";
+    	const center = { lat: parseFloat(this.props.location.query['lat']),
+    					 lng: parseFloat(this.props.location.query['lng']) };
+    	console.log(center);
+	  	const markers = [
+	  	{
+	  		key: 0,
+	  		position: { lat: center.lat, lng: center.lng }
+	  	}];
 
         return (
         	<div>
-    	    	<div name="image-uploader"></div>
 	        	<form className="form-horizontal" action="new" method="post">
 					<fieldset>
 
 					<legend style={{textAlign: "center"}}>I found a dog</legend>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="date">Date</label>
-					  <div className="col-md-4">
-	  				    <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
-					  </div>
-					</div>
+    			<div>
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="date">Date</label>
+				  <div className="col-md-4">
+  				    <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="name">Name</label>
-					  <div className="col-md-4">
-					  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="name">Name</label>
+				  <div className="col-md-4">
+				  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
 
-					  </div>
-					</div>
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
-					  <div className="col-md-4">
-					  <input ref="basic_type" name="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
+				  <div className="col-md-4">
+				  <input ref="basic_type" name="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
 
-					  </div>
-					</div>
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="color">Color</label>
-					  <div className="col-md-4">
-					  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="color">Color</label>
+				  <div className="col-md-4">
+				  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
 
-					  </div>
-					</div>
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
-					  <div className="col-md-4">
-					    <label className="radio-inline" htmlFor="gender">
-					      <input name="gender" type="radio" ref="gender" value="M" defaultChecked="true" />
-					      M
-					    </label>
-					    <label className="radio-inline" htmlFor="gender">
-					      <input name="gender" type="radio" ref="gender" value="F" />
-					      F
-					    </label>
-					  </div>
-					</div>
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
+				  <div className="col-md-4">
+				    <label className="radio-inline" htmlFor="gender">
+				      <input name="gender" type="radio" ref="gender" value="M" defaultChecked="true" />
+				      M
+				    </label>
+				    <label className="radio-inline" htmlFor="gender">
+				      <input name="gender" type="radio" ref="gender" value="F" />
+				      F
+				    </label>
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
-					  <div className="col-md-4">
-					  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="uploadPhoto">Add Photo</label>
+				  <div className="col-md-4">
+					<Dropzone multiple={false} accept="image/*" onDrop={() => this.uploadPhoto() }>
+						<p>Drop an image or click to select a file to upload.</p>
+    				</Dropzone>
+    			  </div>
+				</div>
 
-					  </div>
-					</div>
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
+				  <div className="col-md-4">
+				  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
-					  <div className="col-md-4">
-					  <input name="other_info" ref="other_info" type="text" placeholder="anything addition you want to add" className="form-control input-md" />
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
+				  <div className="col-md-4">
+				  <input name="other_info" ref="other_info" type="text" placeholder="anything additional you want to add" className="form-control input-md" />
 
-					  </div>
-					</div>
+				  </div>
+				</div>
 
-					<div className="form-group">
-					  <label className="col-md-4 control-label" htmlFor="submit"></label>
-					  <div className="col-md-4">
-					    <button id="submit" onClick={this.handleValidateAndSubmit} name="submit" className="btn btn-primary">Add report</button>
-					  </div>
-					</div>
+				<div className="form-group">
+				  <label className="col-md-4 control-label" htmlFor="submit"></label>
+				  <div className="col-md-4">
+				    <button id="submit" onClick={this.handleValidateAndSubmit} name="submit" className="btn btn-primary">Send report</button>
+				  </div>
+				</div>
 
-				</fieldset>
+	    		<div className="form-group">
+	    			<label className="col-md-4 control-label" htmlFor="reportMap">Report location</label>
+	    			<div className="col-md-4 report-map">
+	        		<SimpleMap
+	                  ref={(map) => this.map = map}
+	                  onMapClick={ () => { console.log("do nothing"); }}
+	                  onCenterChanged={ () => { console.log("do nothing"); }}
+	                  onMarkerClick={ () => { console.log("do nothing"); }}
+	                  center={center}
+	                  markers={markers} />
+	                </div>
+                 </div>
+				</div>
+			</fieldset>
 			</form>
 		</div>);
     }

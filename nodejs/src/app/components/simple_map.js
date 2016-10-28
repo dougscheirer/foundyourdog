@@ -8,7 +8,7 @@ export default class SimpleMap extends Component {
     }
 
     componentDidMount() {
-        window.onNewReport = this.props.onNewReport();
+        window.onNewReport = this.props.onNewReport;
     }
 
     componentWillUnmount() {
@@ -16,28 +16,24 @@ export default class SimpleMap extends Component {
     }
 
     render() {
-      var style = "map";
-      var info = [], markers = [];
-      var zoom = this.props.zoom || 16;
-      var center = this.props.center || { lat: 0, lng: 0 }
-      var index = 0;
+      let info = [], markers = [];
+      const zoom = this.props.zoom || 16;
+      const center = this.props.center || { lat: 0, lng: 0 }
       if (!!this.props.markers) {
         markers = this.props.markers.map(function(marker, index) {
                   return (
                     <Marker
                       {...marker}
-                      onClick={() => this.props.onMarkerClick(index)}
-                      onRightclick={() => this.props.onMarkerRightclick(index)} />
+                      onClick={() => this.props.onMarkerClick(index)} />
                   );
                 }.bind(this));
       }
 
       if (!!this.props.selected) {
             let marker = this.props.selected;
+            // TODO: make this better, preview an image, more info etc.
             info = <InfoWindow
-                      {...marker}
-                      visible="false"
-                      onRightclick={() => this.props.onMarkerRightclick(index)}>
+                      {...marker}>
                       <div className="incident-info">
                       {marker.date} :
                       {marker.dog_id} :
@@ -59,7 +55,6 @@ export default class SimpleMap extends Component {
       }
 
       return (
-        <div className={style}>
         <section style={{height: "100%"}}>
           <GoogleMapLoader
             containerElement={
@@ -86,7 +81,6 @@ export default class SimpleMap extends Component {
             }
           />
         </section>
-        </div>
       );
   }
 }
