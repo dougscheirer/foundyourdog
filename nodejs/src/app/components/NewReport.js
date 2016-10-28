@@ -88,7 +88,7 @@ class NewFormBase extends Component {
 	        	<form className="form-horizontal" action="new" method="post">
 					<fieldset>
 
-					<legend style={{textAlign: "center"}}>I found a dog</legend>
+					<legend style={{textAlign: "center"}}>{ this.title }</legend>
 
     			<div>
 				<div className="form-group">
@@ -191,6 +191,7 @@ export class NewFound extends NewFormBase {
 		super(props);
 		this.nameRequired = false;
 		this.submitUrl = "/api/found/new";
+		this.title = "I found a dog";
 	}
 }
 
@@ -199,5 +200,6 @@ export class NewLost extends NewFormBase {
 		super(props);
 		this.nameRequired = true;
 		this.submitUrl = "/api/lost/new"
+		this.title = "I lost a dog";
 	}
 }

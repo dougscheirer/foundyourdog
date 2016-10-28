@@ -24,7 +24,7 @@ export class FoundSearchLayout extends Component {
     return (
       <div className="search">
         <header className="search-header">
-          <p>Great job, you found someone's best friend!</p>
+          <p>Great job, you found someone&lsquo;s best friend!</p>
           <p>Click on a marker to see dogs that have been reported lost, or a map location to start a found dog report</p>
         </header>
         <div className="search-results">
