@@ -3,21 +3,10 @@ import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { DateField } from "react-date-picker";
 
-export class NewFound extends Component {
+class NewFormBase extends Component {
 
+	getSelected = this.getSelected.bind(this);
 	handleValidateAndSubmit = this.handleValidateAndSubmit.bind(this);
-
-	getSelected(fieldName) {
-		var i;
-		var fields = document.getElementsByName(fieldName);
-		var selectedFields = [];
-		for (i = 0; i < fields.length; i++) {
-		  if (fields[i].checked === true) {
-		    selectedFields.push(fields[i].value);
-		  }
-		}
-		return selectedFields.join(', ');
-	}
 
 	handleValidateAndSubmit(e) {
 		e.preventDefault();
@@ -31,7 +20,7 @@ export class NewFound extends Component {
 		};
 		formdata.gender = this.getSelected('gender');
 		$.ajax({
-		    url: "/api/found/new",
+		    url: this.submitUrl,
 		    type: "POST",
 		    data: JSON.stringify(formdata),
     		dataType: "json",
@@ -42,7 +31,26 @@ export class NewFound extends Component {
 				console.log("failed");
 				console.log(e);
 			});
-	};
+	}
+
+	getSelected(fieldName) {
+		var i;
+		var fields = document.getElementsByName(fieldName);
+		var selectedFields = [];
+		for (i = 0; i < fields.length; i++) {
+		  if (fields[i].checked === true) {
+		    selectedFields.push(fields[i].value);
+		  }
+		}
+		return selectedFields.join(', ');
+	}
+}
+
+export class NewFound extends NewFormBase {
+	constructor(props) {
+		super(props);
+		this.submitUrl = "/api/found/new";
+	}
 
     render() {
     	// TODO: load defaults
@@ -57,7 +65,7 @@ export class NewFound extends Component {
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="date">Date</label>   
 					  <div className="col-md-4">
-						  <input ref="date" name="date" type="text" placeholder="datepicker" className="form-control input-md" required="" />
+	  				    <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 					  </div>
 					</div>
 
@@ -128,33 +136,10 @@ export class NewFound extends Component {
 	    }
 }
 
-export class NewLost extends Component {
-
-	handleValidateAndSubmit = this.handleValidateAndSubmit.bind(this);
-
-	handleValidateAndSubmit(e) {
-		e.preventDefault();
-		var formdata = {
-			date: ReactDOM.findDOMNode(this.refs.date).value,
-			name: ReactDOM.findDOMNode(this.refs.name).value,
-			basic_type: ReactDOM.findDOMNode(this.refs.basic_type).value,
-			color: ReactDOM.findDOMNode(this.refs.color).value,
-			other_info: ReactDOM.findDOMNode(this.refs.other_info).value,
-			breeding_status: ReactDOM.findDOMNode(this.refs.breeding_status).value
-		};
-		formdata.gender = this.getSelected('gender');
-		$.ajax({
-		    url: "/api/lost/new",
-		    type: "POST",
-		    data: JSON.stringify(formdata),
-    		dataType: "json",
-    		contentType: "application/json; charset=utf-8",
-    		success: function (x,h,r) {
-				console.log('success');
-			}}).fail(function(e) {
-				console.log("failed");
-				console.log(e);
-			});
+export class NewLost extends NewFormBase {
+	constructor(props) {
+		super(props);
+		this.submitUrl = "/api/lost/new"
 	}
 
     render() {
@@ -169,8 +154,7 @@ export class NewLost extends Component {
 					<div className="form-group">
 					  <label className="col-md-4 control-label" htmlFor="date">Date</label>  
 					  <div className="col-md-4">
-					  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
-					    
+						  <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 					  </div>
 					</div>
 
