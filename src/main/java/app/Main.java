@@ -12,6 +12,7 @@ import org.sql2o.quirks.PostgresQuirks;
 
 import com.beust.jcommander.JCommander;
 
+import app.handlers.CreateIncidentReportHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.GetDogsHandler;
 import app.handlers.GetIncidentsHandler;
@@ -67,8 +68,19 @@ public class Main {
 
 		Spark.staticFileLocation("/public");
 
+		// authentication filter
+		before((request, response) -> {
+			String[] endsWith = { "/new", "/authenticated" };
+			for ( String s : endsWith ) {
+				if (request.pathInfo().endsWith(s)) {
+					halt(403, "Authentication required");
+				}
+			}
+		});
+		
 		// add all of the handlers here
 		redirect.get("/", "/index.html");
+		
 		// TODO: group the /api/... stuff under one route path? 
 		post("/api/users/new", new CreateUserHandler(model));
 		get("/api/users", new GetUsersIndexHandler(model));
@@ -76,5 +88,9 @@ public class Main {
 		// delete("/api/users/:id", new DeleteUserHandler(model));
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
+		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
+		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
+		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
+		
 	}
 }
