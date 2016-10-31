@@ -4,6 +4,8 @@ import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
 import ListMapToggle from "./listMapToggle";
+import { showAuth } from "../../actions";
+import { connect } from 'react-redux';
 
 export class DogList extends Component {
   state = {
@@ -110,11 +112,17 @@ export class DogList extends Component {
   handleNewReport(e) {
     if (e && e.preventDefault) {
       e.preventDefault();
+      let queryUrl = (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
+            "lat=" + this.state.newreport.position.lat() +
+            "&lng=" + this.state.newreport.position.lng();
+
       // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
-      browserHistory.push(
-        (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
-          "lat=" + this.state.newreport.position.lat() +
-          "&lng=" + this.state.newreport.position.lng() );
+      $.get("/api/authenticated", function(res) {
+        console.log("auth check success");
+        browserHistory.push( queryUrl );
+      }).fail(function(e) {
+        this.props.dispatch(showAuth('SIGN_IN', queryUrl));
+      }.bind(this));
     }
   }
 
@@ -167,6 +175,8 @@ export class DogList extends Component {
     }
   }
 };
+
+DogList = connect()(DogList);
 
 class BaseDogs extends Component {
     constructor(props) {

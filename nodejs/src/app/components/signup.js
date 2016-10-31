@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-const Signup = React.createClass({
-  render: function() {
+export default class Signup extends Component {
+  render() {
     return (
-      <h1>Sign up page</h1>
-    );
-  }
-});
+				<div className="modal fade" id="login-modal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" 
+					 style={{ display: 'none'}}>
+				    	  <div className="modal-dialog">
+								<div className="loginmodal-container">
+									<h1>Sign up for an account</h1><br />
+								  <form>
+									<input type="text" name="user" placeholder="Username" />
+									<input type="password" name="pass" placeholder="Password" />
+									<input type="submit" name="login" className="login loginmodal-submit" value="Login" />
+								  </form>
 
-export default Signup;
+								  <div className="login-help">
+									<a href="#">Register</a> - <a href="#">Forgot Password</a>
+								  </div>
+								</div>
+							</div>
+						  </div>
+		);
+  }
+};

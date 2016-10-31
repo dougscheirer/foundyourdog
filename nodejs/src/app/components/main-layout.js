@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import 'bootstrap-loader';
+import AuthNavbar from './auth-navbar';
 
 const MainLayout = React.createClass({
   render: function() {
@@ -21,11 +22,7 @@ const MainLayout = React.createClass({
               <ul className="nav navbar-nav">
                 <li><Link to="/">Home</Link></li>
               </ul>
-              <ul className="nav navbar-nav navbar-right">
-                <li><Link to="/signin">Sign in<span className="sr-only">(current)</span></Link></li>
-                <li><Link to="/signup">Sign up<span className="sr-only">(current)</span></Link></li>
-                <li><Link to="/feedback">Feedback<span className="sr-only">(current)</span></Link></li>
-              </ul>
+              <AuthNavbar authenticated={false} />
             </div>
           </div>
         </nav>

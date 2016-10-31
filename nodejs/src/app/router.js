@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 
 // Layouts
@@ -14,7 +14,9 @@ import Signin from './components/signin';
 import Feedback from './components/feedback';
 import { NewFound, NewLost } from "./components/NewReport";
 
-export default (
+export default class Routes extends Component {
+  render() {
+    return (
   <Router history={browserHistory}>
     <Route component={MainLayout}>
       <Route path="/" component={Home} />
@@ -48,5 +50,5 @@ export default (
 
       <Route path="*" component={Home} />
     </Route>
-  </Router>
-);
+  </Router>);
+}};

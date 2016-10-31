@@ -57,7 +57,11 @@ class NewFormBase extends Component {
     		success: function (x,h,r) {
 				console.log('success');
 			}}).fail(function(e) {
-				toastr.error("The server responded with an error, please try again later.")
+				if (e.status === 403) {
+					toastr.error("You have to be signed in to file a report");
+				} else {
+					toastr.error("The server responded with an error, please try again later.")
+				}
 			});
 	}
 
