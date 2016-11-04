@@ -10,7 +10,7 @@ import Home from './components/home';
 import { FoundDogs, LostDogs } from './components/dog-list';
 import DogProfile from './components/dog-profile';
 import Signup from './components/signup';
-import Signin from './components/signin';
+import Login from './components/login';
 import Feedback from './components/feedback';
 import { NewFound, NewLost } from "./components/NewReport";
 
@@ -44,7 +44,7 @@ export default class Routes extends Component {
       <Route path="signup" component={Signup}>
       </Route>
 
-      <Route path="signin" component={Signin} />
+      <Route path="signin" component={Login} />
 
       <Route path="feedback" component={Feedback} />
 

@@ -1,23 +1,36 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import Signin from './signin';
+import { showLogin } from '../actions';
+import { connect } from 'react-redux';
 
-export default class AuthNavbar extends Component {
+class AuthNavbar extends Component {
     static propTypes = {
    		authenticated: PropTypes.bool.isRequired
     };
 
-    signedInRows = this.signedInRows.bind(this);
-    signedOutRows = this.signedOutRows.bind(this);
+    handleSignin(e) {
+      e.preventDefault();
+      this.props.onSignin();
+    }
+
+    handleSignout(e) {
+      e.preventDefault();
+      this.props.onSignout();
+    }
+
+    handleSignup(e) {
+      e.preventDefault();
+      this.props.onSignup();
+    }
 
     signedInRows() {
-    	return [ (<li key="signout"><Link to="/signout">Sign out<span className="sr-only">(current)</span></Link></li>),
-       		  	 (<li key="myprofile"><Link to="/profile">My profile<span className="sr-only">(current)</span></Link></li>) ];
+    	return [ (<li key="signout"><a href="" onClick={ this.handleSignout.bind(this) }>Sign out<span className="sr-only"></span></a></li>),
+       		  	 (<li key="myprofile"><Link to="/profile">My profile<span className="sr-only"></span></Link></li>) ];
     }
 
     signedOutRows() {
-    	return [ (<li key="signin"><a href="#" data-toggle="modal" data-target="#login-modal">Sign in<span className="sr-only">(current)</span></a></li>),
-                 (<li key="signup"><Link to="/signup">Sign up<span className="sr-only">(current)</span></Link></li>) ];
+    	return [ (<li key="signin"><a href="" onClick={ this.handleSignin.bind(this) }>Sign in<span className="sr-only"></span></a></li>),
+               (<li key="signup"><a href="" onClick={ this.handleSignup.bind(this) }>Sign up<span className="sr-only"></span></a></li>) ];
     }
     render() {
 		const varRows = (this.props.authenticated) ? this.signedInRows() : this.signedOutRows();
@@ -26,8 +39,19 @@ export default class AuthNavbar extends Component {
               <ul className="nav navbar-nav navbar-right">
               	{ varRows }
                 <li><Link to="/feedback">Feedback<span className="sr-only">(current)</span></Link></li>
-                <Signin />
               </ul>
             );
     }
 };
+
+const mapStateToProps = (state, myprops) => ({
+  authenticated: state.login_status === 'success'
+});
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+  onSignin    : () => { dispatch(showLogin('login')); },
+  onSignup    : () => { dispatch(showLogin('signup')); },
+  onSignout    : () => { dispatch(showLogin(undefined)); }
+});
+
+export default AuthNavbar = connect(mapStateToProps, mapDispatchToProps)(AuthNavbar);

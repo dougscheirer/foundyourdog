@@ -2,11 +2,15 @@ import React from 'react';
 import { Link } from 'react-router';
 import 'bootstrap-loader';
 import AuthNavbar from './auth-navbar';
+import Login from './login';
+import Signup from './signup';
 
 const MainLayout = React.createClass({
   render: function() {
     return (
       <div className="app">
+        <Login />
+        <Signup />
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">

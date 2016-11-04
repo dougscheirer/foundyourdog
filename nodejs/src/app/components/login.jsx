@@ -14,16 +14,16 @@ import { showLogin } from '../actions';
 import spinner from '../../spinner.svg';
 import $ from 'jquery';
 
-class Signup extends Component {
+class Login extends Component {
 
 	state = {
-		signup_wait: false,
+		login_wait: false,
 		error_msg: ''
 	}
 
-	login(e) {
+	signup(e) {
 		e.preventDefault();
-		this.props.onLogin();
+		this.props.onSignup();
 	}
 
 	passwordReset(e) {
@@ -31,35 +31,32 @@ class Signup extends Component {
 		this.props.onPasswordReset();
 	}
 
-	onSignedUp(e) {
-		this.props.onLogin();
-	}
-
-	signup(e) {
+	login(e) {
 		e.preventDefault();
 
 		// first dispatch a spinner
-		this.setState({signup_wait: true, error_msg: ''});
-
+		this.setState({login_wait: true, error_msg: ''});
 		// now do the network call, dispatch the results
-		$.ajax({ url: "/signup",
-			 	type: "POST",
-				data: JSON.stringify({ email: this.refs.email.value, userid: this.refs.user.value, password: this.refs.password.value }),
+
+		// TODO: change this to use fetch()
+		$.ajax({ url: "/login",
+				 type: "POST",
+				 data: JSON.stringify({ user: this.refs.user.value, password: this.refs.password.value }),
 				contentType:"application/json; charset=utf-8",
 	  			dataType:"json",
 	  			success:
 					(data,status,xhr) => {
-						this.onSignedUp();
+						this.props.onLoggedIn(data);
 					}}).always(() => {
-						this.setState({signup_wait: false});
+						this.setState({login_wait: false});
 					}).fail(( jqXHR, textStatus, errorThrown ) => {
-						this.setState({error_msg: "Status " + jqXHR.status + " : " + jqXHR.responseText});
+						this.setState({error_msg: "Status " + jqXHR.status + " : " + errorThrown});
 					});
 	}
 
 	hideModal() {
 		this.props.onHide();
-		this.setState({signup_wait: false, error_msg: ''});
+		this.setState({login_wait: false, error_msg: ''});
 	}
 
 	render() {
@@ -85,11 +82,9 @@ class Signup extends Component {
 		  </ModalHeader>
 		  <ModalBody>
 		  	<form onSubmit={ this.login.bind(this) }>
-				<input type="email" className="form-control login-field" name="user" ref="email" placeholder="you@example.com" autoFocus="true" />
-				<input type="text" className="form-control login-field" name="user" ref="user" placeholder="Username" />
+				<input type="text" className="form-control login-field" name="user" ref="user" placeholder="Username" autoFocus="true" />
 				<input type="password" className="form-control login-field" name="password" ref="password" placeholder="Password" />
-				<input type="password" className="form-control login-field" name="password-confirm" ref="password" placeholder="Confirm password" />
-	        	<button type="submit" name="login-btn" className={buttonClasses} id="login-btn" value="Sign up" onClick={ this.signup.bind(this) }>Sign up</button>
+	        	<button type="submit" name="login-btn" className={buttonClasses} id="login-btn" value="Log in" onClick={ this.login.bind(this) }>Log in</button>
 	        </form>
 	 	  </ModalBody>
 		  <ModalFooter>
@@ -97,25 +92,25 @@ class Signup extends Component {
 			  <div className="login-help">
   		  	  	<div className={ "alert alert-danger " + (!!error_msg ? "visible" : "hidden") } role="alert">{ error_msg }</div>
 			  </div>
-			<a href="#" onClick={ this.login.bind(this) }>Log in</a> - <a href="#" onClick={ this.passwordReset.bind(this) }>Forgot Password</a>
+			<a href="" onClick={ this.signup.bind(this) }>Register</a> - <a href="" onClick={ this.passwordReset.bind(this) }>Forgot Password</a>
 		  </ModalFooter>
 		</Modal>);
 	}
 }
 
-Signup.propTypes = {
+Login.propTypes = {
 	isOpen: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	isOpen: state.login_status === 'signup'
+	isOpen: state.login_status === 'login'
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
 	onHide: () 			=> { dispatch(showLogin(undefined)); },
-	onLogin: () 		=> { dispatch(showLogin('login')); },
+	onSignup: () 		=> { dispatch(showLogin('signup')); },
 	onPasswordReset: () => { dispatch(showLogin('reset_password')); },
-	onSignedIn: ()      => { dispatch(showLogin('success')) }
+	onLoggedIn: (data)  => { dispatch(showLogin('success', data)); }
 });
 
-export default Signup=connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default Login=connect(mapStateToProps, mapDispatchToProps)(Login);

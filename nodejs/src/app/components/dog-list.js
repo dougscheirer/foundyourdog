@@ -4,7 +4,7 @@ import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
 import ListMapToggle from "./listMapToggle";
-import { showAuth } from "../../actions";
+import { showAuth } from "../actions";
 import { connect } from 'react-redux';
 
 export class DogList extends Component {

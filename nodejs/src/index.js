@@ -1,30 +1,33 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import {reducer as modalReducer} from 'react-redux-modal'
+import ReactDOM from 'react-dom';
+import { createStore, compose, applyMiddleware } from 'redux';
+import reducerOne from './app/reducers';
+import { Provider } from 'react-redux'
+import DevTools, { logger, crashReporter } from './app/devtools';
+import thunkMiddleware from 'redux-thunk';
+import './index.css';
 
 // import routes
 import Router from './app/router';
 
 import './index.css';
 
-const authForms = (state = "NOTHING", action) => {
-	return state;
-}
+const enhancer = compose(
+  // Middleware you want to use in development:
+  applyMiddleware(thunkMiddleware, logger, crashReporter),
+  // applyMiddleware(d1, d2, d3),
+  // Required! Enable Redux DevTools with the monitors you chose
+  DevTools.instrument()
+);
 
-const reducers = {
-  authForms: authForms,
-  modals: modalReducer // <- Mounted at modals.
-}
+// careful with the initialState param, if you pass something 
+// other than 'undefined' anyone supplying their own default
+// in a reducer will get what you provide, e.g. {} instead of = ...
+const store = createStore(reducerOne, undefined, enhancer);
 
-const reducer = combineReducers(reducers)
-const store = createStore(reducer);
-
-// Now we can attach the router to the 'domroot' element like this:
-render(
-	(<Provider store={store}>
-		<Router />
-		<ReduxModal />
-	</Provider>),
-	document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={store}>
+  	<Router />
+  </Provider>,
+  document.getElementById('root')
+);
