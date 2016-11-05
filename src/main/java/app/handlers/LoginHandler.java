@@ -35,8 +35,8 @@ public class LoginHandler implements Route {
 			response.body("Password incorrect");
 			return response.body();
 		} else {
-			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user));
-			request.session().attribute(this.sessionKey, user);
+			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user.get()));
+			request.session().attribute(this.sessionKey, user.get());
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());

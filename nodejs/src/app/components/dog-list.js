@@ -4,7 +4,7 @@ import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
 import ListMapToggle from "./listMapToggle";
-import { showAuth } from "../actions";
+import { loginRequired } from "../actions";
 import { connect } from 'react-redux';
 
 export class DogList extends Component {
@@ -115,14 +115,9 @@ export class DogList extends Component {
       let queryUrl = (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
             "lat=" + this.state.newreport.position.lat() +
             "&lng=" + this.state.newreport.position.lng();
-
-      // showtype is the opposite of the user's state (if they found a dog, they see lost dogs, but report a found one)
-      $.get("/api/authenticated", function(res) {
-        console.log("auth check success");
-        browserHistory.push( queryUrl );
-      }).fail(function(e) {
-        this.props.dispatch(showAuth('SIGN_IN', queryUrl));
-      }.bind(this));
+      this.props.dispatch(loginRequired((query) => {
+        browserHistory.push(queryUrl);
+      }));
     }
   }
 

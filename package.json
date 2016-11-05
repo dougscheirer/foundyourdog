@@ -1,0 +1,14 @@
+{
+  "name": "fydo",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "foreman": "^2.0.0"
+  },
+  "scripts": {
+    "start": "nf start",
+    "build": "mvn package",
+    "test": "mvn test"
+  }
+}

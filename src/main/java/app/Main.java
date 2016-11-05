@@ -47,7 +47,7 @@ public class Main {
     	if (userID == null)
     		halt(403);
     }
-    
+
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
@@ -76,7 +76,7 @@ public class Main {
 			logger.log(Level.SEVERE, e.toString(), e);
 			return;
 		}
-        
+
 		Model model = new Sql2oModel(sql2o);
 
 		Spark.staticFileLocation("/public");
@@ -90,16 +90,16 @@ public class Main {
 				}
 			}
 		});
-		
+
 		// add all of the handlers here
 		redirect.get("/", "/index.html");
-		
+
 		// basics, login, logout, and an auth check method
 		post("/login", new LoginHandler(model, SESSION_USERID));
 		post("/logout", new LogoutHandler(model, SESSION_USERID));
-		get("/authenticated", new AuthenticatedHandler(model));
-		
-		// TODO: group the /api/... stuff under one route path? 
+		get("/authenticated", new AuthenticatedHandler(model, SESSION_USERID));
+
+		// TODO: group the /api/... stuff under one route path?
 		post("/api/users/new", new CreateUserHandler(model));
 		get("/api/users", new GetUsersIndexHandler(model));
 		// put("/api/users/:id", new UpdateUserHanlder(model));
@@ -109,6 +109,6 @@ public class Main {
 		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
-		
+
 	}
 }

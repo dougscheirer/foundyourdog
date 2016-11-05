@@ -25,7 +25,7 @@ class AuthNavbar extends Component {
 
     signedInRows() {
     	return [ (<li key="signout"><a href="" onClick={ this.handleSignout.bind(this) }>Sign out<span className="sr-only"></span></a></li>),
-       		  	 (<li key="myprofile"><Link to="/profile">My profile<span className="sr-only"></span></Link></li>) ];
+       		  	 (<li key="myprofile"><Link to="/profile">{ this.props.userInfo.handle }&rsquo;s profile<span className="sr-only"></span></Link></li>) ];
     }
 
     signedOutRows() {
@@ -45,7 +45,8 @@ class AuthNavbar extends Component {
 };
 
 const mapStateToProps = (state, myprops) => ({
-  authenticated: state.login_status === 'success'
+  authenticated: state.login_status === 'success',
+  userInfo : state.login_data
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({

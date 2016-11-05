@@ -1,10 +1,11 @@
 import fetch from 'isomorphic-fetch';
 
-export const showLogin = (show, userData) => {
+export const showLogin = (show, userData, postLoginAction) => {
 	return {
 		type: 'SHOW_LOGIN',
 		show: show,
-		userData: userData
+		userData: userData,
+		postLoginAction: postLoginAction
 	}
 }
 
@@ -27,6 +28,19 @@ export const checkLoginStatus = () => {
 		}).then((res) => {
 			if (!!res) 
 				dispatch(showLogin('success', res));
+		});
+	}
+}
+
+export const loginRequired = (postLoginAction) => {
+	return dispatch => {
+		fetch('/authenticated', { credentials: 'include' }).then((res) => {
+			if (res.ok) {
+				postLoginAction();
+			}
+			else {
+				dispatch(showLogin('login', null, postLoginAction));
+			}
 		});
 	}
 }
