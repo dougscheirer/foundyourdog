@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { showLogin } from '../actions';
+import { showLogin, logout } from '../actions';
 import { connect } from 'react-redux';
 
 class AuthNavbar extends Component {
@@ -52,7 +52,7 @@ const mapStateToProps = (state, myprops) => ({
 const mapDispatchToProps = (dispatch, myprops) => ({
   onSignin    : () => { dispatch(showLogin('login')); },
   onSignup    : () => { dispatch(showLogin('signup')); },
-  onSignout    : () => { dispatch(showLogin(undefined)); }
+  onSignout    : () => { dispatch(logout()); }
 });
 
 export default AuthNavbar = connect(mapStateToProps, mapDispatchToProps)(AuthNavbar);
