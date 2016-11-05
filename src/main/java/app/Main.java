@@ -100,7 +100,7 @@ public class Main {
 		get("/authenticated", new AuthenticatedHandler(model, SESSION_USERID));
 
 		// TODO: group the /api/... stuff under one route path?
-		post("/api/users/new", new CreateUserHandler(model));
+		post("/signup", new CreateUserHandler(model));
 		get("/api/users", new GetUsersIndexHandler(model));
 		// put("/api/users/:id", new UpdateUserHanlder(model));
 		// delete("/api/users/:id", new DeleteUserHandler(model));
@@ -109,6 +109,5 @@ public class Main {
 		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
-
 	}
 }

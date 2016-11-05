@@ -7,6 +7,8 @@ import 'toastr/build/toastr.css';
 import 'react-date-picker/index.css';
 import SimpleMap from "./simple_map";
 import Dropzone from "react-dropzone";
+import { connect } from "react-redux";
+import { showLogin } from "../actions";
 
 class NewFormBase extends Component {
 
@@ -19,7 +21,18 @@ class NewFormBase extends Component {
 		console.log("TODO: photo upload");
 	}
 
+	requireLoginCheck() {
+		if (!!!this.props.logged_in)
+			this.props.onLoginRequired();
+	}
+
+	componentDidMount() {
+		this.requireLoginCheck();
+	}
+
 	validate() {
+		this.requireLoginCheck();
+
 		const formdata = {
 			date: 				this.refs.date.getInput().value,
 			name: 				ReactDOM.findDOMNode(this.refs.name).value,
@@ -34,7 +47,7 @@ class NewFormBase extends Component {
 		let errors = false;
 		if (!!!formdata.color) 		{ toastr.error('Color is required'); errors = true; }
 		if (!!!formdata.basic_type) { toastr.error('Breed is required'); errors = true; }
-		if (!!!formdata.name && this.nameRequired)
+		if (!!!formdata.name && this.props.nameRequired)
 									{ toastr.error('Name is required'); errors = true; }
 		if (!!!formdata.date) 		{ toastr.error('Date is required'); errors = true; }
 
@@ -49,7 +62,7 @@ class NewFormBase extends Component {
 		}
 
 		$.ajax({
-		    url: this.submitUrl,
+		    url: this.props.submitUrl,
 		    type: "POST",
 		    data: JSON.stringify(formdata),
     		dataType: "json",
@@ -77,7 +90,7 @@ class NewFormBase extends Component {
 	}
 
     render() {
-    	const name_placeholder = this.nameRequired ? "dog's name" : "dog's name, if known";
+    	const name_placeholder = this.props.nameRequired ? "dog's name" : "dog's name, if known";
     	const center = { lat: parseFloat(this.props.location.query['lat']),
     					 lng: parseFloat(this.props.location.query['lng']) };
     	console.log(center);
@@ -92,7 +105,7 @@ class NewFormBase extends Component {
 	        	<form className="form-horizontal" action="new" method="post">
 					<fieldset>
 
-					<legend style={{textAlign: "center"}}>{ this.title }</legend>
+					<legend style={{textAlign: "center"}}>{ this.props.title }</legend>
 
     			<div>
 				<div className="form-group">
@@ -190,20 +203,24 @@ class NewFormBase extends Component {
     }
 }
 
-export class NewFound extends NewFormBase {
-	constructor(props) {
-		super(props);
-		this.nameRequired = false;
-		this.submitUrl = "/api/found/new";
-		this.title = "I found a dog";
-	}
-}
+const mapFoundStateToProps = (state, myprops) => ({
+	logged_in: state.login_status === 'success',
+	nameRequired : false,
+	submitUrl : "/api/found/new",
+	title : "I found a dog",
+});
 
-export class NewLost extends NewFormBase {
-	constructor(props) {
-		super(props);
-		this.nameRequired = true;
-		this.submitUrl = "/api/lost/new"
-		this.title = "I lost a dog";
-	}
-}
+const mapLostStateToProps = (state, myprops) => ({
+	logged_in: state.login_status === 'success',
+	nameRequired : true,
+	submitUrl : "/api/lost/new",
+	title : "I lost a dog",
+});
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+	onLoginRequired : () => { dispatch(showLogin('login')); }
+});
+
+export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);
+export const NewLost = connect(mapLostStateToProps, mapDispatchToProps)(NewFormBase);
+

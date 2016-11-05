@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showLogin } from '../actions';
 import spinner from '../../spinner.svg';
 import $ from 'jquery';
+import toastr from 'toastr';
 
 class Signup extends Component {
 
@@ -38,11 +39,13 @@ class Signup extends Component {
 	signup(e) {
 		e.preventDefault();
 
+		if (this.validate() === null) return;
+
 		// first dispatch a spinner
 		this.setState({signup_wait: true, error_msg: ''});
 
 		// now do the network call, dispatch the results
-		$.ajax({ url: "/api/users/new",
+		$.ajax({ url: "/signup",
 			 	type: "POST",
 				data: JSON.stringify({ email: this.refs.email.value, userid: this.refs.user.value, password: this.refs.password.value }),
 				contentType:"application/json; charset=utf-8",
@@ -56,6 +59,24 @@ class Signup extends Component {
 						this.setState({error_msg: "Status " + jqXHR.status + " : " + jqXHR.responseText});
 					});
 	}
+
+	validate() {
+		const formdata = {
+			email: 				this.refs.email.value,
+			user_id: 			this.refs.user.value,
+			password: 			this.refs.password.value
+		};
+		const password_confirm = this.refs.password_confirm.value;
+
+		let errors = false;
+		if (!!!formdata.password || formdata.password != password_confirm)
+									{ toastr.error('Password is required or does not match'); errors = true; }
+		if (!!!formdata.user_id) 	{ toastr.error('User name is required'); errors = true; }
+		if (!!!formdata.email) 		{ toastr.error('Email is required'); errors = true; }
+
+		return errors ? null : formdata;
+	}
+
 
 	hideModal() {
 		this.props.onHide();
@@ -88,7 +109,7 @@ class Signup extends Component {
 				<input type="email" className="form-control login-field" name="user" ref="email" placeholder="you@example.com" autoFocus="true" />
 				<input type="text" className="form-control login-field" name="user" ref="user" placeholder="Username" />
 				<input type="password" className="form-control login-field" name="password" ref="password" placeholder="Password" />
-				<input type="password" className="form-control login-field" name="password-confirm" ref="password" placeholder="Confirm password" />
+				<input type="password" className="form-control login-field" name="password-confirm" ref="password_confirm" placeholder="Confirm password" />
 	        	<button type="submit" name="login-btn" className={buttonClasses} id="login-btn" value="Sign up" onClick={ this.signup.bind(this) }>Sign up</button>
 	        </form>
 	 	  </ModalBody>

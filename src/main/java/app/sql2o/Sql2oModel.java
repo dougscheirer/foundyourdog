@@ -3,6 +3,7 @@ package app.sql2o;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -12,6 +13,7 @@ import app.model.Image;
 import app.model.Incident;
 import app.model.Model;
 import app.model.User;
+import app.model.UserSignup;
 import app.handlers.PublicUser;
 import app.handlers.DetailUser;
 
@@ -192,6 +194,27 @@ public class Sql2oModel implements Model {
 				return Optional.of(users.get(0));
 			} else {
 				return Optional.empty();
+			}
+		}
+	}
+
+	@Override
+	public int signupUser(UserSignup u) {
+		try (Connection conn = sql2o.open()) {
+			String confirmationToken = UUID.randomUUID().toString();
+
+			conn.createQuery(
+					"insert into users(email, handle, password_hash, confirmation_token)"
+							+ "   VALUES (:email, :handle, :password_hash, :confirmation_token)")
+					.addParameter("email", u.getEmail()).addParameter("handle", u.getUserid())
+					.addParameter("password_hash", u.getPassword())
+					.addParameter("confirmation_token", confirmationToken).executeUpdate();
+			List<Integer> ids = conn.createQuery("select id from users where email=:email")
+					.addParameter("email", u.getEmail()).executeScalarList(Integer.class);
+			if (ids.size() == 1) {
+				return ids.get(0);
+			} else {
+				throw new RuntimeException();
 			}
 		}
 	}

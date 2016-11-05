@@ -24,8 +24,8 @@ class AuthNavbar extends Component {
     }
 
     signedInRows() {
-    	return [ (<li key="signout"><a href="" onClick={ this.handleSignout.bind(this) }>Sign out<span className="sr-only"></span></a></li>),
-       		  	 (<li key="myprofile"><Link to="/profile">{ this.props.userInfo.handle }&rsquo;s profile<span className="sr-only"></span></Link></li>) ];
+    	return [ (<li key="myprofile"><Link to="/profile">{ this.props.userInfo.handle }&rsquo;s profile<span className="sr-only"></span></Link></li>),
+              (<li key="signout"><a href="" onClick={ this.handleSignout.bind(this) }>Sign out<span className="sr-only"></span></a></li>) ];
     }
 
     signedOutRows() {
