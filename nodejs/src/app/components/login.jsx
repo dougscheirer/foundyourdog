@@ -47,7 +47,9 @@ class Login extends Component {
 	  			success:
 					(data,status,xhr) => {
 						this.props.onLoggedIn(data);
-						this.props.onPostLoginAction(this.props.postLoginAction);
+						if (!!this.props.postLoginAction) {
+							this.props.onPostLoginAction(this.props.postLoginAction());
+						}
 					}}).always(() => {
 						this.setState({login_wait: false});
 					}).fail(( jqXHR, textStatus, errorThrown ) => {
