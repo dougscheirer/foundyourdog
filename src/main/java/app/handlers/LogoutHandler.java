@@ -21,6 +21,6 @@ public class LogoutHandler implements Route {
 	public Object handle(Request request, Response response) throws Exception {
 		request.session().removeAttribute(this.sessionKey);
 		response.status(200);
-		return null;
+		return "OK";
 	}
 }
