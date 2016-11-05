@@ -18,7 +18,7 @@ public class GetDogsHandler extends AbstractRequestHandler<EmptyPayload> {
 
 	@Override
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml) {
-		List<Dog> users = model.getAllDogs();
-		return Answer.ok(dataToJson(users));
+		List<Dog> dogs = model.getAllDogs();
+		return Answer.ok(dataToJson(dogs));
 	}
 }

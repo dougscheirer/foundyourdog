@@ -12,6 +12,7 @@ public interface Model {
 	int createUser(User u);
 	int updateUser(User u);
 	int deleteUser(int id);
+	Optional<DetailUser> authenticateUser(String user, String password);
 	
 	List<Dog> getAllDogs();
 	Optional<Dog> getDog(int id);

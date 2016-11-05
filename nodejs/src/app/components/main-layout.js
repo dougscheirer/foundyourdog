@@ -4,13 +4,21 @@ import 'bootstrap-loader';
 import AuthNavbar from './auth-navbar';
 import Login from './login';
 import Signup from './signup';
+import { connect } from 'react-redux';
+import { checkLoginStatus } from '../actions';
+import DevTools from '../devtools';
 
-const MainLayout = React.createClass({
-  render: function() {
+class MainLayout extends React.Component {
+
+  componentDidMount() {
+    this.props.checkLogin();
+  }
+  render() {
     return (
       <div className="app">
         <Login />
         <Signup />
+        <DevTools />
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
@@ -37,6 +45,10 @@ const MainLayout = React.createClass({
       </div>
     );
   }
+}
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+  checkLogin : () => { dispatch(checkLoginStatus()); }
 });
 
-export default MainLayout;
+export default MainLayout = connect(undefined, mapDispatchToProps)(MainLayout);

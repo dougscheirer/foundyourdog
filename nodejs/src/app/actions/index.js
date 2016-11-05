@@ -25,7 +25,8 @@ export const checkLoginStatus = () => {
 			if (res.ok)
 				return res.json();
 		}).then((res) => {
-			dispatch(showLogin('success', res));
+			if (!!res) 
+				dispatch(showLogin('success', res));
 		});
 	}
 }
