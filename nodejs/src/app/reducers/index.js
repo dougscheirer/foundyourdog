@@ -15,7 +15,12 @@ const initialState = {
 const reducerOne = (state = initialState, action) => {
 	switch (action.type) {
 		case 'SHOW_LOGIN':
-			return { ...state, login_status: action.show, login_data: action.userData };
+			return { ...state,
+				login_status: action.show,
+				login_data: action.userData };
+		case 'POST_LOGIN_ACTION':
+			return { ...state,
+				post_login_action: action.post_login_action };
 		default:
 			return state;
 		}

@@ -69,7 +69,7 @@ class Signup extends Component {
 		const password_confirm = this.refs.password_confirm.value;
 
 		let errors = false;
-		if (!!!formdata.password || formdata.password != password_confirm)
+		if (!!!formdata.password || formdata.password !== password_confirm)
 									{ toastr.error('Password is required or does not match'); errors = true; }
 		if (!!!formdata.user_id) 	{ toastr.error('User name is required'); errors = true; }
 		if (!!!formdata.email) 		{ toastr.error('Email is required'); errors = true; }

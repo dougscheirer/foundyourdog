@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin } from '../actions';
+import { showLogin, setPostLoginAction } from '../actions';
 import spinner from '../../spinner.svg';
 import $ from 'jquery';
 
@@ -47,6 +47,7 @@ class Login extends Component {
 	  			success:
 					(data,status,xhr) => {
 						this.props.onLoggedIn(data);
+						this.props.onPostLoginAction(this.props.postLoginAction);
 					}}).always(() => {
 						this.setState({login_wait: false});
 					}).fail(( jqXHR, textStatus, errorThrown ) => {
@@ -103,14 +104,16 @@ Login.propTypes = {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	isOpen: state.login_status === 'login'
+	isOpen: 			state.login_status === 'login',
+	postLoginAction : 	state.post_login_action
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
 	onHide: () 			=> { dispatch(showLogin(undefined)); },
 	onSignup: () 		=> { dispatch(showLogin('signup')); },
 	onPasswordReset: () => { dispatch(showLogin('reset_password')); },
-	onLoggedIn: (data)  => { dispatch(showLogin('success', data)); }
+	onLoggedIn: (data)  => { dispatch(showLogin('success', data)); },
+	onPostLoginAction: (pli) => { dispatch(setPostLoginAction(null)); pli(); }
 });
 
 export default Login=connect(mapStateToProps, mapDispatchToProps)(Login);

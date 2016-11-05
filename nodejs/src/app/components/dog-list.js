@@ -115,7 +115,7 @@ export class DogList extends Component {
       let queryUrl = (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
             "lat=" + this.state.newreport.position.lat() +
             "&lng=" + this.state.newreport.position.lng();
-      this.props.dispatch(loginRequired((query) => {
+      this.props.dispatch(loginRequired(() => {
         browserHistory.push(queryUrl);
       }));
     }
