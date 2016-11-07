@@ -58,7 +58,8 @@ CREATE TABLE IF NOT EXISTS images (
 	image_location text,
 	upload_date date,
 	tags text,
-	dog_id text
+	dog_id text,
+    status text
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;

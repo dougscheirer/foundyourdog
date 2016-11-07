@@ -13,13 +13,19 @@ import FormData from 'form-data'
 
 class NewFormBase extends Component {
 	state = {
-		image_preview: undefined
+		image_preview: undefined,
+		uploaded_image: undefined
 	};
 
 	getSelected = 				this.getSelected.bind(this);
 	handleValidateAndSubmit = 	this.handleValidateAndSubmit.bind(this);
 	validate = 					this.validate.bind(this);
 	uploadImage = 				this.uploadImage.bind(this);
+
+	doNothing(e) {
+		e.preventDefault();
+		console.log("do nothing");
+	}
 
 	previewImage(files) {
 		this.setState({image_preview: files[0]});
@@ -49,8 +55,10 @@ class NewFormBase extends Component {
 					return res.json();
 			}
 		}).then((res) => {
-			if (!!res)
+			if (!!res) {
 				this.props.onUploadComplete(res);
+				this.setState({uploaded_image: res});
+			}
 		});
 	}
 
@@ -79,16 +87,23 @@ class NewFormBase extends Component {
 			dog_color: 			this.refs.color.value,
 			other_info: 		this.refs.other_info.value,
 			dog_breeding_status:this.refs.breeding_status.value,
-			dog_gender:			this.getSelected('gender')
+			dog_gender:			this.getSelected('gender'),
+			photo_id: 			null
 		};
+
+		if (!!this.state.uploaded_image) {
+			formdata.photo_id = this.state.uploaded_image.id;
+		}
 
 		// required: date, name (sometimes), basic_type, color
 		let errors = false;
+		if (!!this.state.image_preview && !!!this.state.uploaded_image)
+										{ toastr.error('Upload the image before submitting the form'); errors = true; }
 		if (!!!formdata.dog_color) 		{ toastr.error('Color is required'); errors = true; }
 		if (!!!formdata.dog_basic_type) { toastr.error('Breed is required'); errors = true; }
 		if (!!!formdata.dog_name && this.props.nameRequired)
-									{ toastr.error('Name is required'); errors = true; }
-		if (!!!formdata.incident_date){ toastr.error('Date is required'); errors = true; }
+										{ toastr.error('Name is required'); errors = true; }
+		if (!!!formdata.incident_date)	{ toastr.error('Date is required'); errors = true; }
 
 		return errors ? null : formdata;
 	}
@@ -130,6 +145,47 @@ class NewFormBase extends Component {
 		return selectedFields.join(', ');
 	}
 
+	resetServerImage(e) {
+		e.preventDefault();
+		console.log("TODO: delete server image");
+		this.setState({image_preview: undefined, uploaded_image: undefined});
+	}
+
+	resetLocalImage(e) {
+		e.preventDefault();
+		this.setState({image_preview : undefined});
+	}
+
+	upload_or_preview() {
+		// there are 3 states here:
+		// 1) uploaded image (show disabled upload and reset button [reset on server], preview of image)
+		// 2) image, not uploaded (show preview, upload and reset button)
+		// 3) no image (show dropzone)
+  		if (!!this.state.uploaded_image) {
+            return (
+            	<div>
+            		<div>
+		           		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >Upload</button>
+		           		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
+	         	    </div>
+	           		<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
+	           	</div>)
+  		} else if (!!this.state.image_preview) {
+			return (
+				<div>
+	               	<div>
+	               		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
+	               		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetLocalImage(e) }>Reset</button>
+	             	</div>
+	               	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
+	            </div>)
+        } else {
+			return (<Dropzone multiple={false} accept="image/*" onDrop={(file) => this.previewImage(file) }>
+						<p>Drop an image or click to select a file to upload.</p>
+					</Dropzone>)
+		}
+ 	}
+
     render() {
     	const name_placeholder = this.props.nameRequired ? "dog's name" : "dog's name, if known";
     	const center = { lat: parseFloat(this.props.location.query['lat']),
@@ -140,19 +196,6 @@ class NewFormBase extends Component {
 	  		key: 0,
 	  		position: { lat: center.lat, lng: center.lng }
 	  	}];
-
-	  	const upload_or_preview =
-	  		(!!!this.state.image_preview) ?
-				(<Dropzone multiple={false} accept="image/*" onDrop={(file) => this.previewImage(file) }>
-					<p>Drop an image or click to select a file to upload.</p>
-    			</Dropzone>) :
-                (<div>
-                	<div>
-                		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
-                		<button className="btn btn-secondary reset-image" onClick={ () => this.setState({image_preview : undefined}) }>Reset</button>
-                		</div>
-                	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
-                </div>);
 
         return (
         	<div>
@@ -210,7 +253,7 @@ class NewFormBase extends Component {
 				<div className="form-group">
 				  <label className="col-md-4 control-label" htmlFor="uploadPhoto">Add Photo</label>
 				  <div className="col-md-4">
-				  	{ upload_or_preview }
+				  	{ this.upload_or_preview() }
                   </div>
 				</div>
 

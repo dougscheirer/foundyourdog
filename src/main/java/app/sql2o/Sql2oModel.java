@@ -110,18 +110,19 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String confirmationToken = UUID.randomUUID().toString();
 			String uuid = UUID.randomUUID().toString();
-			Query q = conn.createQuery(
-					"insert into dogs (uuid, basic_type, color, gender, intact, owner_id, name, added_date)" +
-					"values(:uuid, :basic_type, :color, :gender, :intact, :owner_id, :name, :added_date)");
-			q.addParameter("uuid", uuid);
-			q.addParameter("basic_type", d.getBasic_type());
-			q.addParameter("color", d.getColor());
-			q.addParameter("gender", d.getGender());
-			q.addParameter("intact", d.getIntact());
-			q.addParameter("owner_id", d.getOwner_id());
-			q.addParameter("name", d.getName());
-			q.addParameter("added_date", d.getAdded_date());
-			q.executeUpdate();
+			conn.createQuery(
+					"insert into dogs (uuid, basic_type, color, gender, intact, owner_id, name, added_date, image_id)" +
+					"values(:uuid, :basic_type, :color, :gender, :intact, :owner_id, :name, :added_date, :image_id)")
+					.addParameter("uuid", uuid)
+					.addParameter("basic_type", d.getBasic_type())
+					.addParameter("color", d.getColor())
+					.addParameter("gender", d.getGender())
+					.addParameter("intact", d.getIntact())
+					.addParameter("owner_id", d.getOwner_id())
+					.addParameter("name", d.getName())
+					.addParameter("added_date", d.getAdded_date())
+					.addParameter("image_id", d.getImage_id())
+					.executeUpdate();
 			
 			return uuid;
 		}
@@ -200,14 +201,16 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into images(uuid, user_id, image_location, upload_date, tags, dog_id)"
-							+ "   VALUES (:uuid, :user_id, :image_location, :upload_date, :tags, :dog_id)")
+					"insert into images(uuid, user_id, image_location, upload_date, tags, dog_id, status)"
+							+ "   VALUES (:uuid, :user_id, :image_location, :upload_date, :tags, :dog_id, :status)")
 					.addParameter("uuid", uuid)
 					.addParameter("user_id", i.getUser_id())
 					.addParameter("image_location", i.getImage_location())
 					.addParameter("upload_date", i.getUpload_date())
 					.addParameter("dog_id", i.getDog_id())
-					.addParameter("tags", i.getTags()).executeUpdate();
+					.addParameter("tags", i.getTags())
+					.addParameter("status", i.getStatus())
+					.executeUpdate();
 			return uuid;
 		}
 	}
@@ -254,6 +257,19 @@ public class Sql2oModel implements Model {
 					.addParameter("password_hash", u.getPassword())
 					.addParameter("confirmation_token", confirmationToken).executeUpdate();
 			return uuid;
+		}
+	}
+
+	@Override
+	public String updateImageStatus(String imageID, String dogId, String status) {
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery(
+					"update images SET dog_id=:dogId, status=:status where uuid=:uuid")
+					.addParameter("uuid", imageID)
+					.addParameter("dogId", dogId)
+					.addParameter("status", status)
+					.executeUpdate();
+			return imageID;
 		}
 	}
 }

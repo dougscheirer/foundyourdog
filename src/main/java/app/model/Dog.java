@@ -16,7 +16,8 @@ public class Dog implements Validatable {
 	private String tags;
 	private String name;
 	private Date added_date;
-
+	private String image_id;
+	
 	@Override
 	public boolean isValid() {
 		// TODO Auto-generated method stub

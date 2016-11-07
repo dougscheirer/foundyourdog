@@ -33,6 +33,7 @@ public class ImageUploadHandler implements Route {
 		newImage.setUser_id(Main.getCurrentUser(request).getUuid());
 		newImage.setImage_location(this.imageLocation);
 		newImage.setUpload_date(new java.sql.Date(utilDate.getTime()));
+		newImage.setStatus("unassigned");
 		// TODO: if it's not part of a report, it will have a dog id
 		String uuid = model.createImage(newImage);
 		if (uuid == null) {

@@ -23,10 +23,12 @@ public class CreateIncidentReportHandler extends AbstractRequestHandler<Incident
 
 	@Override
 	protected Answer processImpl(IncidentForm form, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
-		// we need to do two things:
+		// we need to do several things:
 		// 1) create a new dog for tracking purposes (TODO: make this optional
 		// later)
 		// 2) create an incident with the dog's ID
+		// 3) change the image status (if available) to "assigned"
+		
 		Dog newDog = new Dog();
 		Date utilDate = new java.util.Date();
 		newDog.setAdded_date(new java.sql.Date(utilDate.getTime()));
@@ -35,9 +37,12 @@ public class CreateIncidentReportHandler extends AbstractRequestHandler<Incident
 		newDog.setGender(form.getDog_gender());
 		newDog.setIntact(form.getDog_breeding_status() == "intact");
 		newDog.setName(form.getDog_name());
-
-		String dogId = model.createDog(newDog);
+		newDog.setImage_id(form.getPhoto_id());
 		
+		String dogId = model.createDog(newDog);
+		if (dogId == null) {
+			return new Answer(500);
+		}
 		Incident incident = new Incident();
 		incident.setDog_id(dogId);
 		incident.setIncident_date(form.getIncident_date());
@@ -47,6 +52,17 @@ public class CreateIncidentReportHandler extends AbstractRequestHandler<Incident
 		incident.setState(this.reportType == GetIncidentsHandler.IncidentType.LOST ? "lost" : "found");
 		
 		String incidentId = model.createIncident(incident);
+		if (incidentId == null) {
+			return new Answer(500);
+		}
+		
+		// book-keeping, change the image status
+		if (form.getPhoto_id() != null) {
+			model.updateImageStatus(form.getPhoto_id(), dogId, "assigned to " + dogId);
+		} else {
+			// log a message
+		}
+		
 		return new Answer(200, "{\"id\":\"" + incidentId + "\"}");
 	}
 }

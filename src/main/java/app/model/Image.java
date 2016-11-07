@@ -12,6 +12,7 @@ public class Image implements Validatable {
 	private Date upload_date;
 	private String tags;
 	private String dog_id;
+	private String status;
 	
 	@Override
 	public boolean isValid() {

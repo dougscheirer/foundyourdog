@@ -34,5 +34,6 @@ public interface Model {
 	Optional<Image> getImage(String id);
 	String createImage(Image i);
 	String updateImage(Image i);
+	String updateImageStatus(String imageID, String dogId, String status);
 	String deleteImage(String id);
 }
