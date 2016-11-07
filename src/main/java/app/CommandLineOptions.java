@@ -24,4 +24,7 @@ class CommandLineOptions {
 
     @Parameter(names = {"--db-port"})
     Integer dbPort = 5432;
+
+    @Parameter(names = {"--image-location"})
+    String imageLocation = "uploads/images";
 }

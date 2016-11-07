@@ -5,7 +5,7 @@ CREATE DATABASE foundyourdog_$ENV$;
 GRANT ALL PRIVILEGES ON DATABASE foundyourdog_$ENV$ TO admin;
 
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL primary key,
+    uuid text primary key,
     email text not null unique,
     handle text unique,
     password_hash text not null,
@@ -20,44 +20,45 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS incidents (
-    id SERIAL primary key,
+    uuid text primary key,
     map_latitude float,
     map_longitude float,
-    reporter_id integer,
-    dog_id integer,
+    reporter_id text,
+    dog_id text,
     incident_date date,
     state text not null,
-    resolution integer
+    resolution text
 );
 
 CREATE TABLE IF NOT EXISTS resolutions (
-    id SERIAL primary key,
-    incident_id integer,
-    dog_id integer,
-    dog_id_owner integer,
+    uuid text primary key,
+    incident_id text,
+    dog_id text,
+    dog_id_owner text,
     resolve_date date,
     resolve_text text
 );
 
 CREATE TABLE IF NOT EXISTS dogs (
-	id SERIAL primary key,
+	uuid text primary key,
 	basic_type text,
     color text,
 	gender text,
 	intact text,
-	owner_id integer,
+	owner_id text,
 	tags text,
 	name text,
-	added_date date
+	added_date date,
+    image_id text
 );
 
 CREATE TABLE IF NOT EXISTS images (
-	id SERIAL primary key,
-	user_id integer not null,
+	uuid text primary key,
+	user_id text not null,
 	image_location text,
 	upload_date date,
 	tags text,
-	dog_id integer not null
+	dog_id text
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;

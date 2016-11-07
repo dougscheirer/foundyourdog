@@ -7,6 +7,7 @@ import app.Answer;
 import app.model.Dog;
 import app.model.Model;
 import app.model.User;
+import spark.Request;
 
 public class GetDogsHandler extends AbstractRequestHandler<EmptyPayload> {
 	private boolean lost = false;
@@ -17,7 +18,7 @@ public class GetDogsHandler extends AbstractRequestHandler<EmptyPayload> {
 	}
 
 	@Override
-	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml) {
+	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		List<Dog> dogs = model.getAllDogs();
 		return Answer.ok(dataToJson(dogs));
 	}

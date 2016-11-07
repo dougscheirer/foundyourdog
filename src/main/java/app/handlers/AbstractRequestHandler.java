@@ -43,15 +43,15 @@ public abstract class AbstractRequestHandler<V extends Validatable> implements R
         }
     }
 
-    public final Answer process(V value, Map<String, String> urlParams, boolean shouldReturnHtml) {
+    public final Answer process(V value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
         if (value != null && !value.isValid()) {
             return new Answer(HTTP_BAD_REQUEST);
         } else {
-            return processImpl(value, urlParams, shouldReturnHtml);
+            return processImpl(value, urlParams, shouldReturnHtml, request);
         }
     }
 
-    protected abstract Answer processImpl(V value, Map<String, String> urlParams, boolean shouldReturnHtml);
+    protected abstract Answer processImpl(V value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request);
 
 
     @Override
@@ -63,7 +63,7 @@ public abstract class AbstractRequestHandler<V extends Validatable> implements R
                 value = objectMapper.readValue(request.body(), valueClass);
             }
             Map<String, String> urlParams = request.params();
-            Answer answer = process(value, urlParams, shouldReturnHtml(request));
+            Answer answer = process(value, urlParams, shouldReturnHtml(request), request);
             response.status(answer.getCode());
             if (shouldReturnHtml(request)) {
                 response.type("text/html");

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.sql2o.Connection;
+import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
 import app.model.Dog;
@@ -36,11 +37,11 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public Optional<DetailUser> getDetailUser(int id) {
+	public Optional<DetailUser> getDetailUser(String id) {
 		try (Connection conn = sql2o.open()) {
 			List<DetailUser> users = conn
 					.createQuery(
-							"select id, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where id=:id")
+							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where uuid=:id")
 					.addParameter("id", id).executeAndFetch(DetailUser.class);
 			if (users.size() > 0) {
 				return Optional.empty();
@@ -53,36 +54,35 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public int createUser(User u) {
+	public String createUser(User u) {
 		try (Connection conn = sql2o.open()) {
+			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into users(email, handle, password_hash, confirmation_token, phone1, phone2, inapp_notifications)"
-							+ "   VALUES (:email, :handle, :password_hash, :confirmation_token, :phone1, :phone2, :inapp_notifications)")
-					.addParameter("email", u.getEmail()).addParameter("handle", u.getHandle())
+					"insert into users(uuid, email, handle, password_hash, confirmation_token, phone1, phone2, inapp_notifications)"
+							+ "   VALUES (:uuid, :email, :handle, :password_hash, :confirmation_token, :phone1, :phone2, :inapp_notifications)")
+					.addParameter("uuid", uuid)
+					.addParameter("email", u.getEmail())
+					.addParameter("handle", u.getHandle())
 					.addParameter("password_hash", u.getPassword_hash())
-					.addParameter("confirmation_token", u.getConfirmation_token()).addParameter("phone1", u.getPhone1())
+					.addParameter("confirmation_token", u.getConfirmation_token())
+					.addParameter("phone1", u.getPhone1())
 					.addParameter("phone2", u.getPhone2())
-					.addParameter("inapp_notifications", u.getInapp_notifications()).executeUpdate();
-			List<Integer> ids = conn.createQuery("select id from users where email=:email")
-					.addParameter("email", u.getEmail()).executeScalarList(Integer.class);
-			if (ids.size() == 1) {
-				return ids.get(0);
-			} else {
-				throw new RuntimeException();
-			}
+					.addParameter("inapp_notifications", u.getInapp_notifications())
+					.executeUpdate();
+			return uuid;
 		}
 	}
 
 	@Override
-	public int updateUser(User u) {
+	public String updateUser(User u) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public int deleteUser(int id) {
+	public String deleteUser(String id) {
 		// TODO Auto-generated method stub
-		return 0;
+		return new String();
 	}
 
 	@Override
@@ -100,27 +100,43 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public Optional<Dog> getDog(int id) {
+	public Optional<Dog> getDog(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int createDog(Dog d) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String createDog(Dog d) {
+		try (Connection conn = sql2o.open()) {
+			String confirmationToken = UUID.randomUUID().toString();
+			String uuid = UUID.randomUUID().toString();
+			Query q = conn.createQuery(
+					"insert into dogs (uuid, basic_type, color, gender, intact, owner_id, name, added_date)" +
+					"values(:uuid, :basic_type, :color, :gender, :intact, :owner_id, :name, :added_date)");
+			q.addParameter("uuid", uuid);
+			q.addParameter("basic_type", d.getBasic_type());
+			q.addParameter("color", d.getColor());
+			q.addParameter("gender", d.getGender());
+			q.addParameter("intact", d.getIntact());
+			q.addParameter("owner_id", d.getOwner_id());
+			q.addParameter("name", d.getName());
+			q.addParameter("added_date", d.getAdded_date());
+			q.executeUpdate();
+			
+			return uuid;
+		}
 	}
 
 	@Override
-	public int updateDog(Dog d) {
+	public String updateDog(Dog d) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public int deleteDog(int id) {
+	public String deleteDog(int id) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -130,27 +146,41 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public Optional<Incident> getIncident(int id) {
+	public Optional<Incident> getIncident(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int createIncident(Incident i) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String createIncident(Incident i) {
+		try (Connection conn = sql2o.open()) {
+			String uuid = UUID.randomUUID().toString();
+			conn.createQuery(
+					"insert into incidents (uuid, map_latitude, map_longitude, reporter_id, dog_id, incident_date, state)" +
+					"values(:uuid, :map_latitude, :map_longitude, :reporter_id, :dog_id, :incident_date, :state)")
+		    	.addParameter("uuid", uuid)
+		    	.addParameter("map_latitude", i.getMap_latitude())
+		    	.addParameter("map_longitude", i.getMap_longitude())
+		    	.addParameter("reporter_id", i.getReporter_id())
+		    	.addParameter("dog_id", i.getDog_id())
+		    	.addParameter("incident_date", i.getIncident_date())
+		    	.addParameter("state", i.getState())
+		    	.executeUpdate();
+			
+			return uuid;
+		}
 	}
 
 	@Override
-	public int updateIncident(Incident i) {
+	public String updateIncident(Incident i) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public int deleteIncident(int id) {
+	public String deleteIncident(String id) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -160,27 +190,38 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public Optional<Image> getImage(int id) {
+	public Optional<Image> getImage(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int createImage(Image i) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String createImage(Image i) {
+		try (Connection conn = sql2o.open()) {
+			String uuid = UUID.randomUUID().toString();
+			conn.createQuery(
+					"insert into images(uuid, user_id, image_location, upload_date, tags, dog_id)"
+							+ "   VALUES (:uuid, :user_id, :image_location, :upload_date, :tags, :dog_id)")
+					.addParameter("uuid", uuid)
+					.addParameter("user_id", i.getUser_id())
+					.addParameter("image_location", i.getImage_location())
+					.addParameter("upload_date", i.getUpload_date())
+					.addParameter("dog_id", i.getDog_id())
+					.addParameter("tags", i.getTags()).executeUpdate();
+			return uuid;
+		}
 	}
 
 	@Override
-	public int updateImage(Image i) {
+	public String updateImage(Image i) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public int deleteImage(int id) {
+	public String deleteImage(String id) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -188,8 +229,9 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			List<DetailUser> users = conn
 					.createQuery(
-							"select id, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where (email=:id or handle=:id) and password_hash=:password")
-					.addParameter("id", user).addParameter("password", password).executeAndFetch(DetailUser.class);
+							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where (email=:id or handle=:id) and password_hash=:password")
+					.addParameter("id", user).addParameter("password", password)
+					.executeAndFetch(DetailUser.class);
 			if (users.size() == 1) {
 				return Optional.of(users.get(0));
 			} else {
@@ -199,23 +241,19 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public int signupUser(UserSignup u) {
+	public String signupUser(UserSignup u) {
 		try (Connection conn = sql2o.open()) {
 			String confirmationToken = UUID.randomUUID().toString();
-
+			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into users(email, handle, password_hash, confirmation_token)"
-							+ "   VALUES (:email, :handle, :password_hash, :confirmation_token)")
-					.addParameter("email", u.getEmail()).addParameter("handle", u.getUserid())
+					"insert into users(uuid, email, handle, password_hash, confirmation_token)"
+							+ "   VALUES (:uuid, :email, :handle, :password_hash, :confirmation_token)")
+					.addParameter("uuid", uuid)
+					.addParameter("email", u.getEmail())
+					.addParameter("handle", u.getUserid())
 					.addParameter("password_hash", u.getPassword())
 					.addParameter("confirmation_token", confirmationToken).executeUpdate();
-			List<Integer> ids = conn.createQuery("select id from users where email=:email")
-					.addParameter("email", u.getEmail()).executeScalarList(Integer.class);
-			if (ids.size() == 1) {
-				return ids.get(0);
-			} else {
-				throw new RuntimeException();
-			}
+			return uuid;
 		}
 	}
 }

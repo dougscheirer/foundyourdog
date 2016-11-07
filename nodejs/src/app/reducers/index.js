@@ -21,6 +21,9 @@ const reducerOne = (state = initialState, action) => {
 		case 'POST_LOGIN_ACTION':
 			return { ...state,
 				post_login_action: action.post_login_action };
+		case 'UPLOAD_IMAGE':
+			return { ...state,
+				image_info: action.image_info }
 		default:
 			return state;
 		}

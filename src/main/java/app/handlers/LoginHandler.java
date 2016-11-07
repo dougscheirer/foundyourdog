@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.Answer;
+import app.Main;
 import app.RequestHandler;
 import app.model.Incident;
 import app.model.Model;
@@ -19,9 +20,8 @@ public class LoginHandler implements Route {
 	private String sessionKey;
 	private Model model;
 
-	public LoginHandler(Model model, String sessionKey) {
+	public LoginHandler(Model model) {
 		this.model = model;
-		this.sessionKey = sessionKey;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class LoginHandler implements Route {
 			return response.body();
 		} else {
 			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user.get()));
-			request.session().attribute(this.sessionKey, user.get());
+			request.session().attribute(Main.SESSION_USERID, user.get());
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class DetailUser {
-	private int id;
+	private String uuid;
 	private String email;
 	private String handle;
 	private Boolean confirmed;

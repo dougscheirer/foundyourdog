@@ -8,6 +8,7 @@ import app.model.Dog;
 import app.model.Incident;
 import app.model.Model;
 import app.model.User;
+import spark.Request;
 
 public class GetIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {
 	private boolean lost = false;
@@ -22,7 +23,7 @@ public class GetIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {
 	}
 
 	@Override
-	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml) {
+	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		List<Incident> users = model.getAllIncidents(lost);
 		return Answer.ok(dataToJson(users));
 	}

@@ -18,9 +18,11 @@ import com.beust.jcommander.JCommander;
 import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
 import app.handlers.CreateUserHandler;
+import app.handlers.DetailUser;
 import app.handlers.GetDogsHandler;
 import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUsersIndexHandler;
+import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
 import app.model.Model;
@@ -32,8 +34,13 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
-	private static final String SESSION_USERID = "userid";
-
+	
+	// TODO: move this to where constants live
+	public static final String SESSION_USERID = "userid";
+	public static DetailUser getCurrentUser(Request request) {
+		return request.session().attribute(SESSION_USERID);
+	}
+		
     static int getPortByEnv(int optionsPort) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         if (processBuilder.environment().get("PORT") != null) {
@@ -43,8 +50,7 @@ public class Main {
     }
 
     private static void checkAuthentication(Request request, Response res) {
-    	Object userID = request.session().attribute(SESSION_USERID);
-    	if (userID == null)
+    	if (getCurrentUser(request) == null)
     		halt(403);
     }
 
@@ -59,6 +65,7 @@ public class Main {
 		logger.finest("Options.dbPort = " + options.dbPort);
 		int servicePort = getPortByEnv(options.servicePort);
 		logger.finest("servicePort = " + servicePort);
+		logger.finest("image location = " + options.imageLocation);
 
 		port(servicePort);
 
@@ -95,19 +102,22 @@ public class Main {
 		redirect.get("/", "/index.html");
 
 		// basics, login, logout, and an auth check method
-		post("/login", new LoginHandler(model, SESSION_USERID));
-		post("/logout", new LogoutHandler(model, SESSION_USERID));
-		get("/authenticated", new AuthenticatedHandler(model, SESSION_USERID));
+		post("/login", new LoginHandler(model));
+		post("/logout", new LogoutHandler(model));
+		get("/authenticated", new AuthenticatedHandler(model));
 
 		// TODO: group the /api/... stuff under one route path?
 		post("/signup", new CreateUserHandler(model));
 		get("/api/users", new GetUsersIndexHandler(model));
 		// put("/api/users/:id", new UpdateUserHanlder(model));
 		// delete("/api/users/:id", new DeleteUserHandler(model));
+		
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
+		
 		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
-		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
+		
+		post("/report/images/new", new ImageUploadHandler(model, options.imageLocation));
 	}
 }

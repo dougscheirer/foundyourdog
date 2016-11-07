@@ -7,6 +7,7 @@ import app.Answer;
 import app.model.Model;
 import app.model.User;
 import app.model.UserSignup;
+import spark.Request;
 
 public class CreateUserHandler extends AbstractRequestHandler<UserSignup> {
 
@@ -16,11 +17,11 @@ public class CreateUserHandler extends AbstractRequestHandler<UserSignup> {
 	}
 
 	@Override
-	protected Answer processImpl(UserSignup value, Map<String, String> urlParams, boolean shouldReturnHtml) {
+	protected Answer processImpl(UserSignup value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		// TODO: create a hash of the password in password_hash
 		// TODO: validate the User data before the attempt
 		// create a confirmation token
-		int userId = model.signupUser(value);
+		String  userId = model.signupUser(value);
 		return new Answer(200, "{\"id\":\"" + userId + "\"}");
 	}
 }

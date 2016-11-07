@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class User implements Validatable {
-	private int id;
+	private String uuid;
 	private String email;
 	private String handle;
 	private String password_hash;

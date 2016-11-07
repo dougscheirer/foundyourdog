@@ -1,29 +1,64 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import $ from 'jquery';
-import { DateField } from "react-date-picker";
-import toastr from 'toastr';
-import 'toastr/build/toastr.css';
-import 'react-date-picker/index.css';
-import SimpleMap from "./simple_map";
-import Dropzone from "react-dropzone";
-import { connect } from "react-redux";
-import { showLogin } from "../actions";
+import React, { Component } from 'react'
+import $ from 'jquery'
+import { DateField } from "react-date-picker"
+import toastr from 'toastr'
+import 'toastr/build/toastr.css'
+import 'react-date-picker/index.css'
+import SimpleMap from "./simple_map"
+import Dropzone from "react-dropzone"
+import { connect } from "react-redux"
+import { showLogin, uploadReportImage } from "../actions"
+import fetch from 'isomorphic-fetch'
+import FormData from 'form-data'
 
 class NewFormBase extends Component {
+	state = {
+		image_preview: undefined
+	};
 
 	getSelected = 				this.getSelected.bind(this);
 	handleValidateAndSubmit = 	this.handleValidateAndSubmit.bind(this);
 	validate = 					this.validate.bind(this);
-	uploadPhoto = 				this.uploadPhoto.bind(this);
+	uploadImage = 				this.uploadImage.bind(this);
 
-	uploadPhoto(files) {
-		console.log("TODO: photo upload");
+	previewImage(files) {
+		this.setState({image_preview: files[0]});
+	}
+
+	uploadImage(e) {
+		e.preventDefault();
+		if (this.requireLoginCheck()) {
+			return;
+		}
+
+		var data = new FormData()
+		data.append('file', this.state.image_preview)
+
+		fetch('/report/images/new', {
+		  credentials: 'include',
+		  method: 'POST',
+		  body: data
+		}).then((res) => {
+			switch (res.status) {
+				case 403:
+					this.props.onLoginRequired();
+					return null;
+				case 500:
+					return null;
+				default:
+					return res.json();
+			}
+		}).then((res) => {
+			if (!!res)
+				this.props.onUploadComplete(res);
+		});
 	}
 
 	requireLoginCheck() {
-		if (!!!this.props.logged_in)
+		if (!!!this.props.logged_in) {
 			this.props.onLoginRequired();
+			return true;
+		}
 	}
 
 	componentDidMount() {
@@ -31,25 +66,29 @@ class NewFormBase extends Component {
 	}
 
 	validate() {
-		this.requireLoginCheck();
+		if (this.requireLoginCheck()) {
+			return null;
+		}
 
 		const formdata = {
-			date: 				this.refs.date.getInput().value,
-			name: 				ReactDOM.findDOMNode(this.refs.name).value,
-			basic_type: 		ReactDOM.findDOMNode(this.refs.basic_type).value,
-			color: 				ReactDOM.findDOMNode(this.refs.color).value,
-			other_info: 		ReactDOM.findDOMNode(this.refs.other_info).value,
-			breeding_status: 	ReactDOM.findDOMNode(this.refs.breeding_status).value,
-			gender: 			this.getSelected('gender')
+			map_latitude: 		parseFloat(this.props.location.query['lat']),
+			map_longitude: 		parseFloat(this.props.location.query['lng']),
+			incident_date: 		this.refs.date.getInput().value,
+			dog_name: 			this.refs.name.value,
+			dog_basic_type: 	this.refs.basic_type.value,
+			dog_color: 			this.refs.color.value,
+			other_info: 		this.refs.other_info.value,
+			dog_breeding_status:this.refs.breeding_status.value,
+			dog_gender:			this.getSelected('gender')
 		};
 
 		// required: date, name (sometimes), basic_type, color
 		let errors = false;
-		if (!!!formdata.color) 		{ toastr.error('Color is required'); errors = true; }
-		if (!!!formdata.basic_type) { toastr.error('Breed is required'); errors = true; }
-		if (!!!formdata.name && this.props.nameRequired)
+		if (!!!formdata.dog_color) 		{ toastr.error('Color is required'); errors = true; }
+		if (!!!formdata.dog_basic_type) { toastr.error('Breed is required'); errors = true; }
+		if (!!!formdata.dog_name && this.props.nameRequired)
 									{ toastr.error('Name is required'); errors = true; }
-		if (!!!formdata.date) 		{ toastr.error('Date is required'); errors = true; }
+		if (!!!formdata.incident_date){ toastr.error('Date is required'); errors = true; }
 
 		return errors ? null : formdata;
 	}
@@ -61,6 +100,7 @@ class NewFormBase extends Component {
 			return;
 		}
 
+		const loginFunc = this.props.onLoginRequired;
 		$.ajax({
 		    url: this.props.submitUrl,
 		    type: "POST",
@@ -72,6 +112,7 @@ class NewFormBase extends Component {
 			}}).fail(function(e) {
 				if (e.status === 403) {
 					toastr.error("You have to be signed in to file a report");
+					loginFunc();
 				} else {
 					toastr.error("The server responded with an error, please try again later.")
 				}
@@ -99,6 +140,19 @@ class NewFormBase extends Component {
 	  		key: 0,
 	  		position: { lat: center.lat, lng: center.lng }
 	  	}];
+
+	  	const upload_or_preview =
+	  		(!!!this.state.image_preview) ?
+				(<Dropzone multiple={false} accept="image/*" onDrop={(file) => this.previewImage(file) }>
+					<p>Drop an image or click to select a file to upload.</p>
+    			</Dropzone>) :
+                (<div>
+                	<div>
+                		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
+                		<button className="btn btn-secondary reset-image" onClick={ () => this.setState({image_preview : undefined}) }>Reset</button>
+                		</div>
+                	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
+                </div>);
 
         return (
         	<div>
@@ -156,10 +210,8 @@ class NewFormBase extends Component {
 				<div className="form-group">
 				  <label className="col-md-4 control-label" htmlFor="uploadPhoto">Add Photo</label>
 				  <div className="col-md-4">
-					<Dropzone multiple={false} accept="image/*" onDrop={() => this.uploadPhoto() }>
-						<p>Drop an image or click to select a file to upload.</p>
-    				</Dropzone>
-    			  </div>
+				  	{ upload_or_preview }
+                  </div>
 				</div>
 
 				<div className="form-group">
@@ -218,7 +270,8 @@ const mapLostStateToProps = (state, myprops) => ({
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-	onLoginRequired : () => { dispatch(showLogin('login')); }
+	onLoginRequired : () => { dispatch(showLogin('login')); },
+	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); }
 });
 
 export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);

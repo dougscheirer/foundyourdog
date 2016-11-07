@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import app.Answer;
+import app.Main;
 import app.model.Model;
 import spark.Request;
 import spark.Response;
@@ -11,16 +12,14 @@ import spark.Route;
 
 public class AuthenticatedHandler implements Route {
 	private final Model model;
-	private final String sessionKey;
 	
-	public AuthenticatedHandler(Model model, String sessionKey) {
+	public AuthenticatedHandler(Model model) {
 		this.model = model;
-		this.sessionKey = sessionKey;
 	}
 
 	@Override
 	public Object handle(Request request, Response response) throws Exception {
-		DetailUser user = request.session().attribute(this.sessionKey);
+		DetailUser user = Main.getCurrentUser(request);
 		if (user == null) {
 			response.status(401);
 			response.body("Not authenticated");

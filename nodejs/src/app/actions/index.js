@@ -50,3 +50,10 @@ export const loginRequired = (postLoginAction) => {
 		});
 	}
 }
+
+export const uploadReportImage = (image_info) => {
+	return {
+		type: 'upload_image',
+		image_info : image_info
+	}
+}
