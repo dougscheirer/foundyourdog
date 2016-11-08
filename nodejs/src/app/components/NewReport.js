@@ -10,6 +10,8 @@ import { connect } from "react-redux"
 import { showLogin, uploadReportImage } from "../actions"
 import fetch from 'isomorphic-fetch'
 import FormData from 'form-data'
+import { browserHistory } from 'react-router';
+import checkbox from "../../checkbox.svg"
 
 class NewFormBase extends Component {
 	state = {
@@ -122,8 +124,8 @@ class NewFormBase extends Component {
 		    data: JSON.stringify(formdata),
     		dataType: "json",
     		contentType: "application/json; charset=utf-8",
-    		success: function (x,h,r) {
-				console.log('success');
+    		success: function (response,status,jXHR) {
+				browserHistory.push("reports/" + response.id);
 			}}).fail(function(e) {
 				if (e.status === 403) {
 					toastr.error("You have to be signed in to file a report");
@@ -165,7 +167,9 @@ class NewFormBase extends Component {
             return (
             	<div>
             		<div>
-		           		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >Upload</button>
+		           		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >
+		           			<img src={ checkbox } width="20px" alt="checked" /> Upload
+		           		</button>
 		           		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
 	         	    </div>
 	           		<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
@@ -190,7 +194,6 @@ class NewFormBase extends Component {
     	const name_placeholder = this.props.nameRequired ? "dog's name" : "dog's name, if known";
     	const center = { lat: parseFloat(this.props.location.query['lat']),
     					 lng: parseFloat(this.props.location.query['lng']) };
-    	console.log(center);
 	  	const markers = [
 	  	{
 	  		key: 0,
@@ -314,7 +317,7 @@ const mapLostStateToProps = (state, myprops) => ({
 
 const mapDispatchToProps = (dispatch, myprops) => ({
 	onLoginRequired : () => { dispatch(showLogin('login')); },
-	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); }
+	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
 });
 
 export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);

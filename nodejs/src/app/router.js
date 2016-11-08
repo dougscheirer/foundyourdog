@@ -13,6 +13,7 @@ import Signup from './components/signup';
 import Login from './components/login';
 import Feedback from './components/feedback';
 import { NewFound, NewLost } from "./components/NewReport";
+import ReportSummary from './components/report_summary'
 
 export default class Routes extends Component {
   render() {
@@ -35,6 +36,10 @@ export default class Routes extends Component {
         </Route>
         <Route path="new" component={NewFound} />
         <Route path=":dogId" component={DogProfile} />
+      </Route>
+
+      <Route path="reports">
+        <Route path=":reportId" component={ReportSummary} />
       </Route>
 
       <Route path="dogs">

@@ -24,6 +24,10 @@ const reducerOne = (state = initialState, action) => {
 		case 'UPLOAD_IMAGE':
 			return { ...state,
 				image_info: action.image_info }
+		case 'REPORT_FETCHED':
+			return { ...state,
+				report_detail: action.result
+			}
 		default:
 			return state;
 		}

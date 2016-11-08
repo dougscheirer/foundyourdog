@@ -101,8 +101,14 @@ public class Sql2oModel implements Model {
 
 	@Override
 	public Optional<Dog> getDog(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection conn = sql2o.open()) {
+			List<Dog> dogs = conn.createQuery("select * from dogs where uuid=:id")
+					.addParameter("id", id).executeAndFetch(Dog.class);
+			if (dogs.size() != 1) {
+				return Optional.empty();
+			}
+			return Optional.of(dogs.get(0));
+		}
 	}
 
 	@Override
@@ -148,8 +154,14 @@ public class Sql2oModel implements Model {
 
 	@Override
 	public Optional<Incident> getIncident(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection conn = sql2o.open()) {
+			List<Incident> incidents = conn.createQuery("select * from incidents where uuid=:id")
+					.addParameter("id", id).executeAndFetch(Incident.class);
+			if (incidents.size() != 1) {
+				return Optional.empty();
+			}
+			return Optional.of(incidents.get(0));
+		}
 	}
 
 	@Override
@@ -192,10 +204,15 @@ public class Sql2oModel implements Model {
 
 	@Override
 	public Optional<Image> getImage(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection conn = sql2o.open()) {
+			List<Image> images = conn.createQuery("select * from images where uuid=:id")
+					.addParameter("id", id).executeAndFetch(Image.class);
+			if (images.size() != 1) {
+				return Optional.empty();
+			}
+			return Optional.of(images.get(0));
+		}
 	}
-
 	@Override
 	public String createImage(Image i) {
 		try (Connection conn = sql2o.open()) {

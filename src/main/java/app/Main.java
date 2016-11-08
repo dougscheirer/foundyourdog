@@ -20,6 +20,8 @@ import app.handlers.CreateIncidentReportHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.DetailUser;
 import app.handlers.GetDogsHandler;
+import app.handlers.GetImageHandler;
+import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUsersIndexHandler;
 import app.handlers.ImageUploadHandler;
@@ -117,7 +119,11 @@ public class Main {
 		
 		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
+		get("/reports/:id", new GetIncidentDetailHandler(model));
 		
 		post("/report/images/new", new ImageUploadHandler(model, options.imageLocation));
+		
+		// what is java bad about? serving static image files, so change this when really using it
+		get("/api/images/:id", new GetImageHandler(model));
 	}
 }
