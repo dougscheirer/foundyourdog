@@ -24,7 +24,7 @@ public interface Model {
 	String deleteDog(int id);
 	
 	List<Incident> getAllIncidents();
-	List<Incident> getAllIncidents(boolean lost);
+	List<IncidentBrief> getAllIncidents(boolean lost);
 	Optional<Incident> getIncident(String id);
 	String createIncident(Incident i);
 	String updateIncident(Incident i);

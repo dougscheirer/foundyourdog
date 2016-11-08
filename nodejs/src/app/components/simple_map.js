@@ -3,16 +3,9 @@ import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps"
 import './home.css';
 
 export default class SimpleMap extends Component {
+
     newReport() {
-        window.onNewReport();
-    }
-
-    componentDidMount() {
-        window.onNewReport = this.props.onNewReport;
-    }
-
-    componentWillUnmount() {
-        window.onNewReport = null;
+        this.props.onNewReport();
     }
 
     render() {
@@ -24,6 +17,7 @@ export default class SimpleMap extends Component {
                   return (
                     <Marker
                       {...marker}
+                      key={index}
                       onClick={() => this.props.onMarkerClick(index)} />
                   );
                 }.bind(this));
@@ -33,12 +27,10 @@ export default class SimpleMap extends Component {
             let marker = this.props.selected;
             // TODO: make this better, preview an image, more info etc.
             info = <InfoWindow
+                      onCloseclick={ () => { if (!!this.props.onSelectedClose) { this.props.onSelectedClose(); } } }
                       {...marker}>
                       <div className="incident-info">
-                      {marker.date} :
-                      {marker.dog_id} :
-                      {marker.state} :
-                      {marker.resolution} :
+                      {marker.incidentInfo}
                       </div>
                     </InfoWindow>
       }

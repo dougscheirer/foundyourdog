@@ -12,6 +12,7 @@ import org.sql2o.Sql2o;
 import app.model.Dog;
 import app.model.Image;
 import app.model.Incident;
+import app.model.IncidentBrief;
 import app.model.Model;
 import app.model.User;
 import app.model.UserSignup;
@@ -91,10 +92,11 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public List<Incident> getAllIncidents(boolean lost) {
+	public List<IncidentBrief> getAllIncidents(boolean lost) {
 		try (Connection conn = sql2o.open()) {
-			List<Incident> incidents = conn.createQuery("select * from incidents where state=:state")
-					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(Incident.class);
+			List<IncidentBrief> incidents = 
+					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from incidents I inner join dogs D on D.uuid=I.dog_id where I.state=:state")
+					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
 		}
 	}

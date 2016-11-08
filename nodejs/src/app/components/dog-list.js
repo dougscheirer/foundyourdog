@@ -23,6 +23,21 @@ export class DogList extends Component {
     }
   }
 
+  showCard(e, incident) {
+    e.preventDefault();
+    console.log("show card for " + incident.uuid)
+  }
+
+  incidentToInfo(incident) {
+    console.log(incident.dog_color)
+    return (
+      <div>{incident.incident_date} : 
+        <a href="" onClick={ (e) => this.showCard(e, incident) } >
+        {incident.dog_color}&nbsp;{incident.dog_gender === 'F' ? 'female' : 'male'}&nbsp;
+                        &nbsp;{incident.dog_basic_type}&nbsp;[{ (!!incident.dog_name) ? incident.dog_name : "no name" }]
+        </a></div>)
+  }
+
   getServerData(location, zoom) {
     if (location != null) {
       if (!!!zoom) {
@@ -30,11 +45,12 @@ export class DogList extends Component {
       }
       console.log("Fetching server data based on " + location.lat + " / " + location.lng);
       this.setState( { center: location } );
+      // TODO: switch to fetch and an action for the store
       this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom,
         function (result) {
           var markers = [];
           for (var i=0; i<result.length; i++) {
-            var incident = result[i];
+            const incident = result[i];
             markers.push({
               position: {
                 lat: incident['map_latitude'],
@@ -48,7 +64,7 @@ export class DogList extends Component {
               defaultAnimation: 2
             });
           }
-          this.setState({ markers });
+          this.setState({ markers: markers });
         }.bind(this))
         .fail( function(error) {
           console.log("failed to get server data");
@@ -61,7 +77,6 @@ export class DogList extends Component {
     this.getServerData(null, 16);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          console.log(position);
           this.getServerData({ lat: position.coords.latitude, lng: position.coords.longitude });
         }.bind(this),
         function (error) {
@@ -79,7 +94,7 @@ export class DogList extends Component {
       // Notice: Check zoomLevel equality here,
       // or it will fire zoom_changed event infinitely
       this.setState({
-        zoomLevel,
+        zoom: zoomLevel,
         content: `Zoom: ${zoomLevel}`,
       });
     }
@@ -100,13 +115,16 @@ export class DogList extends Component {
           key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
           label: "!"
         }
-    this.setState({ newreport });
+    this.setState({ newreport: newreport, selected: undefined });
   }
 
   handleMarkerClick(index, event) {
-    let { markers } = this.state;
-    let selected = markers[index];
-    this.setState({ markers, selected });
+    let selected = this.state.markers[index];
+    this.setState({ newreport: undefined, selected: selected });
+  }
+
+  handleSelectedClosed() {
+    this.setState({selected: undefined})
   }
 
   handleNewReport(e) {
@@ -122,13 +140,13 @@ export class DogList extends Component {
   }
 
   render() {
-    console.log(this.state.markers);
     if (this.props.displaytype === "list") {
       var rows = [];
       this.state.markers.forEach((marker) => {
         rows.push(<tr>
             <td>{marker.date}</td>
-            <td>{marker.dog_id}</td>
+            <td><a href="" onClick={ (e) => this.showCard(e, marker) }>
+              { this.incidentToInfo(marker) }</a></td>
             <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
             <td>{marker.resolution}</td>
             <td>{marker.state}</td>
@@ -139,7 +157,7 @@ export class DogList extends Component {
           <table style={{width: "100%"}}>
           <thead>
             <th>Date</th>
-            <th>DogId</th>
+            <th>Description</th>
             <th>Position</th>
             <th>Resolution</th>
             <th>State</th>
@@ -164,6 +182,7 @@ export class DogList extends Component {
                   onMarkerClick={this.handleMarkerClick}
                   onZoomChanged={this.handleZoomChanged}
                   onNewReport={this.handleNewReport}
+                  onSelectedClose={this.handleSelectedClosed.bind(this)}
                 />
           </div>
         );
