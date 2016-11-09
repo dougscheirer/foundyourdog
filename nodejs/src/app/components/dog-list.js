@@ -4,8 +4,9 @@ import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
 import ListMapToggle from "./listMapToggle";
-import { loginRequired } from "../actions";
+import { loginRequired, showIncidentInfo } from "../actions";
 import { connect } from 'react-redux';
+import ShowInfoCard from './info-card'
 
 export class DogList extends Component {
   state = {
@@ -25,11 +26,10 @@ export class DogList extends Component {
 
   showCard(e, incident) {
     e.preventDefault();
-    console.log("show card for " + incident.uuid)
+    this.props.dispatch(showIncidentInfo(incident));
   }
 
   incidentToInfo(incident) {
-    console.log(incident.dog_color)
     return (
       <div>{incident.date}
         <a href="" onClick={ (e) => this.showCard(e, incident) } >
@@ -152,6 +152,7 @@ export class DogList extends Component {
       });
       return (
         <div>
+        <ShowInfoCard />
           <table style={{width: "100%"}}>
           <thead>
             <tr>
@@ -170,6 +171,7 @@ export class DogList extends Component {
     } else {
       return (
           <div className="search-map">
+          <ShowInfoCard />
           <SimpleMap
                   ref={(map) => this.map = map}
                   showtype={this.props.showtype}

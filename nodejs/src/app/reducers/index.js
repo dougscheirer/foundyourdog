@@ -28,6 +28,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				report_detail: action.result
 			}
+		case 'SHOW_INCIDENT_INFO':
+			return { ...state,
+				incident_info: action.incident_info
+			}
 		default:
 			return state;
 		}

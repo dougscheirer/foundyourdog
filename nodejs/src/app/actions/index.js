@@ -79,3 +79,10 @@ export const getReportInfo = (id) => {
 		});
 	}
 }
+
+export const showIncidentInfo = (incident) => {
+	return {
+		type: 'SHOW_INCIDENT_INFO',
+		incident_info: incident
+	}
+}
