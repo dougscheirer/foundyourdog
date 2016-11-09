@@ -31,10 +31,12 @@ export class DogList extends Component {
   incidentToInfo(incident) {
     console.log(incident.dog_color)
     return (
-      <div>{incident.incident_date} : 
+      <div>{incident.date}
         <a href="" onClick={ (e) => this.showCard(e, incident) } >
-        {incident.dog_color}&nbsp;{incident.dog_gender === 'F' ? 'female' : 'male'}&nbsp;
-                        &nbsp;{incident.dog_basic_type}&nbsp;[{ (!!incident.dog_name) ? incident.dog_name : "no name" }]
+        [{ (!!incident.dog_name) ? incident.dog_name : "no name" }]&nbsp;
+        {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
+        {incident.dog_color}{" : "}
+        {incident.dog_basic_type}
         </a></div>)
   }
 
@@ -56,11 +58,8 @@ export class DogList extends Component {
                 lat: incident['map_latitude'],
                 lng: incident['map_longitude']
               },
-              key: incident['id'],
-              dog_id: incident['dog_id'],
-              date: incident['incident_date'],
-              state: incident['state'],
-              resolution: incident['resolution'],
+              incident: incident,
+              key: incident['uuid'],
               defaultAnimation: 2
             });
           }
@@ -143,24 +142,25 @@ export class DogList extends Component {
     if (this.props.displaytype === "list") {
       var rows = [];
       this.state.markers.forEach((marker) => {
-        rows.push(<tr>
-            <td>{marker.date}</td>
-            <td><a href="" onClick={ (e) => this.showCard(e, marker) }>
-              { this.incidentToInfo(marker) }</a></td>
+        rows.push(<tr key={marker.key}>
+            <td>{marker.incident.incident_date}</td>
+            <td>{ this.incidentToInfo(marker.incident) }</td>
             <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
-            <td>{marker.resolution}</td>
-            <td>{marker.state}</td>
+            <td>{marker.incident.resolution}</td>
+            <td>{marker.incident.state}</td>
             </tr>);
       });
       return (
         <div>
           <table style={{width: "100%"}}>
           <thead>
+            <tr>
             <th>Date</th>
             <th>Description</th>
             <th>Position</th>
             <th>Resolution</th>
             <th>State</th>
+            </tr>
           </thead>
           <tbody>
           {  rows }
