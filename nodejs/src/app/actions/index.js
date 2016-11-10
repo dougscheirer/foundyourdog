@@ -86,3 +86,19 @@ export const showIncidentInfo = (incident) => {
 		incident_info: incident
 	}
 }
+
+// TODO: needless copy pasta
+export const getIncidentInfo = (id) => {
+	return dispatch => {
+		fetch('/reports/' + id, { credentials: 'include'}).then((res) => {
+			switch (res.status) {
+				default:
+					return null;
+				case 200:
+					return res.json();
+			}
+		}).then((res) => {
+			dispatch(showIncidentInfo(res));
+		});
+	}
+}

@@ -4,7 +4,7 @@ import SimpleMap from "./simple_map";
 import $ from 'jquery';
 import { browserHistory } from 'react-router';
 import ListMapToggle from "./listMapToggle";
-import { loginRequired, showIncidentInfo } from "../actions";
+import { loginRequired, getIncidentInfo } from "../actions";
 import { connect } from 'react-redux';
 import ShowInfoCard from './info-card'
 
@@ -26,7 +26,7 @@ export class DogList extends Component {
 
   showCard(e, incident) {
     e.preventDefault();
-    this.props.dispatch(showIncidentInfo(incident));
+    this.props.dispatch(getIncidentInfo(incident.uuid));
   }
 
   incidentToInfo(incident) {
@@ -60,7 +60,8 @@ export class DogList extends Component {
               },
               incident: incident,
               key: incident['uuid'],
-              defaultAnimation: 2
+              defaultAnimation: 2,
+              incidentInfo: this.incidentToInfo(incident)
             });
           }
           this.setState({ markers: markers });
