@@ -23,6 +23,25 @@ class ShowInfoCard extends Component {
 		this.props.hide();
 	}
 
+	onContact(e) {
+		e.preventDefault();
+		// this.props.dispatch(contact_options(uuid));
+	}
+
+	getBreedingStatusRow(status) {
+		if (!!status)
+			return (<tr><td>Breeding status</td><td>{ status }</td></tr>);
+		else
+			return ("");
+	}
+
+	getNameRow(name) {
+		if (!!name)
+			return (<tr><td>Name</td><td>{ name }</td></tr>)
+		else
+			return("")
+	}
+
 	render() {
 		const dialogStyles = {
 			  base: {
@@ -42,42 +61,33 @@ class ShowInfoCard extends Component {
 			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 			  <ModalHeader>
 			    <ModalClose onClick={ this.hideModal.bind(this) }/>
-			    <ModalTitle>Info for { "dog name" }</ModalTitle>
+			    <ModalTitle>Info for { !!incident_info.dog.name ? incident_info.dog.name : "unknown" }</ModalTitle>
 			  </ModalHeader>
 			  <ModalBody>
 		  		<div>
 					<img style={{display:"block", margin:"auto", width: "200px"}} src={ "/api/images/" + incident_info.image.uuid } alt="dog" />
 				</div>
 				<div>
-					<div>
-			            <table width="100%">
-			            	<thead>
-			            		<tr><th>Report details</th></tr>
-			            	</thead>
-			            	<tbody>
-			            		<tr><td>Date</td><td>{ incident_info.incident.incident_date }</td></tr>
-			            		<tr><td>Status</td><td>{ incident_info.incident.state }</td></tr>
-			            		<tr><td>Resolution</td><td>{ incident_info.incident.resolution }</td></tr>
-			            		<tr><td>Reporter</td><td>Contact reporter</td></tr>
-			            	</tbody>
-			            </table>
-					</div>
-					<div>
-					    <table width="100%">
-			            	<thead>
-			            		<tr><th>Dog profile</th></tr>
-			            	</thead>
-			            	<tbody>
-								<tr><td>Basic type</td><td>{ incident_info.dog.basic_type }</td></tr>
-								<tr><td>Color</td><td>{ incident_info.dog.color }</td></tr>
-								<tr><td>Breeding status</td><td>{ incident_info.dog.intact }</td></tr>
-								<tr><td>Name</td><td>{ incident_info.dog.name }</td></tr>
-								<tr><td>Added on</td><td>{ incident_info.dog.added_date }</td></tr>
-								<tr><td>Tags</td><td>{ incident_info.dog.tags }</td></tr>
-								<tr><td>Owner</td><td>Contact owner</td></tr>
-	    	            	</tbody>
-			            </table>
-					</div>
+					<p></p>
+	            	<p>Reported <strong>{ incident_info.state === 'found' ? "found" : "lost" }</strong>
+	            			{ " on " }<strong>{ incident_info.incident.incident_date }</strong>
+			            	{!!incident_info.incident.resolution ? "(" + incident_info.incident.resolution + ")" : ""}
+			            	<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
+			            			{ "Contact " + (incident_info.state === 'found' ? "finder" : "owner") }
+			            	</button></p>
+				    <table width="100%">
+		            	<thead>
+		            		<tr><th>Dog profile</th></tr>
+		            	</thead>
+		            	<tbody>
+							{ this.getNameRow(incident_info.dog.name) }
+							<tr><td>Breed</td><td>{ incident_info.dog.basic_type }</td></tr>
+							<tr><td>Color</td><td>{ incident_info.dog.color }</td></tr>
+							{ this.getBreedingStatusRow(incident_info.dog.intact) }
+							<tr><td>Added on</td><td>{ incident_info.dog.added_date }</td></tr>
+							<tr><td></td><td>{ incident_info.dog.tags }</td></tr>
+    	            	</tbody>
+		            </table>
 				</div>
 	 	  </ModalBody>
 		  <ModalFooter>

@@ -211,7 +211,7 @@ class NewFormBase extends Component {
 				<div className="form-group">
 				  <label className="col-md-4 control-label" htmlFor="date">Date when it happened</label>
 				  <div className="col-md-4">
-  				    <DateField dateFormat="YYYY-MM-DD" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
+  				    <DateField  dateFormat="YYYY-MM-DD HH:mm:ss" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 				  </div>
 				</div>
 

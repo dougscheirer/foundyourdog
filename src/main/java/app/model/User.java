@@ -1,6 +1,7 @@
 package app.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import app.Validatable;
@@ -14,9 +15,9 @@ public class User implements Validatable {
 	private String password_hash;
 	private String confirmation_token;
 	private Boolean confirmed;
-	private Date signup_date;
-	private Date confirm_date;
-	private Date deactivate_date;
+	private Timestamp signup_date;
+	private Timestamp confirm_date;
+	private Timestamp deactivate_date;
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;

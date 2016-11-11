@@ -76,7 +76,7 @@ class ReportSummary extends Component {
 				            		<tr><th>Dog profile</th></tr>
 				            	</thead>
 				            	<tbody>
-									<tr><td>Basic type</td><td>{ report.dog.basic_type }</td></tr>
+									<tr><td>Breed</td><td>{ report.dog.basic_type }</td></tr>
 									<tr><td>Color</td><td>{ report.dog.color }</td></tr>
 									<tr><td>Breeding status</td><td>{ report.dog.intact }</td></tr>
 									<tr><td>Name</td><td>{ report.dog.name }</td></tr>

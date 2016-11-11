@@ -31,7 +31,7 @@ public class CreateIncidentReportHandler extends AbstractRequestHandler<Incident
 		
 		Dog newDog = new Dog();
 		Date utilDate = new java.util.Date();
-		newDog.setAdded_date(new java.sql.Date(utilDate.getTime()));
+		newDog.setAdded_date(new java.sql.Timestamp(utilDate.getTime()));
 		newDog.setBasic_type(form.getDog_basic_type());
 		newDog.setColor(form.getDog_color());
 		newDog.setGender(form.getDog_gender());

@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash text not null,
     confirmation_token text not null,
     confirmed bool,
-    signup_date date,
-    confirm_date date,
-    deactivate_date date,
+    signup_date timestamp,
+    confirm_date timestamp,
+    deactivate_date timestamp,
     phone1 text,
     phone2 text,
     inapp_notifications bool
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS incidents (
     map_longitude float,
     reporter_id text,
     dog_id text,
-    incident_date date,
+    incident_date timestamp,
     state text not null,
     resolution text
 );
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS resolutions (
     incident_id text,
     dog_id text,
     dog_id_owner text,
-    resolve_date date,
+    resolve_date timestamp,
     resolve_text text
 );
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS dogs (
 	owner_id text,
 	tags text,
 	name text,
-	added_date date,
+	added_date timestamp,
     image_id text
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS images (
 	uuid text primary key,
 	user_id text not null,
 	image_location text,
-	upload_date date,
+	upload_date timestamp,
 	tags text,
 	dog_id text,
     status text

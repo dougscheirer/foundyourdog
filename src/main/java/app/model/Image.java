@@ -1,6 +1,7 @@
 package app.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 import lombok.Data;
 import app.Validatable;
 
@@ -9,7 +10,7 @@ public class Image implements Validatable {
 	private String uuid;
 	private String user_id;
 	private String image_location;
-	private Date upload_date;
+	private Timestamp upload_date;
 	private String tags;
 	private String dog_id;
 	private String status;

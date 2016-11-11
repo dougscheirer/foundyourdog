@@ -1,6 +1,7 @@
 package app.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import app.Validatable;
 import lombok.Data;
@@ -11,7 +12,7 @@ public class IncidentBrief implements Validatable {
 	private String uuid;
 	private float map_latitude;
 	private float map_longitude;
-	private Date incident_date;
+	private Timestamp incident_date;
 	private String state;
 	private String resolution;
 	private String reporter_id;

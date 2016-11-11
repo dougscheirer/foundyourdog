@@ -3,7 +3,7 @@ package app.handlers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
@@ -32,7 +32,7 @@ public class ImageUploadHandler implements Route {
 		java.util.Date utilDate = new java.util.Date();
 		newImage.setUser_id(Main.getCurrentUser(request).getUuid());
 		newImage.setImage_location(this.imageLocation);
-		newImage.setUpload_date(new java.sql.Date(utilDate.getTime()));
+		newImage.setUpload_date(new java.sql.Timestamp(utilDate.getTime()));
 		newImage.setStatus("unassigned");
 		// TODO: if it's not part of a report, it will have a dog id
 		String uuid = model.createImage(newImage);
