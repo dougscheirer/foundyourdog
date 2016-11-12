@@ -1,6 +1,8 @@
 package app.handlers;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import spark.Request;
@@ -59,7 +61,7 @@ public abstract class AbstractRequestHandler<V extends Validatable> implements R
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			// set the date format for our app
-			DateFormat df = new DateFormat("YYYY-MM-DD HH:mm:ss");
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			objectMapper.setDateFormat(df);
 					
 			V value = null;

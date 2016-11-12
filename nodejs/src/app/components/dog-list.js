@@ -29,15 +29,21 @@ export class DogList extends Component {
     this.props.dispatch(getIncidentInfo(incident.uuid));
   }
 
-  incidentToInfo(incident) {
+  incidentToLink(incident) {
     return (
-      <div>{incident.date}
         <a href="" onClick={ (e) => this.showCard(e, incident) } >
         [{ (!!incident.dog_name) ? incident.dog_name : "no name" }]&nbsp;
         {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
         {incident.dog_color}{" : "}
         {incident.dog_basic_type}
-        </a></div>)
+        </a>)
+  }
+
+  incidentToInfo(incident) {
+    const theDate = new Date(incident.incident_date);
+    return (
+      <div>{ theDate.toDateString() }&nbsp;
+        { this.incidentToLink(incident) }</div>)
   }
 
   getServerData(location, zoom) {
@@ -143,9 +149,10 @@ export class DogList extends Component {
     if (this.props.displaytype === "list") {
       var rows = [];
       this.state.markers.forEach((marker) => {
+        const theDate = new Date(marker.incident.incident_date);
         rows.push(<tr key={marker.key}>
-            <td>{marker.incident.incident_date}</td>
-            <td>{ this.incidentToInfo(marker.incident) }</td>
+            <td>{ theDate.toString() }</td>
+            <td>{ this.incidentToLink(marker.incident) }</td>
             <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
             <td>{marker.incident.resolution}</td>
             <td>{marker.incident.state}</td>

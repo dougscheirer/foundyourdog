@@ -70,7 +70,7 @@ class ShowInfoCard extends Component {
 				<div>
 					<p></p>
 	            	<p>Reported <strong>{ incident_info.state === 'found' ? "found" : "lost" }</strong>
-	            			{ " on " }<strong>{ incident_info.incident.incident_date }</strong>
+	            			{ " on " }<strong>{ Date(incident_info.incident.incident_date) }</strong>
 			            	{!!incident_info.incident.resolution ? "(" + incident_info.incident.resolution + ")" : ""}
 			            	<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
 			            			{ "Contact " + (incident_info.state === 'found' ? "finder" : "owner") }
@@ -84,7 +84,7 @@ class ShowInfoCard extends Component {
 							<tr><td>Breed</td><td>{ incident_info.dog.basic_type }</td></tr>
 							<tr><td>Color</td><td>{ incident_info.dog.color }</td></tr>
 							{ this.getBreedingStatusRow(incident_info.dog.intact) }
-							<tr><td>Added on</td><td>{ incident_info.dog.added_date }</td></tr>
+							<tr><td>Added on</td><td>{ Date(incident_info.dog.added_date) }</td></tr>
 							<tr><td></td><td>{ incident_info.dog.tags }</td></tr>
     	            	</tbody>
 		            </table>

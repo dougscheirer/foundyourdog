@@ -63,7 +63,7 @@ class ReportSummary extends Component {
 				            		<tr><th>Report details</th></tr>
 				            	</thead>
 				            	<tbody>
-				            		<tr><td>Date</td><td>{ report.incident.incident_date }</td></tr>
+				            		<tr><td>Date</td><td>{ Date(report.incident.incident_date) }</td></tr>
 				            		<tr><td>Status</td><td>{ report.incident.state }</td></tr>
 				            		<tr><td>Resolution</td><td>{ report.incident.resolution }</td></tr>
 				            		<tr><td>Reporter</td><td>Contact reporter</td></tr>
@@ -80,7 +80,7 @@ class ReportSummary extends Component {
 									<tr><td>Color</td><td>{ report.dog.color }</td></tr>
 									<tr><td>Breeding status</td><td>{ report.dog.intact }</td></tr>
 									<tr><td>Name</td><td>{ report.dog.name }</td></tr>
-									<tr><td>Added on</td><td>{ report.dog.added_date }</td></tr>
+									<tr><td>Added on</td><td>{ Date(report.dog.added_date) }</td></tr>
 									<tr><td>Tags</td><td>{ report.dog.tags }</td></tr>
 									<tr><td>Owner</td><td>Contact owner</td></tr>
 		    	            	</tbody>
