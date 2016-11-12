@@ -170,7 +170,12 @@ class NewFormBase extends Component {
 		// 1) uploaded image (show disabled upload and reset button [reset on server], preview of image, from server)
 		// 2) image, not uploaded (show preview, upload and reset button)
 		// 3) no image (show dropzone)
-  		if (!!this.state.uploaded_image) {
+		const uploaded = (this.props.existing_image || this.state.uploaded_image);
+
+  		if (!!uploaded) {
+			const image_src = (!!this.props.existing_image ?
+				"/api/images/" + this.props.existing_image.uuid :
+				this.state.image_preview.preview)
             return (
             	<div>
             		<div>
@@ -179,7 +184,7 @@ class NewFormBase extends Component {
 		           		</button>
 		           		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
 	         	    </div>
-	           		<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
+	           		<img style={{width: "200px"}} alt="current report" src={ image_src } />
 	           	</div>)
   		} else if (!!this.state.image_preview) {
 			return (
@@ -313,7 +318,7 @@ const mapFoundStateToProps = (state, myprops) => ({
 	nameRequired : false,
 	submitUrl : "/api/found/new",
 	title : "I found a dog",
-	existing_image : state.unassinged_image
+	existing_image : state.unassigned_image
 });
 
 const mapLostStateToProps = (state, myprops) => ({
@@ -321,7 +326,7 @@ const mapLostStateToProps = (state, myprops) => ({
 	nameRequired : true,
 	submitUrl : "/api/lost/new",
 	title : "I lost a dog",
-	existing_image : state.unassinged_image
+	existing_image : state.unassigned_image
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
