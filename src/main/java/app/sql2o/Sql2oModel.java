@@ -241,9 +241,13 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public String deleteImage(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public void deleteImage(String id) {
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery(
+							"delete from images where uuid=:id")
+					.addParameter("id", id)
+					.executeUpdate();
+		}
 	}
 
 	@Override
@@ -289,6 +293,18 @@ public class Sql2oModel implements Model {
 					.addParameter("status", status)
 					.executeUpdate();
 			return imageID;
+		}
+	}
+
+	@Override
+	public Optional<Image> getUnassignedImage(String userid) {
+		try (Connection conn = sql2o.open()) {
+			List<Image> images = conn.createQuery("select * from images where user_id=:userid and dog_id is null order by upload_date desc limit 1")
+					.addParameter("userid", userid).executeAndFetch(Image.class);
+			if (images.size() != 1) {
+				return Optional.empty();
+			}
+			return Optional.of(images.get(0));
 		}
 	}
 }

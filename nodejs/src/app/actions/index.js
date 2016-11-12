@@ -102,3 +102,22 @@ export const getIncidentInfo = (id) => {
 		});
 	}
 }
+
+export const getUnassignedImages = () => {
+	return dispatch => {
+		fetch('/reports/images/unassigned', { credentials: 'include' }).then((res) => {
+			switch (res.status) {
+				default:
+					return null;
+				case 200:
+					return res.json();
+			}
+		}).then((res) => {
+			if (!!res)
+				return dispatch({
+					type: 'FOUND_UNASSIGNED_IMAGE',
+					image: res
+				});
+		});
+	}
+}

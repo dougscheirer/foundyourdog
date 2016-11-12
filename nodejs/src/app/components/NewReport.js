@@ -7,7 +7,7 @@ import 'react-date-picker/index.css'
 import SimpleMap from "./simple_map"
 import Dropzone from "react-dropzone"
 import { connect } from "react-redux"
-import { showLogin, uploadReportImage } from "../actions"
+import { showLogin, uploadReportImage, getUnassignedImages } from "../actions"
 import fetch from 'isomorphic-fetch'
 import FormData from 'form-data'
 import { browserHistory } from 'react-router';
@@ -73,6 +73,10 @@ class NewFormBase extends Component {
 
 	componentDidMount() {
 		this.requireLoginCheck();
+		this.props.getUnassignedImages();
+		if (this.props.exisiting_image) {
+			this.setState({uploaded_image: this.props.existing_image});
+		}
 	}
 
 	validate() {
@@ -149,8 +153,11 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
-		console.log("TODO: delete server image");
-		this.setState({image_preview: undefined, uploaded_image: undefined});
+		fetch('/report/images/' + this.state.uploaded_image.id, {
+		  credentials: 'include',
+		  method: 'DELETE' }).then((res) => {
+			this.setState({image_preview: undefined, uploaded_image: undefined});
+		});
 	}
 
 	resetLocalImage(e) {
@@ -160,7 +167,7 @@ class NewFormBase extends Component {
 
 	upload_or_preview() {
 		// there are 3 states here:
-		// 1) uploaded image (show disabled upload and reset button [reset on server], preview of image)
+		// 1) uploaded image (show disabled upload and reset button [reset on server], preview of image, from server)
 		// 2) image, not uploaded (show preview, upload and reset button)
 		// 3) no image (show dropzone)
   		if (!!this.state.uploaded_image) {
@@ -306,6 +313,7 @@ const mapFoundStateToProps = (state, myprops) => ({
 	nameRequired : false,
 	submitUrl : "/api/found/new",
 	title : "I found a dog",
+	existing_image : state.unassinged_image
 });
 
 const mapLostStateToProps = (state, myprops) => ({
@@ -313,11 +321,13 @@ const mapLostStateToProps = (state, myprops) => ({
 	nameRequired : true,
 	submitUrl : "/api/lost/new",
 	title : "I lost a dog",
+	existing_image : state.unassinged_image
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
 	onLoginRequired : () => { dispatch(showLogin('login')); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
+	getUnassignedImages: () => { dispatch(getUnassignedImages()); }
 });
 
 export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);

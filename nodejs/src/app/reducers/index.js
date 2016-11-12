@@ -32,6 +32,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				incident_info: action.incident_info
 			}
+		case 'FOUND_UNASSIGNED_IMAGE':
+			return { ...state,
+				unassigned_image: action.image
+			}
 		default:
 			return state;
 		}

@@ -19,11 +19,13 @@ import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.DetailUser;
+import app.handlers.FindUnassignedImageHandler;
 import app.handlers.GetDogsHandler;
 import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUsersIndexHandler;
+import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
@@ -122,6 +124,8 @@ public class Main {
 		get("/reports/:id", new GetIncidentDetailHandler(model));
 		
 		post("/report/images/new", new ImageUploadHandler(model, options.imageLocation));
+		delete("/report/images/:id", new ImageDeleteHandler(model));
+		get("/reports/images/unassigned", new FindUnassignedImageHandler(model));
 		
 		// what is java bad about? serving static image files, so change this when really using it
 		get("/api/images/:id", new GetImageHandler(model));
