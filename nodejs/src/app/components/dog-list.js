@@ -12,6 +12,7 @@ export class DogList extends Component {
   state = {
   };
 
+  default_location = { lat : 37.976761, lng: -122.090577}
   handleMapClick = this.handleMapClick.bind(this);
   handleMarkerClick = this.handleMarkerClick.bind(this);
   handleZoomChanged = this.handleZoomChanged.bind(this);
@@ -46,13 +47,27 @@ export class DogList extends Component {
         { this.incidentToLink(incident) }</div>)
   }
 
+  zoomFromAccuracy(accuracy) {
+     // Use min(width, height) (to properly fit the screen
+    const screenSize = Math.min(window.screen.availWidth, window.screen.availHeight);
+
+    // Equators length
+    const equator = 40075004;
+
+    // The meters per pixel required to show the whole area the user might be located in
+    const requiredMpp = accuracy/screenSize;
+
+    // Calculate the zoom level
+    return Math.round(((Math.log(equator / (256 * requiredMpp))) / Math.log(2)) + 1);
+  }
+
   getServerData(location, zoom) {
     if (location != null) {
       if (!!!zoom) {
         zoom = 16;
       }
-      console.log("Fetching server data based on " + location.lat + " / " + location.lng);
-      this.setState( { center: location } );
+      console.log("Fetching server data based on " + location.lat + " / " + location.lng + " zoom: " + zoom);
+      this.setState( { center: location, zoom: zoom } );
       // TODO: switch to fetch and an action for the store
       this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom,
         function (result) {
@@ -83,32 +98,34 @@ export class DogList extends Component {
     this.getServerData(null, 16);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          this.getServerData({ lat: position.coords.latitude, lng: position.coords.longitude });
+          // TODO: use positions.accuracy to set the zoom
+          this.getServerData(
+            { lat: position.coords.latitude, lng: position.coords.longitude }, this.zoomFromAccuracy(position.coords.accuracy));
         }.bind(this),
         function (error) {
           console.log("geolocation error: ");
           console.log(error);
+          this.getServerData(this.default_location);
         });
     }
   }
 
-  handleZoomChanged() {
+  handleZoomChanged(a,b,c) {
     // TODO: the refs thing doesn't work, don't know why
     //       when it does, change the query based on the area of the zoom
-    const zoomLevel = this.refs.map.getZoom();
+    const zoomLevel = this.map.map.getZoom();
     if (zoomLevel !== this.state.zoomLevel) {
       // Notice: Check zoomLevel equality here,
       // or it will fire zoom_changed event infinitely
       this.setState({
-        zoom: zoomLevel,
-        content: `Zoom: ${zoomLevel}`,
+        zoom: zoomLevel
       });
     }
   }
 
   handleCenterChanged() {
     if (this.map != null) {
-      this.getServerData({ lat: this.map.map.getCenter().lat(), lng: this.map.map.getCenter().lng() }, this.map.map.getZoom());
+      this.getServerData({ lat: this.map.map.getCenter().lat(), lng: this.map.map.getCenter().lng() }, this.state.zoom );
     }
   }
 
@@ -184,6 +201,7 @@ export class DogList extends Component {
                   ref={(map) => this.map = map}
                   showtype={this.props.showtype}
                   center={this.state.center}
+                  zoom={this.state.zoom}
                   markers={this.state.markers}
                   selected={this.state.selected}
                   newreport={this.state.newreport}

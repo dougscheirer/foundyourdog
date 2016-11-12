@@ -60,12 +60,14 @@ export default class SimpleMap extends Component {
             googleMapElement={
               <GoogleMap
                 ref={(map) => this.map = map}
+                zoom={zoom}
                 defaultZoom={zoom}
                 defaultCenter={ center }
                 center={ center }
                 onClick={this.props.onMapClick}
                 onDragEnd={this.props.onCenterChanged}
                 onIdle={this.props.onCenterChanged}
+                onZoomChanged={this.props.onZoomChanged}
               >
                 {markers}
                 {info}

@@ -113,11 +113,13 @@ export const getUnassignedImages = () => {
 					return res.json();
 			}
 		}).then((res) => {
-			if (!!res)
+			if (!!res) {
+				const image_block = (res.uuid != undefined) ? res : undefined;
 				return dispatch({
 					type: 'FOUND_UNASSIGNED_IMAGE',
-					image: res
+					image: image_block
 				});
+			}
 		});
 	}
 }

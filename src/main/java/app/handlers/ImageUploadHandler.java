@@ -58,7 +58,7 @@ public class ImageUploadHandler implements Route {
 		is.close();
 		
 		response.status(200);
-		response.body("{\"id\":\"" + uuid + "\"}");
+		response.body(AbstractRequestHandler.dataToJson(model.getImage(uuid).get()));
 		
 		return response.body();
 	}

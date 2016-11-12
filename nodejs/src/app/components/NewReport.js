@@ -74,8 +74,11 @@ class NewFormBase extends Component {
 	componentDidMount() {
 		this.requireLoginCheck();
 		this.props.getUnassignedImages();
-		if (this.props.exisiting_image) {
-			this.setState({uploaded_image: this.props.existing_image});
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.existing_image !== this.props.existing_image) {
+			this.setState({uploaded_image: nextProps.existing_image});
 		}
 	}
 
@@ -98,7 +101,7 @@ class NewFormBase extends Component {
 		};
 
 		if (!!this.state.uploaded_image) {
-			formdata.photo_id = this.state.uploaded_image.id;
+			formdata.photo_id = this.state.uploaded_image.uuid;
 		}
 
 		// required: date, name (sometimes), basic_type, color
@@ -153,7 +156,7 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
-		fetch('/report/images/' + this.state.uploaded_image.id, {
+		fetch('/report/images/' + this.state.uploaded_image.uuid, {
 		  credentials: 'include',
 		  method: 'DELETE' }).then((res) => {
 			this.setState({image_preview: undefined, uploaded_image: undefined});
@@ -170,12 +173,10 @@ class NewFormBase extends Component {
 		// 1) uploaded image (show disabled upload and reset button [reset on server], preview of image, from server)
 		// 2) image, not uploaded (show preview, upload and reset button)
 		// 3) no image (show dropzone)
-		const uploaded = (this.props.existing_image || this.state.uploaded_image);
+		const uploaded = this.state.uploaded_image;
 
   		if (!!uploaded) {
-			const image_src = (!!this.props.existing_image ?
-				"/api/images/" + this.props.existing_image.uuid :
-				this.state.image_preview.preview)
+			const image_src = "/api/images/" + this.state.uploaded_image.uuid;
             return (
             	<div>
             		<div>

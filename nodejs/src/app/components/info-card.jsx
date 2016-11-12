@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showIncidentInfo } from '../actions';
 import spinner from '../../spinner.svg';
 import $ from 'jquery';
+import no_image from '../../noimage.svg'
 
 class ShowInfoCard extends Component {
 
@@ -42,6 +43,16 @@ class ShowInfoCard extends Component {
 			return("")
 	}
 
+	imageOrEmpty(incident_info) {
+		const source = (!!incident_info.image && !!incident_info.image.uuid) ?
+					"/api/images/" + incident_info.image.uuid :
+					no_image;
+
+			return (<img style={{display:"block", margin:"auto", width: "200px"}}
+						 src={ source }
+						 alt="dog" />)
+	}
+
 	render() {
 		const dialogStyles = {
 			  base: {
@@ -57,6 +68,8 @@ class ShowInfoCard extends Component {
 			return (<div></div>)
 		}
 
+		const image = this.imageOrEmpty(incident_info);
+
 		return (
 			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 			  <ModalHeader>
@@ -65,7 +78,7 @@ class ShowInfoCard extends Component {
 			  </ModalHeader>
 			  <ModalBody>
 		  		<div>
-					<img style={{display:"block", margin:"auto", width: "200px"}} src={ "/api/images/" + incident_info.image.uuid } alt="dog" />
+					{ image }
 				</div>
 				<div>
 					<p></p>
