@@ -23,15 +23,15 @@ insert into incidents (uuid, map_latitude, map_longitude, dog_id, incident_date,
 				      ('5', 37.9728918, -122.1025806, '5', '09/30/2016', 'lost', null);
 
 insert into dogs (uuid, basic_type, color, gender, intact, owner_id, tags, name, added_date) values
-				 ('1', 'labrador', 'brown', 'f', 'unknown', null, null, null, '09/26/2016');
+				 ('1', 'labrador', 'brown', 'f', 'unknown', null, null, 'ralph', '09/26/2016');
 insert into dogs (uuid, basic_type, color, gender, intact, owner_id, tags, name, added_date) values
 				 ('2', 'aussie', 'black', 'f', 'unknown', null, null, null, '09/27/2016');
 insert into dogs (uuid, basic_type, color, gender, intact, owner_id, tags, name, added_date) values
-				 ('3', 'golden retriever', 'light orange', 'm', 'yes', '1', null, null, '09/28/2016');
+				 ('3', 'golden retriever', 'light orange', 'm', 'yes', '1', null, 'bing bong', '09/28/2016');
 insert into dogs (uuid, basic_type, color, gender, intact, owner_id, tags, name, added_date) values
 				 ('4', 'labrador', 'black', 'f', 'unknown', null, null, null, '09/29/2016');
 insert into dogs (uuid, basic_type, color, gender, intact, owner_id, tags, name, added_date) values
-				 ('5', 'great dane', 'brindle, white and black', 'm', 'no', '3', null, null, '09/30/2016');
+				 ('5', 'great dane', 'brindle, white and black', 'm', 'no', '3', null, 'fruit salad', '09/30/2016');
 
 insert into images (uuid, user_id, image_location, upload_date, tags, dog_id) values
 				 ('1', '1', 'http://foundyourdog.com/images/1', '09/26/2016', null, '1');

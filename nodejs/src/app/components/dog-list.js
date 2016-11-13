@@ -33,7 +33,6 @@ export class DogList extends Component {
   incidentToLink(incident) {
     return (
         <a href="" onClick={ (e) => this.showCard(e, incident) } >
-        [{ (!!incident.dog_name) ? incident.dog_name : "no name" }]&nbsp;
         {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
         {incident.dog_color}{" : "}
         {incident.dog_basic_type}
@@ -43,8 +42,11 @@ export class DogList extends Component {
   incidentToInfo(incident) {
     const theDate = new Date(incident.incident_date);
     return (
-      <div>{ theDate.toDateString() }&nbsp;
-        { this.incidentToLink(incident) }</div>)
+      <div>
+        { theDate.toDateString() }
+        &nbsp;[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]&nbsp;
+        { this.incidentToLink(incident) }
+      </div>)
   }
 
   zoomFromAccuracy(accuracy) {
@@ -95,7 +97,6 @@ export class DogList extends Component {
 
   componentDidMount() {
     // fire off a geolocation request and re-center the map
-    this.getServerData(null, 16);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           // TODO: use positions.accuracy to set the zoom
@@ -169,6 +170,7 @@ export class DogList extends Component {
         const theDate = new Date(marker.incident.incident_date);
         rows.push(<tr key={marker.key}>
             <td>{ theDate.toString() }</td>
+            <td>{ (!!marker.incident.dog_name) ? marker.incident.dog_name : "no name" }</td>
             <td>{ this.incidentToLink(marker.incident) }</td>
             <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
             <td>{marker.incident.resolution}</td>
@@ -182,6 +184,7 @@ export class DogList extends Component {
           <thead>
             <tr>
             <th>Date</th>
+            <th>Name</th>
             <th>Description</th>
             <th>Position</th>
             <th>Resolution</th>

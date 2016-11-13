@@ -33,14 +33,14 @@ class ShowInfoCard extends Component {
 		if (!!status)
 			return (<tr><td>Breeding status</td><td>{ status }</td></tr>);
 		else
-			return ("");
+			return undefined
 	}
 
 	getNameRow(name) {
 		if (!!name)
 			return (<tr><td>Name</td><td>{ name }</td></tr>)
 		else
-			return("")
+			return undefined
 	}
 
 	imageOrEmpty(incident_info) {
@@ -76,7 +76,7 @@ class ShowInfoCard extends Component {
 			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 			  <ModalHeader>
 			    <ModalClose onClick={ this.hideModal.bind(this) }/>
-			    <ModalTitle>Info for { !!dog.name ? dog.name : "unknown" }</ModalTitle>
+			    <ModalTitle>Info for &quot;{ !!dog.name ? dog.name : "unknown" }&quot;</ModalTitle>
 			  </ModalHeader>
 			  <ModalBody>
 		  		<div>
