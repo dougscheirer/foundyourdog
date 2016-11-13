@@ -68,13 +68,15 @@ class ShowInfoCard extends Component {
 			return (<div></div>)
 		}
 
+		const incident = incident_info.incident;
+		const dog = incident_info.dog;
 		const image = this.imageOrEmpty(incident_info);
 
 		return (
 			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 			  <ModalHeader>
 			    <ModalClose onClick={ this.hideModal.bind(this) }/>
-			    <ModalTitle>Info for { !!incident_info.dog.name ? incident_info.dog.name : "unknown" }</ModalTitle>
+			    <ModalTitle>Info for { !!dog.name ? dog.name : "unknown" }</ModalTitle>
 			  </ModalHeader>
 			  <ModalBody>
 		  		<div>
@@ -82,23 +84,23 @@ class ShowInfoCard extends Component {
 				</div>
 				<div>
 					<p></p>
-	            	<p>Reported <strong>{ incident_info.state === 'found' ? "found" : "lost" }</strong>
-	            			{ " on " }<strong>{ Date(incident_info.incident.incident_date) }</strong>
-			            	{!!incident_info.incident.resolution ? "(" + incident_info.incident.resolution + ")" : ""}
+	            	<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
+	            			{ " on " }<strong>{ Date(incident.incident_date) }</strong>
+			            	{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
 			            	<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
-			            			{ "Contact " + (incident_info.state === 'found' ? "finder" : "owner") }
+			            			{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
 			            	</button></p>
 				    <table width="100%">
 		            	<thead>
 		            		<tr><th>Dog profile</th></tr>
 		            	</thead>
 		            	<tbody>
-							{ this.getNameRow(incident_info.dog.name) }
-							<tr><td>Breed</td><td>{ incident_info.dog.basic_type }</td></tr>
-							<tr><td>Color</td><td>{ incident_info.dog.color }</td></tr>
-							{ this.getBreedingStatusRow(incident_info.dog.intact) }
-							<tr><td>Added on</td><td>{ Date(incident_info.dog.added_date) }</td></tr>
-							<tr><td></td><td>{ incident_info.dog.tags }</td></tr>
+							{ this.getNameRow(dog.name) }
+							<tr><td>Breed</td><td>{ dog.basic_type }</td></tr>
+							<tr><td>Color</td><td>{ dog.color }</td></tr>
+							{ this.getBreedingStatusRow(dog.intact) }
+							<tr><td>Added on</td><td>{ Date(dog.added_date) }</td></tr>
+							<tr><td></td><td>{ dog.tags }</td></tr>
     	            	</tbody>
 		            </table>
 				</div>
