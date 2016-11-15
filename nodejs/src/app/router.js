@@ -14,6 +14,7 @@ import Login from './components/login';
 import Feedback from './components/feedback';
 import { NewFound, NewLost } from "./components/NewReport";
 import ReportSummary from './components/report_summary'
+import ProfileLayout from './components/profile-layout'
 
 export default class Routes extends Component {
   render() {
@@ -22,12 +23,15 @@ export default class Routes extends Component {
     <Route component={MainLayout}>
       <Route path="/" component={Home} />
 
+    { /* not super happy with the routing, but tabs inside of the page make it generally weird */ }
+      <Route path="profile" component={ProfileLayout} />
+      <Route path="profile/*" component={ProfileLayout} />
+
       <Route path="lost">
         <Route component={LostSearchLayout}>
           <IndexRoute component={LostDogs} />
         </Route>
         <Route path="new" component={NewLost} />
-        <Route path=":dogId" component={DogProfile} />
       </Route>
 
       <Route path="found">
@@ -35,7 +39,6 @@ export default class Routes extends Component {
           <IndexRoute component={FoundDogs} />
         </Route>
         <Route path="new" component={NewFound} />
-        <Route path=":dogId" component={DogProfile} />
       </Route>
 
       <Route path="reports">

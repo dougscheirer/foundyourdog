@@ -11,8 +11,6 @@ import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showIncidentInfo } from '../actions';
-import spinner from '../../spinner.svg';
-import $ from 'jquery';
 import no_image from '../../noimage.svg'
 
 class ShowInfoCard extends Component {
@@ -112,6 +110,7 @@ class ShowInfoCard extends Component {
 }
 
 ShowInfoCard.propTypes = {
+	incident_info: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state, ownProps) => ({

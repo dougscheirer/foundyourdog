@@ -114,7 +114,7 @@ export const getUnassignedImages = () => {
 			}
 		}).then((res) => {
 			if (!!res) {
-				const image_block = (res.uuid != undefined) ? res : undefined;
+				const image_block = (res.uuid !== undefined) ? res : undefined;
 				return dispatch({
 					type: 'FOUND_UNASSIGNED_IMAGE',
 					image: image_block

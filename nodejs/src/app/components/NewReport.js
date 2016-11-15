@@ -204,6 +204,8 @@ class NewFormBase extends Component {
  	}
 
     render() {
+    	toastr.options = { "positionClass": "toast-top-center" }
+
     	const name_placeholder = this.props.nameRequired ? "dog's name" : "dog's name, if known";
     	const center = { lat: parseFloat(this.props.location.query['lat']),
     					 lng: parseFloat(this.props.location.query['lng']) };

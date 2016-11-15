@@ -69,3 +69,16 @@ a:hover {
   margin-bottom: 5px;
   border-color: #FCC;
 }
+
+.numberCircle {
+    display: inline;
+    border-radius: 33%;
+
+    margin-left: 3px;
+    background: #008000;
+    border: 2px solid #666;
+    color: #FFF;
+    text-align: center;
+
+    font: 16px Arial, sans-serif;
+}
