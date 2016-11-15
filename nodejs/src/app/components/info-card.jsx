@@ -109,10 +109,6 @@ class ShowInfoCard extends Component {
 	}
 }
 
-ShowInfoCard.propTypes = {
-	incident_info: PropTypes.object.isRequired
-}
-
 const mapStateToProps = (state, ownProps) => ({
 	incident_info: state.incident_info
 });

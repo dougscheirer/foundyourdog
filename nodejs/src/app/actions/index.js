@@ -65,6 +65,13 @@ export const reportFetched = (res) => {
 	}
 }
 
+export const wait_dialog = (show) => {
+	return {
+		type: 'SHOW_WAIT_DIALOG',
+		show: show
+	}
+}
+
 export const getReportInfo = (id) => {
 	return dispatch => {
 		fetch('/reports/' + id, { credentials: 'include'}).then((res) => {
@@ -90,6 +97,7 @@ export const showIncidentInfo = (incident) => {
 // TODO: needless copy pasta
 export const getIncidentInfo = (id) => {
 	return dispatch => {
+		dispatch(wait_dialog(true))
 		fetch('/reports/' + id, { credentials: 'include'}).then((res) => {
 			switch (res.status) {
 				default:

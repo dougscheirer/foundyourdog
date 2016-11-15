@@ -36,6 +36,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				unassigned_image: action.image
 			}
+		case 'SHOW_WAIT_DIALOG':
+			return { ...state,
+				show_wait_dialog: action.show
+			}
 		default:
 			return state;
 		}
