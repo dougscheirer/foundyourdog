@@ -46,7 +46,7 @@ class TabContainer extends Component {
 		const activeTab = this.renderActiveTab()
 
 		return (
-			<div>
+			<div { ...this.props } className="container">
 				<ul className="nav nav-tabs" role="tablist">
 					{ tabList }
 				</ul>
@@ -81,7 +81,7 @@ export default class ProfileLayout extends Component {
 		// figure out the active tab by the last in the url path
 		const active = this.activePath(this.props.location.pathname)
 
-		return (<TabContainer activeTab={ active }>
+		return (<TabContainer activeTab={ active } >
 					<Tab tabId="notifications" name="Notifications" link="/profile/notifications">
 						<Notifications />
 					</Tab>

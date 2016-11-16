@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 
 class NotificationPanel extends Component {
 	render() {
-		const expanded = this.props.expanded(this.props.id);
-		const chevronClasses = (!expanded) ? "glyphicon-chevron-up" : "glyphicon-chevron-down"
-		const panelClass = (!expanded) ? "in" : ""
+		const expanded = this.props.expanded(this.props.panelid);
+		const chevronClasses = (!expanded) ? "glyphicon-chevron-down" : "glyphicon-chevron-right"
+		const panelClass = (expanded) ? "in" : ""
 
 		return (<div className="panel-group">
 			  <div className="panel panel-default">
@@ -35,22 +35,22 @@ export default class Notifications extends Component {
 
 	stateToPanelStatus(panelId) {
 		// default state is expanded
-		if (!!!this.state.panel)
+		if (!!!this.state.panel || this.state.panel[panelId] === undefined)
 			return true;
-		return this.state.panel[panelId]
+		return !!this.state.panel[panelId]
 	}
 
 	render() {
 		return (<div className="user-profile-container">
-			<div className="container">
+			<div>
 				<div className="panel-group input-group" style={{ width: "50%" }} >
-				   <input type="text" className="form-control" />
+				   <input type="text" className="form-control" placeholder="Search..." />
 				   <span className="input-group-btn">
 				        <button className="btn btn-default glyphicon glyphicon-search" style={{ marginTop: "-1px" }} type="button"></button>
 				   </span>
 				</div>
 				</div>
-			<div className="container">
+			<div>
 				{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
 					<div>Pizza</div>
