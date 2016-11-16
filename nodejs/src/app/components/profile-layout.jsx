@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { Notifications, Reports, Dogs, Settings } from "./profile"
+import './home.css'
 
 class TabLink extends Component {
 	render() {
+		const className = (this.props.tagged) ? "box" : undefined
 		return (
 			<li role="presentation"
-				className={ this.props.active }>
-				<Link to={this.props.linkTo} role="tab">{this.props.text}</Link>
+				className={ this.props.active}>
+				<Link to={this.props.linkTo} role="tab" className={className}>{this.props.text}{this.props.extra}</Link>
 			</li>)
 	}
 }
@@ -18,10 +20,15 @@ class TabContainer extends Component {
 		return (tabId === this.props.activeTab)
 	}
 
+	getDecorator() {
+		// return (<div className="numberCircle">8</div>)
+		return undefined
+	}
+
 	getTabList(tabs) {
 		return tabs.map( (value, key) => {
 			const className = this.isActiveTab(value.props.tabId) ? "active" : "";
-			return (<TabLink key={ key } active={ className } linkTo={value.props.link} text={value.props.name} />)
+			return (<TabLink key={ key } active={ className } linkTo={value.props.link} text={value.props.name} extra={ this.getDecorator() } />)
 		})
 	}
 
