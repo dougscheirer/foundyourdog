@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import mockData from './mockdata/notifications.json'
 
 class NotificationPanel extends Component {
 	render() {
@@ -19,6 +20,28 @@ class NotificationPanel extends Component {
 			    </div>
 			  </div>
 			</div>)
+	}
+}
+
+class NotificationTable extends Component {
+	render() {
+		const readFilter = (this.props.filter === "read")
+		const rows = this.props.dataSource.notifications.map( (val, key) => {
+			if (val.read === readFilter)
+				return (
+					<tr key={ key }>
+						<td>{ val.from }</td>
+						<td>{ val.sent }</td>
+						<td>{ val.message }</td>
+						<td>selected actions</td>
+					</tr>)
+
+		})
+
+		return (<table style={{width:"100%"}}>
+					<thead><tr><th>From</th><th>When</th><th>Message</th></tr></thead>
+					<tbody>{ rows }</tbody>
+				</table>)
 	}
 }
 
@@ -53,10 +76,10 @@ export default class Notifications extends Component {
 			<div>
 				{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
-					<div>Pizza</div>
+					<NotificationTable dataSource={ mockData } filter="read" />
 				</NotificationPanel>
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Older" expanded={ this.stateToPanelStatus.bind(this) } >
-					<div>Pie</div>
+					<NotificationTable dataSource={ mockData } filter="unread" />
 				</NotificationPanel>
 			</div>
 		</div>)

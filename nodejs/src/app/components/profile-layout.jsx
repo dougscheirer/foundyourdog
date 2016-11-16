@@ -43,14 +43,15 @@ class TabContainer extends Component {
 
 	render() {
 		const tabList = this.getTabList(this.props.children);
-		const activeTab = this.renderActiveTab()
+		const activeTabObj = this.renderActiveTab()
+		const { activeTab, ...rest } = this.props
 
 		return (
-			<div { ...this.props } className="container">
+			<div { ...rest } className="container">
 				<ul className="nav nav-tabs" role="tablist">
 					{ tabList }
 				</ul>
-				{ activeTab }
+				{ activeTabObj }
 			</div>);
 	}
 }
