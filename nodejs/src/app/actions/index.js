@@ -131,3 +131,26 @@ export const getUnassignedImages = () => {
 		});
 	}
 }
+
+export const getDogIncidents = ( type, location, zoom ) => {
+	return dispatch => {
+		fetch('/api/dogs/' + type + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom,
+					{ credentials : 'include' }).then((res) => {
+						switch (res.status) {
+							default:
+								console.log("failed to get server data");
+								return null
+							case 200:
+								return res.json()
+						}
+					}).then((res) => {
+						if (!!res) {
+		          return dispatch({
+		          	type: 'INCIDENT_INFO',
+		          	filter: type,
+		          	incidents: res
+		          })
+		        }
+		      })
+  }
+}

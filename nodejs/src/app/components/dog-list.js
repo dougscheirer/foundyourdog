@@ -1,42 +1,59 @@
 import React, { Component } from "react";
 
 import SimpleMap from "./simple_map";
-import $ from 'jquery';
 import { browserHistory } from 'react-router';
-import ListMapToggle from "./listMapToggle";
-import { loginRequired, getIncidentInfo } from "../actions";
+import { loginRequired, getIncidentInfo, getDogIncidents } from "../actions";
 import { connect } from 'react-redux';
 import ShowInfoCard from './info-card'
+import { Tab, TabContainer } from './tabs'
+import ReactTable from 'react-table'
+import 'react-table/react-table.css'
 
-export class DogList extends Component {
+function incidentToString(incident) {
+  return (
+    <div>
+      {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
+      {incident.dog_color}{" : "}
+      {incident.dog_basic_type}
+    </div>)
+}
+
+class DogMap extends Component {
   state = {
+
   };
 
-  default_location = { lat : 37.976761, lng: -122.090577}
-  handleMapClick = this.handleMapClick.bind(this);
-  handleMarkerClick = this.handleMarkerClick.bind(this);
-  handleZoomChanged = this.handleZoomChanged.bind(this);
-  handleNewReport = this.handleNewReport.bind(this);
-  handleCenterChanged = this.handleCenterChanged.bind(this);
+  handleMapClick(event) {
+    // center the map on the location?
+    let newreport =
+        {
+          position: event.latLng,
+          defaultAnimation: 2,
+          key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
+          label: "!"
+        }
+    this.setState({ newreport: newreport, selected: undefined });
+  }
 
-  componentWillUnmount() {
-    if (this.serverRequest) {
-      this.serverRequest.abort();
+  handleMarkerClick(index, event) {
+    let selected = this.props.incidents[index];
+    this.setState({ newreport: undefined, selected: selected });
+  }
+
+  handleSelectedClosed() {
+    this.setState({selected: undefined})
+  }
+
+  handleNewReport(e) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      let queryUrl = (this.props.showtype === "lost" ? "/found" : "/lost") + "/new?" +
+            "lat=" + this.state.newreport.position.lat() +
+            "&lng=" + this.state.newreport.position.lng();
+      this.props.dispatch(loginRequired(() => {
+        browserHistory.push(queryUrl);
+      }));
     }
-  }
-
-  showCard(e, incident) {
-    e.preventDefault();
-    this.props.dispatch(getIncidentInfo(incident.uuid));
-  }
-
-  incidentToLink(incident) {
-    return (
-        <a href="" onClick={ (e) => this.showCard(e, incident) } >
-        {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
-        {incident.dog_color}{" : "}
-        {incident.dog_basic_type}
-        </a>)
   }
 
   incidentToInfo(incident) {
@@ -44,55 +61,89 @@ export class DogList extends Component {
     return (
       <div>
         { theDate.toDateString() }
-        &nbsp;[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]&nbsp;
-        { this.incidentToLink(incident) }
+        <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
+        &nbsp;<strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong>&nbsp;
+        {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
+        {incident.dog_color}{" : "}
+        {incident.dog_basic_type}
+        </a>
       </div>)
   }
 
-  zoomFromAccuracy(accuracy) {
-     // Use min(width, height) (to properly fit the screen
-    const screenSize = Math.min(window.screen.availWidth, window.screen.availHeight);
-
-    // Equators length
-    const equator = 40075004;
-
-    // The meters per pixel required to show the whole area the user might be located in
-    const requiredMpp = accuracy/screenSize;
-
-    // Calculate the zoom level
-    return Math.round(((Math.log(equator / (256 * requiredMpp))) / Math.log(2)) + 1);
+  markerFromIncident(incident) {
+    if (!!!incident) return undefined
+    return {
+      position: {
+        lat: incident['map_latitude'],
+        lng: incident['map_longitude']
+      },
+      incident: incident,
+      key: incident['uuid'],
+      defaultAnimation: 2,
+      incidentInfo: this.incidentToInfo(incident)
+    };
   }
 
-  getServerData(location, zoom) {
-    if (location != null) {
-      if (!!!zoom) {
-        zoom = 16;
-      }
-      console.log("Fetching server data based on " + location.lat + " / " + location.lng + " zoom: " + zoom);
-      this.setState( { center: location, zoom: zoom } );
-      // TODO: switch to fetch and an action for the store
-      this.serverRequest = $.getJSON('/api/dogs/' + this.props.showtype + "?lat=" + location.lat + "&lng=" + location.lng + "&zoom=" + zoom,
-        function (result) {
-          var markers = [];
-          for (var i=0; i<result.length; i++) {
-            const incident = result[i];
-            markers.push({
-              position: {
-                lat: incident['map_latitude'],
-                lng: incident['map_longitude']
-              },
-              incident: incident,
-              key: incident['uuid'],
-              defaultAnimation: 2,
-              incidentInfo: this.incidentToInfo(incident)
-            });
-          }
-          this.setState({ markers: markers });
-        }.bind(this))
-        .fail( function(error) {
-          console.log("failed to get server data");
-      });
-    }
+  markersFromIncidents(incidents) {
+    if (!!!incidents) return []
+    return incidents.map( (incident, key) => {
+      return this.markerFromIncident(incident)
+    })
+  }
+
+  render() {
+      const markers = this.markersFromIncidents(this.props.incidents)
+      return (
+          <div className="search-map">
+          <SimpleMap
+                  ref={(map) => this.map = map}
+                  showtype={this.props.showtype}
+                  center={this.props.center}
+                  zoom={this.props.zoom}
+                  markers={markers}
+                  selected={this.markerFromIncident(this.state.selected)}
+                  newreport={this.state.newreport}
+                  onCenterChanged={ () => this.props.onCenterChanged(this.map.map) }
+                  onMapClick={this.handleMapClick.bind(this)}
+                  onMarkerClick={this.handleMarkerClick.bind(this)}
+                  onZoomChanged={() => this.props.onZoomChanged(this.map.map) }
+                  onNewReport={this.handleNewReport.bind(this)}
+                  onSelectedClose={this.handleSelectedClosed.bind(this)}
+                />
+          </div>
+        );
+  }
+}
+
+DogMap = connect()(DogMap)
+
+class DogList extends Component {
+
+  render() {
+    const columns = [
+      { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toDateString() }</span> },
+      { header: "Name", accessor: "dog_name" },
+      { header: "Description", id: "description", accessor: (incident) => incident,
+        render: ({value}) => <span><a href="" onClick={ (e) => this.props.showCard(e, value) }>{ incidentToString(value) }</a></span> },
+      { header: "Location", id: "location", accessor: (incident) => incident,
+        render: ({value}) => <span>Lat: {value.map_latitude}, Lng: {value.map_longitude}</span> },
+      { header: "Resolution", accessor: "resolution" },
+      { header: "State", accessor: "state" }
+    ]
+
+    return (<ReactTable data={ this.props.incidents } columns={columns} pageSize={ this.props.incidents.length } />)
+  }
+}
+
+class DogViewController extends Component {
+  state = {
+  };
+
+  default_location = { lat : 37.976761, lng: -122.090577}
+
+  showCard(e, incident) {
+    e.preventDefault();
+    this.props.getIncidentInfo(incident.uuid);
   }
 
   componentDidMount() {
@@ -111,149 +162,110 @@ export class DogList extends Component {
     }
   }
 
-  handleZoomChanged(a,b,c) {
+  handleZoomChanged(map) {
     // TODO: the refs thing doesn't work, don't know why
     //       when it does, change the query based on the area of the zoom
-    const zoomLevel = this.map.map.getZoom();
-    if (zoomLevel !== this.state.zoomLevel) {
-      // Notice: Check zoomLevel equality here,
-      // or it will fire zoom_changed event infinitely
-      this.setState({
-        zoom: zoomLevel
-      });
+    const zoomLevel = map.getZoom();
+    if (zoomLevel !== this.state.zoom) {
+      const location = { lat: map.getCenter().lat(), lng: map.getCenter().lng() }
+      this.getServerData( location, zoomLevel )
     }
   }
 
-  handleCenterChanged() {
-    if (this.map != null) {
-      this.getServerData({ lat: this.map.map.getCenter().lat(), lng: this.map.map.getCenter().lng() }, this.state.zoom );
+  handleCenterChanged(map) {
+    if (map != null) {
+      const location = { lat: map.getCenter().lat(), lng: map.getCenter().lng() }
+      const zoom = this.state.zoom
+
+      this.getServerData( location, zoom );
     }
   }
 
-  handleMapClick(event) {
-    // center the map on the location
-    let newreport =
-        {
-          position: event.latLng,
-          defaultAnimation: 2,
-          key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
-          label: "!"
-        }
-    this.setState({ newreport: newreport, selected: undefined });
+  zoomFromAccuracy(accuracy) {
+     // Use min(width, height) (to properly fit the screen
+    const screenSize = Math.min(window.screen.availWidth, window.screen.availHeight);
+    // Equators length
+    const equator = 40075004;
+    // The meters per pixel required to show the whole area the user might be located in
+    const requiredMpp = accuracy/screenSize;
+    // Calculate the zoom level
+    return Math.round(((Math.log(equator / (256 * requiredMpp))) / Math.log(2)) + 1);
   }
 
-  handleMarkerClick(index, event) {
-    let selected = this.state.markers[index];
-    this.setState({ newreport: undefined, selected: selected });
+  getServerData(location, zoom) {
+    if (location != null) {
+      if (!!!zoom) {
+        zoom = 16;
+      }
+
+      this.setState( { center: location, zoom: zoom })
+      console.log("Fetching server data based on " + location.lat + " / " + location.lng + " zoom: " + zoom);
+      this.props.getIncidentsInArea( this.props.showtype, location, zoom );
+    }
   }
 
-  handleSelectedClosed() {
-    this.setState({selected: undefined})
-  }
-
-  handleNewReport(e) {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-      let queryUrl = (this.props.showtype === "lost" ? "found" : "lost") + "/new?" +
-            "lat=" + this.state.newreport.position.lat() +
-            "&lng=" + this.state.newreport.position.lng();
-      this.props.dispatch(loginRequired(() => {
-        browserHistory.push(queryUrl);
-      }));
+  activePath(pathname) {
+    const parts = pathname.split('/')
+    for (let last = parts.length -1; last >= 0; last--) {
+      if (parts[last] !== '') {
+        return (parts[last].toLowerCase() !== "list") ? "map" : "list"
+      }
     }
   }
 
   render() {
-    if (this.props.displaytype === "list") {
-      var rows = [];
-      this.state.markers.forEach((marker) => {
-        const theDate = new Date(marker.incident.incident_date);
-        rows.push(<tr key={marker.key}>
-            <td>{ theDate.toString() }</td>
-            <td>{ (!!marker.incident.dog_name) ? marker.incident.dog_name : "no name" }</td>
-            <td>{ this.incidentToLink(marker.incident) }</td>
-            <td>Lat: {marker.position.lat}, Lng: {marker.position.lng}</td>
-            <td>{marker.incident.resolution}</td>
-            <td>{marker.incident.state}</td>
-            </tr>);
-      });
-      return (
-        <div>
+    const basePath = "/" + this.props.baselink + "/"
+    const active = this.activePath(this.props.location.pathname)
+
+    return (<div>
         <ShowInfoCard />
-          <table style={{width: "100%"}}>
-          <thead>
-            <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Position</th>
-            <th>Resolution</th>
-            <th>State</th>
-            </tr>
-          </thead>
-          <tbody>
-          {  rows }
-          </tbody>
-          </table>
-        </div>);
-    } else {
-      return (
-          <div className="search-map">
-          <ShowInfoCard />
-          <SimpleMap
-                  ref={(map) => this.map = map}
-                  showtype={this.props.showtype}
-                  center={this.state.center}
-                  zoom={this.state.zoom}
-                  markers={this.state.markers}
-                  selected={this.state.selected}
-                  newreport={this.state.newreport}
-                  onCenterChanged={this.handleCenterChanged}
-                  onMapClick={this.handleMapClick}
-                  onMarkerClick={this.handleMarkerClick}
-                  onZoomChanged={this.handleZoomChanged}
-                  onNewReport={this.handleNewReport}
-                  onSelectedClose={this.handleSelectedClosed.bind(this)}
-                />
-          </div>
-        );
-    }
+        <TabContainer activeTab={ active } >
+          <Tab tabId="map" name="Map" link={ basePath + "map" } >
+            <DogMap { ...this.props }
+              incidents={ this.props.incidents }
+              dataCallback={ this.getServerData.bind(this) }
+              showCard={ this.showCard.bind(this) }
+              center={ this.state.center }
+              zoom={ this.state.zoom }
+              onCenterChanged={ this.handleCenterChanged.bind(this) }
+              onZoomChanged={ this.handleZoomChanged.bind(this) } />
+          </Tab>
+          <Tab tabId="list" name="List" link={ basePath + "list"} >
+            <DogList { ...this.props }
+              incidents={ this.props.incidents }
+              dataCallback={ this.getServerData.bind(this) }
+              showCard={ this.showCard.bind(this) } />
+          </Tab>
+      </TabContainer>
+      </div>)
   }
-};
-
-DogList = connect()(DogList);
-
-class BaseDogs extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        displaytype: 'map'
-      }
-    }
-
-    handleToggle = this.handleToggle.bind(this);
-
-    handleToggle(displayType) {
-      this.setState({ displaytype: displayType });
-    }
 }
 
-export class FoundDogs extends BaseDogs {
+const mapStateToProps = (state, myprops) => ({
+  incidents: (state.incidents ? state.incidents[myprops.showtype] : [])
+})
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+  getIncidentsInArea: (type, location, zoom) => { dispatch(getDogIncidents(type, location, zoom)) },
+  getIncidentInfo: (incident) => { dispatch(getIncidentInfo(incident)) }
+})
+
+DogViewController = connect(mapStateToProps, mapDispatchToProps)(DogViewController);
+
+export class FoundDogs extends DogViewController {
     render() {
         return (
           <div>
-            <ListMapToggle displaytype={this.state.displaytype} onToggle={this.handleToggle}/>
-            <DogList showtype="lost" displaytype={this.state.displaytype}/>
+            <DogViewController showtype="lost" baselink="found" location={this.props.location} />
           </div>);
     }
 }
 
-export class LostDogs extends BaseDogs {
+export class LostDogs extends DogViewController {
     render() {
         return (
           <div>
-            <ListMapToggle displaytype={this.state.displaytype} onToggle={this.handleToggle}/>
-            <DogList showtype="found" displaytype={this.state.displaytype}/>
+            <DogViewController showtype="found" baselink="found" location={this.props.location} />
           </div>);
     }
 }

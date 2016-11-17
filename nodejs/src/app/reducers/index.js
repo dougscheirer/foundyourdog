@@ -40,6 +40,12 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				show_wait_dialog: action.show
 			}
+		case 'INCIDENT_INFO':
+			// incidents is an array of lost or found
+			let incidents = state.incidents || []
+			incidents[action.filter] = action.incidents
+			return { ...state,
+				incidents: incidents }
 		default:
 			return state;
 		}

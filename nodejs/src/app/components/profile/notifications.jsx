@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import mockData from './mockdata/notifications.json'
+import ReactTable from 'react-table'
+import 'react-table/react-table.css'
 
 class NotificationPanel extends Component {
 	render() {
@@ -24,24 +26,24 @@ class NotificationPanel extends Component {
 }
 
 class NotificationTable extends Component {
+	onMessageClick(e) {
+		e.preventDefault();
+	}
+
 	render() {
 		const readFilter = (this.props.filter === "read")
-		const rows = this.props.dataSource.notifications.map( (val, key) => {
-			if (val.read === readFilter)
-				return (
-					<tr key={ key }>
-						<td>{ val.from }</td>
-						<td>{ val.sent }</td>
-						<td>{ val.message }</td>
-						<td>selected actions</td>
-					</tr>)
-
+		const rows = this.props.dataSource.notifications.filter( (val, key) => {
+			return (val.read === readFilter)
 		})
-
-		return (<table style={{width:"100%"}}>
-					<thead><tr><th>From</th><th>When</th><th>Message</th></tr></thead>
-					<tbody>{ rows }</tbody>
-				</table>)
+		const columns = [
+			{ header: "From", accessor: "from",
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+			{ header: "When", accessor: "sent",
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+			{ header: "Message", accessor: "message",
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> }
+		]
+		return (<ReactTable data={rows} columns={columns} pageSize={ rows.length } />)
 	}
 }
 
@@ -69,7 +71,7 @@ export default class Notifications extends Component {
 				<div className="panel-group input-group" style={{ width: "50%" }} >
 				   <input type="text" className="form-control" placeholder="Search..." />
 				   <span className="input-group-btn">
-				        <button className="btn btn-default glyphicon glyphicon-search" style={{ marginTop: "-1px" }} type="button"></button>
+				        <button className="btn btn-default glyphicon glyphicon-search" type="button"></button>
 				   </span>
 				</div>
 				</div>

@@ -124,6 +124,7 @@ class NewFormBase extends Component {
 			return;
 		}
 
+		// TODO: move this to redux
 		const loginFunc = this.props.onLoginRequired;
 		$.ajax({
 		    url: this.props.submitUrl,
@@ -132,7 +133,7 @@ class NewFormBase extends Component {
     		dataType: "json",
     		contentType: "application/json; charset=utf-8",
     		success: function (response,status,jXHR) {
-				browserHistory.push("reports/" + response.id);
+				browserHistory.push("/reports/" + response.id);
 			}}).fail(function(e) {
 				if (e.status === 403) {
 					toastr.error("You have to be signed in to file a report");
@@ -302,9 +303,6 @@ class NewFormBase extends Component {
 	    			<div className="col-md-4 report-map">
 	        		<SimpleMap
 	                  ref={(map) => this.map = map}
-	                  onMapClick={ () => { console.log("do nothing"); }}
-	                  onCenterChanged={ () => { console.log("do nothing"); }}
-	                  onMarkerClick={ () => { console.log("do nothing"); }}
 	                  center={center}
 	                  markers={markers} />
 	                </div>

@@ -32,13 +32,26 @@ export default class Routes extends Component {
           <IndexRoute component={LostDogs} />
         </Route>
         <Route path="new" component={NewLost} />
+        <Route path="map" component={LostSearchLayout}>
+          <IndexRoute component={LostDogs} />
+        </Route>
+        <Route path="list" component={LostSearchLayout}>
+          <IndexRoute component={LostDogs} />
+        </Route>
       </Route>
+
 
       <Route path="found">
         <Route component={FoundSearchLayout}>
           <IndexRoute component={FoundDogs} />
         </Route>
         <Route path="new" component={NewFound} />
+        <Route path="map" component={FoundSearchLayout}>
+          <IndexRoute component={FoundDogs} />
+        </Route>
+        <Route path="list" component={FoundSearchLayout}>
+          <IndexRoute component={FoundDogs} />
+        </Route>
       </Route>
 
       <Route path="reports">

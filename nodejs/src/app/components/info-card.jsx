@@ -1,12 +1,12 @@
 import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalClose,
-  ModalBody,
-  ModalFooter
+	Modal,
+	ModalHeader,
+	ModalTitle,
+	ModalClose,
+	ModalBody,
+	ModalFooter
 } from 'react-modal-bootstrap';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
@@ -43,23 +43,23 @@ class ShowInfoCard extends Component {
 
 	imageOrEmpty(incident_info) {
 		const source = (!!incident_info.image && !!incident_info.image.uuid) ?
-					"/api/images/" + incident_info.image.uuid :
-					no_image;
+		"/api/images/" + incident_info.image.uuid :
+		no_image;
 
-			return (<img style={{display:"block", margin:"auto", width: "200px"}}
-						 src={ source }
-						 alt="dog" />)
+		return (<img style={{display:"block", margin:"auto", width: "200px"}}
+			src={ source }
+			alt="dog" />)
 	}
 
 	render() {
 		const dialogStyles = {
-			  base: {
-			    transition: "right 0.4s"
-			  },
-			  open: {
-			    right: 0
-			  }
+			base: {
+				transition: "right 0.4s"
+			},
+			open: {
+				right: 0
 			}
+		}
 		const incident_info = this.props.incident_info;
 
 		if (!!!incident_info) {
@@ -72,40 +72,41 @@ class ShowInfoCard extends Component {
 
 		return (
 			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
-			  <ModalHeader>
-			    <ModalClose onClick={ this.hideModal.bind(this) }/>
-			    <ModalTitle>Info for &quot;{ !!dog.name ? dog.name : "unknown" }&quot;</ModalTitle>
-			  </ModalHeader>
-			  <ModalBody>
-		  		<div>
-					{ image }
-				</div>
-				<div>
-					<p></p>
-	            	<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
-	            			{ " on " }<strong>{ Date(incident.incident_date) }</strong>
-			            	{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
-			            	<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
-			            			{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
-			            	</button></p>
-				    <table width="100%">
-		            	<thead>
-		            		<tr><th>Dog profile</th></tr>
-		            	</thead>
-		            	<tbody>
-							{ this.getNameRow(dog.name) }
-							<tr><td>Breed</td><td>{ dog.basic_type }</td></tr>
-							<tr><td>Color</td><td>{ dog.color }</td></tr>
-							{ this.getBreedingStatusRow(dog.intact) }
-							<tr><td>Added on</td><td>{ Date(dog.added_date) }</td></tr>
-							<tr><td></td><td>{ dog.tags }</td></tr>
-    	            	</tbody>
-		            </table>
-				</div>
-	 	  </ModalBody>
-		  <ModalFooter>
-		  </ModalFooter>
-		</Modal>);
+				<ModalHeader>
+					<ModalClose onClick={ this.hideModal.bind(this) }/>
+					<ModalTitle>Info for &quot;{ !!dog.name ? dog.name : "unknown" }&quot;</ModalTitle>
+				</ModalHeader>
+				<ModalBody>
+					<div>
+						{ image }
+					</div>
+					<div>
+						<p></p>
+						<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
+							{ " on " }<strong>{ Date(incident.incident_date) }</strong>
+							{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
+							<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
+							{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
+							</button>
+						</p>
+						<table className="table">
+							<thead>
+								<tr><th>Dog profile</th></tr>
+							</thead>
+							<tbody>
+								{ this.getNameRow(dog.name) }
+								<tr><td>Breed</td><td>{ dog.basic_type }</td></tr>
+								<tr><td>Color</td><td>{ dog.color }</td></tr>
+								{ this.getBreedingStatusRow(dog.intact) }
+								<tr><td>Added on</td><td>{ Date(dog.added_date) }</td></tr>
+								<tr><td></td><td>{ dog.tags }</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</ModalBody>
+				<ModalFooter>
+				</ModalFooter>
+			</Modal>);
 	}
 }
 
