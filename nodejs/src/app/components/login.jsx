@@ -39,7 +39,7 @@ class Login extends Component {
 		// now do the network call, dispatch the results
 
 		// TODO: change this to use fetch()
-		$.ajax({ url: "/login",
+		$.ajax({ url: "/api/login",
 				 type: "POST",
 				 data: JSON.stringify({ user: this.refs.user.value, password: this.refs.password.value }),
 				contentType:"application/json; charset=utf-8",

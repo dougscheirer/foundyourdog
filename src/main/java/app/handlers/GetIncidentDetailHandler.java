@@ -1,6 +1,5 @@
 package app.handlers;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import app.model.Image;
 import app.model.Incident;
 import app.model.Model;
 import app.model.ReportDetail;
-import app.model.User;
 import spark.Request;
 
 public class GetIncidentDetailHandler extends AbstractRequestHandler<EmptyPayload> {

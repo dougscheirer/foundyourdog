@@ -8,6 +8,18 @@ export default class SimpleMap extends Component {
         this.props.onNewReport();
     }
 
+    onMarkerClick(index) {
+      if (this.props.onMarkerClick) {
+        this.props.onMarkerClick(index)
+      }
+    }
+
+    onCenterChanged(map) {
+      if (this.props && this.props.onCenterChanged) {
+        this.props.onCenterChanged(map)
+      }
+    }
+
     render() {
       let info = [], markers = [];
       const zoom = this.props.zoom || 16;
@@ -18,7 +30,7 @@ export default class SimpleMap extends Component {
                     <Marker
                       {...marker}
                       key={index}
-                      onClick={() => this.props.onMarkerClick(index)} />
+                      onClick={ () => this.onMarkerClick(index) } />
                   );
                 }.bind(this));
       }
@@ -66,7 +78,7 @@ export default class SimpleMap extends Component {
                 center={ center }
                 onClick={this.props.onMapClick}
                 onDragEnd={this.props.onCenterChanged}
-                onIdle={this.props.onCenterChanged}
+                onIdle={this.onCenterChanged}
                 onZoomChanged={this.props.onZoomChanged}
               >
                 {markers}

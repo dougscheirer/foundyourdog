@@ -45,7 +45,7 @@ class Signup extends Component {
 		this.setState({signup_wait: true, error_msg: ''});
 
 		// now do the network call, dispatch the results
-		$.ajax({ url: "/signup",
+		$.ajax({ url: "/api/signup",
 			 	type: "POST",
 				data: JSON.stringify({ email: this.refs.email.value, userid: this.refs.user.value, password: this.refs.password.value }),
 				contentType:"application/json; charset=utf-8",

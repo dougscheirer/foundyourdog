@@ -1,12 +1,10 @@
 package app.sql2o;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.sql2o.Connection;
-import org.sql2o.Query;
 import org.sql2o.Sql2o;
 
 import app.model.Dog;
@@ -42,7 +40,7 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			List<DetailUser> users = conn
 					.createQuery(
-							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where uuid=:id")
+							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications, admin from users where uuid=:id")
 					.addParameter("id", id).executeAndFetch(DetailUser.class);
 			if (users.size() > 0) {
 				return Optional.empty();
@@ -59,7 +57,7 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into users(uuid, email, handle, password_hash, confirmation_token, phone1, phone2, inapp_notifications)"
+					"insert into users(uuid, email, handle, password_hash, confirmation_token, phone1, phone2, inapp_notifications, admin)"
 							+ "   VALUES (:uuid, :email, :handle, :password_hash, :confirmation_token, :phone1, :phone2, :inapp_notifications)")
 					.addParameter("uuid", uuid)
 					.addParameter("email", u.getEmail())
@@ -69,6 +67,7 @@ public class Sql2oModel implements Model {
 					.addParameter("phone1", u.getPhone1())
 					.addParameter("phone2", u.getPhone2())
 					.addParameter("inapp_notifications", u.getInapp_notifications())
+					.addParameter("admin", false)
 					.executeUpdate();
 			return uuid;
 		}
@@ -95,7 +94,7 @@ public class Sql2oModel implements Model {
 	public List<IncidentBrief> getAllIncidents(boolean lost) {
 		try (Connection conn = sql2o.open()) {
 			List<IncidentBrief> incidents = 
-					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from incidents I inner join dogs D on D.uuid=I.dog_id where I.state=:state")
+					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from incidents I inner join dogs D on D.uuid=I.dog_id where I.state=:state")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
 		}
@@ -116,7 +115,6 @@ public class Sql2oModel implements Model {
 	@Override
 	public String createDog(Dog d) {
 		try (Connection conn = sql2o.open()) {
-			String confirmationToken = UUID.randomUUID().toString();
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
 					"insert into dogs (uuid, basic_type, color, gender, intact, owner_id, name, added_date, image_id)" +
@@ -305,6 +303,19 @@ public class Sql2oModel implements Model {
 				return Optional.empty();
 			}
 			return Optional.of(images.get(0));
+		}
+	}
+
+	@Override
+	public List<IncidentBrief> getUserIncidents(String userId, String type) {
+		try (Connection conn = sql2o.open()) {
+			List<IncidentBrief> incidents = 
+					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from "
+							+ "incidents I inner join dogs D on D.uuid=I.dog_id "
+							+ "where reporter_id=:userId and resolution_id is " + (type.equals("open") ? "null" : "not null"))
+					.addParameter("userId", userId)
+					.executeAndFetch(IncidentBrief.class);
+			return incidents;
 		}
 	}
 }

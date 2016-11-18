@@ -4,11 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import app.Answer;
-import app.model.Dog;
-import app.model.Incident;
 import app.model.IncidentBrief;
 import app.model.Model;
-import app.model.User;
 import spark.Request;
 
 public class GetIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {

@@ -1,8 +1,6 @@
 package app.model;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 import app.Validatable;
 import lombok.Data;
@@ -21,6 +19,7 @@ public class User implements Validatable {
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;
+	private Boolean admin;
 	
 	@Override
 	public boolean isValid() {

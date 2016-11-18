@@ -37,4 +37,6 @@ public interface Model {
 	String updateImageStatus(String imageID, String dogId, String status);
 	Optional<Image> getUnassignedImage(String userid);
 	void deleteImage(String id);
+
+	List<IncidentBrief> getUserIncidents(String userId, String type);
 }

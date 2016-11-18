@@ -60,7 +60,7 @@ class DogMap extends Component {
     const theDate = new Date(incident.incident_date);
     return (
       <div>
-        { theDate.toDateString() }
+        { theDate.toString() }
         <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
         &nbsp;<strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong>&nbsp;
         {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
@@ -121,7 +121,7 @@ class DogList extends Component {
 
   render() {
     const columns = [
-      { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toDateString() }</span> },
+      { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
       { header: "Name", accessor: "dog_name" },
       { header: "Description", id: "description", accessor: (incident) => incident,
         render: ({value}) => <span><a href="" onClick={ (e) => this.props.showCard(e, value) }>{ incidentToString(value) }</a></span> },
@@ -131,7 +131,7 @@ class DogList extends Component {
       { header: "State", accessor: "state" }
     ]
 
-    return (<ReactTable data={ this.props.incidents } columns={columns} pageSize={ this.props.incidents.length } />)
+    return (<ReactTable data={ this.props.incidents } columns={columns} pageSize={ Math.max(1, this.props.incidents.length) } />)
   }
 }
 
@@ -218,7 +218,6 @@ class DogViewController extends Component {
     const active = this.activePath(this.props.location.pathname)
 
     return (<div>
-        <ShowInfoCard />
         <TabContainer activeTab={ active } >
           <Tab tabId="map" name="Map" link={ basePath + "map" } >
             <DogMap { ...this.props }
@@ -265,7 +264,7 @@ export class LostDogs extends DogViewController {
     render() {
         return (
           <div>
-            <DogViewController showtype="found" baselink="found" location={this.props.location} />
+            <DogViewController showtype="found" baselink="lost" location={this.props.location} />
           </div>);
     }
 }

@@ -7,6 +7,7 @@ import Signup from './signup';
 import { connect } from 'react-redux';
 import { checkLoginStatus } from '../actions';
 import DevTools from '../devtools';
+import ShowInfoCard from './info-card'
 
 class MainLayout extends React.Component {
 
@@ -19,6 +20,7 @@ class MainLayout extends React.Component {
         <Login />
         <Signup />
         <DevTools />
+        <ShowInfoCard />
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">

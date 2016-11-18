@@ -6,15 +6,11 @@ import java.util.Map;
 import app.Answer;
 import app.model.Dog;
 import app.model.Model;
-import app.model.User;
 import spark.Request;
 
 public class GetDogsHandler extends AbstractRequestHandler<EmptyPayload> {
-	private boolean lost = false;
-	
 	public GetDogsHandler(boolean lost, Model model) {
 		super(EmptyPayload.class, model);
-		this.lost = lost; 
 	}
 
 	@Override

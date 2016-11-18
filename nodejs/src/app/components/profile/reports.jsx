@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { getIncidentInfo, getUserReports } from '../../actions'
+import ReactTable from 'react-table'
 
 class ReportsPanel extends Component {
 	render() {
@@ -11,7 +14,9 @@ class ReportsPanel extends Component {
 			    <div className="panel-heading">
 			      <h4 className="panel-title">
 			        <a href="" onClick={ (e) => this.props.onToggle(e, this) }>
-			        <span className={ "glyphicon " + chevronClasses } />{ this.props.title } </a>
+			        	<span className={ "glyphicon " + chevronClasses } />
+			        	&nbsp;{ this.props.title }
+			        </a>
 			      </h4>
 			    </div>
 			    <div id={this.props.panelid} className={ "panel-collapse collapse " + panelClass } aria-expanded={ expanded }>
@@ -22,7 +27,34 @@ class ReportsPanel extends Component {
 	}
 }
 
-export default class Reports extends Component {
+class ReportsTable extends Component {
+	onReportClick(e) {
+		e.preventDefault();
+	}
+
+	onDogClick(e, incident) {
+		e.preventDefault();
+		this.props.showIncidentInfo(incident)
+	}
+
+	render() {
+		if (!!!this.props.dataSource || !this.props.dataSource.length) {
+			return (<div>No results</div>)
+		}
+
+		const rows = this.props.dataSource || []
+
+		const columns = [
+		    { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
+			{ header: "Dog description", id: "description", accessor: (incident) => incident,
+				render: ({value}) => <a href="" onClick={ (e) => this.onDogClick(e, value) }>{value.dog_name + ", " + value.dog_gender + " "
+										+ value.dog_color + " " + value.dog_basic_type } </a> }
+		]
+		return (<ReactTable data={rows} columns={columns} pageSize={ rows.length } />)
+	}
+}
+
+class Reports extends Component {
 	onTogglePanel(e, panel) {
 		e.preventDefault()
 		const panelStates = this.state.panel || {}
@@ -31,6 +63,11 @@ export default class Reports extends Component {
 	}
 
 	state = {
+	}
+
+	componentDidMount() {
+		this.props.getReportList('open');
+		this.props.getReportList('closed');
 	}
 
 	stateToPanelStatus(panelId) {
@@ -53,12 +90,24 @@ export default class Reports extends Component {
 			<div>
 				{ /* <ReportsPanel panelid="search" title="Search results"/ > */ }
 				<ReportsPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="Open" expanded={ this.stateToPanelStatus.bind(this) } >
-					<div>Pizza</div>
+					<ReportsTable dataSource={ this.props.openReports } { ...this.props }/>
 				</ReportsPanel>
 				<ReportsPanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Closed" expanded={ this.stateToPanelStatus.bind(this) } >
-					<div>Pie</div>
+					<ReportsTable dataSource={ this.props.closedReports } { ...this.props }/>
 				</ReportsPanel>
 			</div>
 		</div>)
 	}
 }
+
+const mapStateToProps = (state, myprops) => ({
+	openReports : state.myOpenReports,
+	closedReports : state.myClosedReports
+});
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+	getReportList : (type) => { dispatch(getUserReports(type)); },
+	showIncidentInfo: (incident) => { dispatch(getIncidentInfo(incident.uuid)) }
+});
+
+export default Reports = connect(mapStateToProps, mapDispatchToProps)(Reports);

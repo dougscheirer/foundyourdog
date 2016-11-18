@@ -1,13 +1,6 @@
 package app.handlers;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
 
 import app.Main;
 import app.model.Image;

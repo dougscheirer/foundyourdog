@@ -12,7 +12,7 @@ import DogProfile from './components/dog-profile';
 import Signup from './components/signup';
 import Login from './components/login';
 import Feedback from './components/feedback';
-import { NewFound, NewLost } from "./components/NewReport";
+import { EditReport, NewFound, NewLost } from "./components/NewReport";
 import ReportSummary from './components/report_summary'
 import ProfileLayout from './components/profile-layout'
 
@@ -55,6 +55,7 @@ export default class Routes extends Component {
       </Route>
 
       <Route path="reports">
+        <Route path="edit/:reportId" component={EditReport} />
         <Route path=":reportId" component={ReportSummary} />
       </Route>
 

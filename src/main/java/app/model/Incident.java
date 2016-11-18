@@ -13,7 +13,7 @@ public class Incident implements Validatable {
 	private String dog_id;
 	private Timestamp incident_date;
 	private String state;
-	private String resolution;
+	private String resolution_id;
 	private String reporter_id;
 	
 	@Override

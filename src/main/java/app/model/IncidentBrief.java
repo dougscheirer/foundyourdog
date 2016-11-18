@@ -1,6 +1,5 @@
 package app.model;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import app.Validatable;
@@ -14,7 +13,7 @@ public class IncidentBrief implements Validatable {
 	private float map_longitude;
 	private Timestamp incident_date;
 	private String state;
-	private String resolution;
+	private String resolution_id;
 	private String reporter_id;
 
 	// these come from the dog query

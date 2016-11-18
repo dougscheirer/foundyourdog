@@ -1,23 +1,18 @@
 package app.handlers;
 
-import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.Answer;
 import app.Main;
-import app.RequestHandler;
-import app.model.Incident;
 import app.model.Model;
-import app.model.User;
 import app.model.UserAuth;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class LoginHandler implements Route {
-	private String sessionKey;
 	private Model model;
 
 	public LoginHandler(Model model) {

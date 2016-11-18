@@ -2,7 +2,6 @@ package app.handlers;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 import app.Answer;
 import app.Main;
@@ -10,7 +9,6 @@ import app.model.Dog;
 import app.model.Incident;
 import app.model.IncidentForm;
 import app.model.Model;
-import app.model.User;
 import spark.Request;
 
 public class CreateIncidentReportHandler extends AbstractRequestHandler<IncidentForm> {

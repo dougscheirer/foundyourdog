@@ -14,7 +14,9 @@ class NotificationPanel extends Component {
 			    <div className="panel-heading">
 			      <h4 className="panel-title">
 			        <a href="" onClick={ (e) => this.props.onToggle(e, this) }>
-			        <span className={ "glyphicon " + chevronClasses } />{ this.props.title } </a>
+			        	<span className={ "glyphicon " + chevronClasses } />
+			        	&nbsp;{ this.props.title }
+			        </a>
 			      </h4>
 			    </div>
 			    <div id={this.props.panelid} className={ "panel-collapse collapse " + panelClass } aria-expanded={ expanded }>
@@ -74,9 +76,9 @@ export default class Notifications extends Component {
 				        <button className="btn btn-default glyphicon glyphicon-search" type="button"></button>
 				   </span>
 				</div>
-				</div>
+			</div>
 			<div>
-				{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
+		{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
 					<NotificationTable dataSource={ mockData } filter="read" />
 				</NotificationPanel>

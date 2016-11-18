@@ -16,7 +16,7 @@ export const showLogin = (show, userData) => {
 
 export const logout = () => {
 	return dispatch => {
-		fetch('/logout', {
+		fetch('/api/logout', {
 		  method: 'POST', credentials: 'include'
 		}).then((res) => {
 		  // TODO: check res for the status
@@ -27,7 +27,7 @@ export const logout = () => {
 
 export const checkLoginStatus = () => {
 	return dispatch => {
-		fetch('/authenticated', { credentials: 'include' }).then((res) => {
+		fetch('/api/auth/authenticated', { credentials: 'include' }).then((res) => {
 			if (res.ok)
 				return res.json();
 		}).then((res) => {
@@ -39,7 +39,7 @@ export const checkLoginStatus = () => {
 
 export const loginRequired = (postLoginAction) => {
 	return dispatch => {
-		fetch('/authenticated', { credentials: 'include' }).then((res) => {
+		fetch('/api/auth/authenticated', { credentials: 'include' }).then((res) => {
 			if (res.ok) {
 				postLoginAction();
 			}
@@ -74,7 +74,7 @@ export const wait_dialog = (show) => {
 
 export const getReportInfo = (id) => {
 	return dispatch => {
-		fetch('/reports/' + id, { credentials: 'include'}).then((res) => {
+		fetch('/api/reports/' + id, { credentials: 'include'}).then((res) => {
 			switch (res.status) {
 				default:
 					return null;
@@ -98,7 +98,7 @@ export const showIncidentInfo = (incident) => {
 export const getIncidentInfo = (id) => {
 	return dispatch => {
 		dispatch(wait_dialog(true))
-		fetch('/reports/' + id, { credentials: 'include'}).then((res) => {
+		fetch('/api/reports/' + id, { credentials: 'include'}).then((res) => {
 			switch (res.status) {
 				default:
 					return null;
@@ -113,7 +113,7 @@ export const getIncidentInfo = (id) => {
 
 export const getUnassignedImages = () => {
 	return dispatch => {
-		fetch('/reports/images/unassigned', { credentials: 'include' }).then((res) => {
+		fetch('/api/auth/reports/images/unassigned', { credentials: 'include' }).then((res) => {
 			switch (res.status) {
 				default:
 					return null;
@@ -153,4 +153,26 @@ export const getDogIncidents = ( type, location, zoom ) => {
 		        }
 		      })
   }
+}
+
+export const getUserReports = (type) => {
+	return dispatch => {
+		fetch('/api/auth/reports' + '?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
+			switch (res.status) {
+				default:
+					console.log("failed: " + res);
+					return null
+				case 200:
+					return res.json()
+				}
+			}).then((res) => {
+				if (!!res) {
+					return dispatch({
+						type: 'USER_REPORTS',
+						filter: type,
+						incidents: res
+					})
+				}
+			})
+		}
 }

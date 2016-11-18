@@ -46,6 +46,14 @@ const reducerOne = (state = initialState, action) => {
 			incidents[action.filter] = action.incidents
 			return { ...state,
 				incidents: incidents }
+		case 'USER_REPORTS':
+			if (action.filter == 'open') {
+				return { ...state,
+					myOpenReports: action.incidents	}
+			} else {
+				return { ...state,
+					myClosedReports: action.incidents	}
+			}
 		default:
 			return state;
 		}

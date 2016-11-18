@@ -20,7 +20,7 @@ class ReportSummary extends Component {
 	}
 
 	formatReporterField(report) {
-		if (this.props.login_status === "success" && this.props.login_data.uuid == report.incident.reporter_id) {
+		if (this.props.login_status === "success" && this.props.login_data.uuid === report.incident.reporter_id) {
 			return (<span>
 								<Link to="/profile">You</Link>
 								<button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-trash"></button>
@@ -37,8 +37,8 @@ class ReportSummary extends Component {
 
 	formatOwnerField(report) {
 		if (report.incident.state === "lost") {
-			if (this.props.login_status === "success" && this.props.login_data.uuid == report.incident.reporter_id) {
-				<Link to="/profile">You</Link>
+			if (this.props.login_status === "success" && this.props.login_data.uuid === report.incident.reporter_id) {
+				return (<Link to="/profile">You</Link>)
 			} else {
 				return (<button className="btn btn-default">Contact owner</button>)
 			}
@@ -64,8 +64,8 @@ class ReportSummary extends Component {
 				position: { lat: center.lat, lng: center.lng }
 			}];
 
-			const imageSource = (!!report.incident.image && !!report.incident.image.uuid) ?
-														"/api/images/" + report.incident.image.uuid :
+			const imageSource = (!!report.image && !!report.image.uuid) ?
+														"/api/images/" + report.image.uuid :
 														no_image;
 
 			return (

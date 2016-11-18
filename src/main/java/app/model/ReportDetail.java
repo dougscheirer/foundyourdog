@@ -1,7 +1,5 @@
 package app.model;
 
-import java.util.Optional;
-
 import app.Validatable;
 import lombok.Data;
 

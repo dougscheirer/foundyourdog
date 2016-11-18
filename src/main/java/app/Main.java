@@ -4,7 +4,6 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,10 +19,10 @@ import app.handlers.CreateIncidentReportHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.DetailUser;
 import app.handlers.FindUnassignedImageHandler;
-import app.handlers.GetDogsHandler;
 import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
+import app.handlers.GetUserIncidents;
 import app.handlers.GetUsersIndexHandler;
 import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
@@ -31,10 +30,7 @@ import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.template.Configuration;
 import spark.Spark;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
@@ -58,6 +54,12 @@ public class Main {
     		halt(403);
     }
 
+    private static void checkAdminAuthentication(Request request, Response res) {
+    	DetailUser u = getCurrentUser(request);
+    	if (u == null || !u.getAdmin())
+    		halt(403);
+    }
+    
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
@@ -93,12 +95,18 @@ public class Main {
 		Spark.staticFileLocation("/public");
 
 		// authentication filter
+		/* the pattern here is: 
+		*		/api/auth : requires authenticated user session
+		*		/api/admin: requires authenticated admin session
+		*		(anything else): no auth required
+		*/
 		before((request, response) -> {
-			String[] endsWith = { "/new", "/authenticated" };
-			for ( String s : endsWith ) {
-				if (request.pathInfo().endsWith(s)) {
-					checkAuthentication(request, response);
-				}
+			if (request.pathInfo().startsWith("/api/auth/")) {
+				checkAuthentication(request, response);
+			} else if (request.pathInfo().startsWith("/api/admin/")) {
+				checkAdminAuthentication(request, response);
+			} else {
+				// it's legit
 			}
 		});
 
@@ -106,26 +114,29 @@ public class Main {
 		redirect.get("/", "/index.html");
 
 		// basics, login, logout, and an auth check method
-		post("/login", new LoginHandler(model));
-		post("/logout", new LogoutHandler(model));
-		get("/authenticated", new AuthenticatedHandler(model));
+		post("/api/login", new LoginHandler(model));
+		post("/api/logout", new LogoutHandler(model));
+		
+		get("/api/auth/authenticated", new AuthenticatedHandler(model));
 
 		// TODO: group the /api/... stuff under one route path?
-		post("/signup", new CreateUserHandler(model));
-		get("/api/users", new GetUsersIndexHandler(model));
-		// put("/api/users/:id", new UpdateUserHanlder(model));
+		post("/api/signup", new CreateUserHandler(model));
+		get("/api/admin/users", new GetUsersIndexHandler(model));
+		// put("/api/users/:id", new UpdateUserHandler(model));
 		// delete("/api/users/:id", new DeleteUserHandler(model));
+
+		get("/api/auth/reports", new GetUserIncidents(model));
 		
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
 		
-		post("/api/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
-		post("/api/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
-		get("/reports/:id", new GetIncidentDetailHandler(model));
+		post("/api/auth/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
+		post("/api/auth/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
+		get("/api/reports/:id", new GetIncidentDetailHandler(model));
 		
-		post("/report/images/new", new ImageUploadHandler(model, options.imageLocation));
-		delete("/report/images/:id", new ImageDeleteHandler(model));
-		get("/reports/images/unassigned", new FindUnassignedImageHandler(model));
+		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation));
+		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
+		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
 		
 		// what is java bad about? serving static image files, so change this when really using it
 		get("/api/images/:id", new GetImageHandler(model));

@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { Notifications, Reports, Dogs, Settings } from "./profile"
 import './home.css'
 import { TabContainer, Tab } from './tabs'
+import { connect } from 'react-redux'
 
-// TODO: add required proptypes for Tab and TabContainer
-export default class ProfileLayout extends Component {
+class ProfileLayout extends Component {
 
 	activePath(pathname) {
 		const parts = pathname.split('/')
@@ -23,10 +23,10 @@ export default class ProfileLayout extends Component {
 		const active = this.activePath(this.props.location.pathname)
 
 		return (<TabContainer activeTab={ active } >
-					<Tab tabId="notifications" name="Notifications" link="/profile/notifications">
+					<Tab tabId="notifications" name="My notifications" link="/profile/notifications">
 						<Notifications />
 					</Tab>
-					<Tab tabId="reports" name="Reports" link="/profile/reports">
+					<Tab tabId="reports" name="My reports" link="/profile/reports">
 						<Reports />
 					</Tab>
 					<Tab tabId="dogs" name="My dogs" link="/profile/dogs">
@@ -38,3 +38,5 @@ export default class ProfileLayout extends Component {
 			</TabContainer>)
 	}
 }
+
+export default ProfileLayout = connect()(ProfileLayout)

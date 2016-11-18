@@ -1,7 +1,5 @@
 package app.model;
 
-import java.sql.Timestamp;
-
 import app.Validatable;
 import lombok.Data;
 

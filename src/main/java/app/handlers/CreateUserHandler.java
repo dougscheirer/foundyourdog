@@ -1,11 +1,9 @@
 package app.handlers;
 
 import java.util.Map;
-import java.util.UUID;
 
 import app.Answer;
 import app.model.Model;
-import app.model.User;
 import app.model.UserSignup;
 import spark.Request;
 

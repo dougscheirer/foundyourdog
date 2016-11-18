@@ -16,4 +16,5 @@ public class DetailUser {
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;
+	private Boolean admin;
 }

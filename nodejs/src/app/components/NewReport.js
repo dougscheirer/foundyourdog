@@ -42,7 +42,7 @@ class NewFormBase extends Component {
 		var data = new FormData()
 		data.append('file', this.state.image_preview)
 
-		fetch('/report/images/new', {
+		fetch('/api/auth/report/images/new', {
 		  credentials: 'include',
 		  method: 'POST',
 		  body: data
@@ -157,7 +157,7 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
-		fetch('/report/images/' + this.state.uploaded_image.uuid, {
+		fetch('/api/auth/report/images/' + this.state.uploaded_image.uuid, {
 		  credentials: 'include',
 		  method: 'DELETE' }).then((res) => {
 			this.setState({image_preview: undefined, uploaded_image: undefined});
@@ -317,7 +317,7 @@ class NewFormBase extends Component {
 const mapFoundStateToProps = (state, myprops) => ({
 	logged_in: state.login_status === 'success',
 	nameRequired : false,
-	submitUrl : "/api/found/new",
+	submitUrl : "/api/auth/found/new",
 	title : "I found a dog",
 	existing_image : state.unassigned_image
 });
@@ -325,9 +325,17 @@ const mapFoundStateToProps = (state, myprops) => ({
 const mapLostStateToProps = (state, myprops) => ({
 	logged_in: state.login_status === 'success',
 	nameRequired : true,
-	submitUrl : "/api/lost/new",
+	submitUrl : "/api/auth/lost/new",
 	title : "I lost a dog",
 	existing_image : state.unassigned_image
+});
+
+const mapEditStateToProps = (state, myprops) => ({
+	logged_in: state.login_status === 'success',
+	edit: true,
+	submitUrl : "/api/auth/report/edit",
+	title : "Edit exisitng report (put something here)",
+	existing_image : undefined
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
@@ -338,4 +346,4 @@ const mapDispatchToProps = (dispatch, myprops) => ({
 
 export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);
 export const NewLost = connect(mapLostStateToProps, mapDispatchToProps)(NewFormBase);
-
+export const EditReport = connect(mapEditStateToProps, mapDispatchToProps)(NewFormBase);
