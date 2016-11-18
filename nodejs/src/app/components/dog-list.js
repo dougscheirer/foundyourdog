@@ -60,7 +60,7 @@ class DogMap extends Component {
     const theDate = new Date(incident.incident_date);
     return (
       <div>
-        { theDate.toString() }
+        { theDate.toString() }<br />
         <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
         &nbsp;<strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong>&nbsp;
         {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}

@@ -20,6 +20,11 @@ export default class SimpleMap extends Component {
       }
     }
 
+    onZoomChanged(e) {
+      if (this.props && this.props.onZoomChanged) {
+        this.props.onZoomChanged(e)
+      }
+    }
     render() {
       let info = [], markers = [];
       const zoom = this.props.zoom || 16;
@@ -77,9 +82,9 @@ export default class SimpleMap extends Component {
                 defaultCenter={ center }
                 center={ center }
                 onClick={this.props.onMapClick}
-                onDragEnd={this.props.onCenterChanged}
-                onIdle={this.onCenterChanged}
-                onZoomChanged={this.props.onZoomChanged}
+                onDragEnd={this.onCenterChanged.bind(this)}
+                onIdle={this.onCenterChanged.bind(this)}
+                onZoomChanged={this.onZoomChanged.bind(this)}
               >
                 {markers}
                 {info}
