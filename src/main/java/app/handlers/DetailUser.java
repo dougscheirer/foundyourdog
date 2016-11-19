@@ -1,8 +1,7 @@
 package app.handlers;
 
-import java.sql.Timestamp;
-
 import lombok.Data;
+import org.joda.time.DateTime;
 
 @Data
 public class DetailUser {
@@ -10,9 +9,9 @@ public class DetailUser {
 	private String email;
 	private String handle;
 	private Boolean confirmed;
-	private Timestamp signup_date;
-	private Timestamp confirm_date;
-	private Timestamp deactivate_date;
+	private DateTime signup_date;
+	private DateTime confirm_date;
+	private DateTime deactivate_date;
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;

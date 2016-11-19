@@ -12,6 +12,8 @@ import fetch from 'isomorphic-fetch'
 import FormData from 'form-data'
 import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
+import dogTypes from './common_dogs.json'
+import coatTypes from './coats.json'
 
 class NewFormBase extends Component {
 	state = {
@@ -91,13 +93,16 @@ class NewFormBase extends Component {
 			map_latitude: 		parseFloat(this.props.location.query['lat']),
 			map_longitude: 		parseFloat(this.props.location.query['lng']),
 			incident_date: 		this.refs.date.getInput().value,
-			dog_name: 			this.refs.name.value,
-			dog_basic_type: 	this.refs.basic_type.value,
-			dog_color: 			this.refs.color.value,
-			other_info: 		this.refs.other_info.value,
+			dog_name: 				this.refs.name.value,
+			dog_primary_type: this.refs.primary_type.value,
+			dog_secondary_type:	this.refs.secondary_type.value,
+			dog_primary_color: this.refs.primary_color.value,
+			dog_secondary_color: this.refs.secondary_color.value,
+			dog_coat_type: 		this.refs.coat_type.value,
+			other_info: 			this.refs.other_info.value,
 			dog_breeding_status:this.refs.breeding_status.value,
-			dog_gender:			this.getSelected('gender'),
-			photo_id: 			null
+			dog_gender:				this.getSelected('gender'),
+			photo_id: 				null
 		};
 
 		if (!!this.state.uploaded_image) {
@@ -108,8 +113,8 @@ class NewFormBase extends Component {
 		let errors = false;
 		if (!!this.state.image_preview && !!!this.state.uploaded_image)
 										{ toastr.error('Upload the image before submitting the form'); errors = true; }
-		if (!!!formdata.dog_color) 		{ toastr.error('Color is required'); errors = true; }
-		if (!!!formdata.dog_basic_type) { toastr.error('Breed is required'); errors = true; }
+		if (!!!formdata.dog_primary_color) 		{ toastr.error('Color is required'); errors = true; }
+		if (!!!formdata.dog_primary_type) { toastr.error('A basic breed identifier is required'); errors = true; }
 		if (!!!formdata.dog_name && this.props.nameRequired)
 										{ toastr.error('Name is required'); errors = true; }
 		if (!!!formdata.incident_date)	{ toastr.error('Date is required'); errors = true; }
@@ -204,7 +209,53 @@ class NewFormBase extends Component {
 		}
  	}
 
-    render() {
+	dog_breed_options(primary) {
+		let options = [ <option default="true" key="" value=""></option> ]
+
+		options.push(dogTypes.map((val,key) => {
+			return (<option key={key} value={val}>{val}</option>)
+		}));
+
+		return options;
+	}
+
+	dog_primary_type_options() {
+		return this.dog_breed_options(true)
+	}
+
+	dog_secondary_type_options() {
+		return this.dog_breed_options(false)
+	}
+
+	dog_color_options(primary) {
+		let options = [ <option default="true" key="" value=""></option> ]
+
+		options.push(coatTypes.colors.map((val,key) => {
+			return (<option key={key} value={val}>{val}</option>)
+		}));
+
+		return options;
+	}
+
+	dog_primary_color_options() {
+		return this.dog_color_options(true)
+	}
+
+	dog_secondary_color_options() {
+		return this.dog_color_options(false)
+	}
+
+	dog_coat_options() {
+		let options = [ <option default="true" key="" value=""></option> ]
+
+		options.push(coatTypes.coats.map((val,key) => {
+			return (<option key={key} value={val}>{val}</option>)
+		}));
+
+		return options;
+	}
+
+  render() {
     	toastr.options = { "positionClass": "toast-top-center" }
 
     	const name_placeholder = this.props.nameRequired ? "dog's name" : "dog's name, if known";
@@ -216,7 +267,7 @@ class NewFormBase extends Component {
 	  		position: { lat: center.lat, lng: center.lng }
 	  	}];
 
-        return (
+      return (
         	<div>
 	        	<form className="form-horizontal" action="new" method="post">
 					<fieldset>
@@ -240,18 +291,35 @@ class NewFormBase extends Component {
 				</div>
 
 				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="basic_type">Breed</label>
+				  <label className="col-md-4 control-label" htmlFor="primary_type">Breed</label>
 				  <div className="col-md-4">
-				  <input ref="basic_type" name="basic_type" type="text" placeholder="labrador mix, german shepard, etc." className="form-control input-md" required="" />
-
+					  <select className="form-control" id="primary_type" ref="primary_type" placeholder="Best guess at a breed">
+					    { this.dog_primary_type_options() }
+					  </select>
+					  <select className="form-control" id="secondary_type" ref="secondary_type">
+					    { this.dog_secondary_type_options() }
+					  </select>
 				  </div>
 				</div>
 
 				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="color">Color</label>
+				  <label className="col-md-4 control-label" htmlFor="primary_color">Color</label>
 				  <div className="col-md-4">
-				  <input ref="color" name="color" type="text" placeholder="brown, grey and white, brindle, etc." className="form-control input-md" required="" />
+					  <select className="form-control" id="primary_color" ref="primary_color">
+					    { this.dog_primary_color_options() }
+					  </select>
+					  <select className="form-control" ref="secondary_color" id="secondary_color">
+					    { this.dog_secondary_color_options() }
+					  </select>
+					</div>
+				</div>
 
+				<div className="form-group">
+					<label className="col-md-4 control-label" htmlFor="coat_type">Coat</label>
+				  <div className="col-md-4">
+					  <select className="form-control" ref="coat_type" id="coat_type">
+					    { this.dog_coat_options() }
+					  </select>
 				  </div>
 				</div>
 

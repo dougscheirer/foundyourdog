@@ -37,6 +37,27 @@ class ReportsTable extends Component {
 		this.props.showIncidentInfo(incident)
 	}
 
+	genderToText(gender) {
+		switch (gender) {
+			case 'f':
+			case 'F':
+				return 'female'
+			case 'm':
+			case 'M':
+				return 'male'
+			default:
+				return 'unknown gender'
+		}
+	}
+
+	describeDog(incident) {
+		let basicDesc = this.genderToText(incident.dog_gender) + " " + incident.dog_color + " " + incident.dog_basic_type;
+		if (!!incident.dog_name) {
+			basicDesc = incident.dog_name + " : " + basicDesc
+		}
+		return basicDesc
+	}
+
 	render() {
 		if (!!!this.props.dataSource || !this.props.dataSource.length) {
 			return (<div>No results</div>)
@@ -46,9 +67,8 @@ class ReportsTable extends Component {
 
 		const columns = [
 		    { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
-			{ header: "Dog description", id: "description", accessor: (incident) => incident,
-				render: ({value}) => <a href="" onClick={ (e) => this.onDogClick(e, value) }>{value.dog_name + ", " + value.dog_gender + " "
-										+ value.dog_color + " " + value.dog_basic_type } </a> }
+				{ header: "Dog description", id: "description", accessor: (incident) => incident,
+					render: ({value}) => <a href="" onClick={ (e) => this.onDogClick(e, value) }>{ this.describeDog(value) }</a> }
 		]
 		return (<ReactTable data={rows} columns={columns} pageSize={ rows.length } />)
 	}

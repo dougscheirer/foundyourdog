@@ -94,7 +94,16 @@ public class Sql2oModel implements Model {
 	public List<IncidentBrief> getAllIncidents(boolean lost) {
 		try (Connection conn = sql2o.open()) {
 			List<IncidentBrief> incidents = 
-					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from incidents I inner join dogs D on D.uuid=I.dog_id where I.state=:state")
+					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, "
+							+ "resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, "
+							+ "D.gender as dog_gender, "
+							+ "D.primary_type as dog_primary_type, "
+							+ "D.secondary_type as dog_secondary_type, "
+							+ "D.primary_color as dog_primary_color, "
+							+ "D.secondary_color as dog_secondary_color, "
+							+ "D.coat_type as dog_coat_type "
+							+ "from incidents I "
+							+ "inner join dogs D on D.uuid=I.dog_id where I.state=:state")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
 		}
@@ -117,11 +126,20 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into dogs (uuid, basic_type, color, gender, intact, owner_id, name, added_date, image_id)" +
-					"values(:uuid, :basic_type, :color, :gender, :intact, :owner_id, :name, :added_date, :image_id)")
+					"insert into dogs (uuid, primary_type, secondary_type, primary_color, secondary_color, " +
+					"coat_type, gender, intact, owner_id, name, added_date, image_id) " +
+					"values(:uuid, :gender, :intact, :owner_id, :name, :added_date, :image_id, "
+					+ ":primary_type, "
+					+ ":secondary_type, "
+					+ ":primary_color, "
+					+ ":secondary_color, "
+					+ ":coat_type)")
 					.addParameter("uuid", uuid)
-					.addParameter("basic_type", d.getBasic_type())
-					.addParameter("color", d.getColor())
+					.addParameter("primary_type", d.getPrimary_type())
+					.addParameter("secondary_type", d.getSecondary_type())
+					.addParameter("primary_color", d.getPrimary_color())
+					.addParameter("secondary_color", d.getSecondary_color())
+					.addParameter("coat_type", d.getCoat_type())
 					.addParameter("gender", d.getGender())
 					.addParameter("intact", d.getIntact())
 					.addParameter("owner_id", d.getOwner_id())
@@ -310,8 +328,15 @@ public class Sql2oModel implements Model {
 	public List<IncidentBrief> getUserIncidents(String userId, String type) {
 		try (Connection conn = sql2o.open()) {
 			List<IncidentBrief> incidents = 
-					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, D.color as dog_color, D.gender as dog_gender, D.basic_type as dog_basic_type from "
-							+ "incidents I inner join dogs D on D.uuid=I.dog_id "
+					conn.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, "
+							+ "reporter_id, D.uuid as dog_id, D.name as dog_name, "
+							+ "D.gender as dog_gender, "
+							+ "D.coat_type as dog_coat_type, "
+							+ "D.primary_type as dog_primary_type, "
+							+ "D.secondary_type as dog_secondary_type, "
+							+ "D.primary_color as dog_primary_color, "
+							+ "D.secondary_color as dog_secondary_color "
+							+ "from incidents I inner join dogs D on D.uuid=I.dog_id "
 							+ "where reporter_id=:userId and resolution_id is " + (type.equals("open") ? "null" : "not null"))
 					.addParameter("userId", userId)
 					.executeAndFetch(IncidentBrief.class);

@@ -5,6 +5,7 @@ import { getReportInfo } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
+import { optionalString, coatDescription } from './helpers'
 
 class ReportSummary extends Component {
 
@@ -100,8 +101,8 @@ class ReportSummary extends Component {
 							<tr><th>Dog profile</th></tr>
 						</thead>
 							<tbody>
-								<tr><td>Breed</td><td>{ report.dog.basic_type }</td></tr>
-								<tr><td>Color</td><td>{ report.dog.color }</td></tr>
+								<tr><td>Breed</td><td>{ optionalString(report.dog.primary_type, report.dog.secondary_type) }</td></tr>
+								<tr><td>Coat</td><td>{ coatDescription(report.dog.primary_color, report.dog.secondary_color, report.dog.coat_type) }</td></tr>
 								<tr><td>Breeding status</td><td>{ report.dog.intact }</td></tr>
 								<tr><td>Name</td><td>{ report.dog.name }</td></tr>
 								<tr><td>Added on</td><td>{ Date(report.dog.added_date) }</td></tr>

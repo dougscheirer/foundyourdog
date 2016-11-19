@@ -42,8 +42,11 @@ CREATE TABLE IF NOT EXISTS resolutions (
 
 CREATE TABLE IF NOT EXISTS dogs (
 	uuid text primary key,
-	basic_type text,
-    color text,
+	primary_type text,
+    secondary_type text,
+    primary_color text,
+    secondary_color text,
+    coat_type text,
 	gender text,
 	intact text,
 	owner_id text,

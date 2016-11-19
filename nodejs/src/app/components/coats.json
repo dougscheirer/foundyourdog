@@ -1,0 +1,25 @@
+{
+	"colors" : [
+		"Brown/Chocolate",
+		"Yellow",
+		"Black",
+		"Gold",
+		"Red",
+		"Cream",
+		"Fawn",
+		"Gray",
+		"White",
+		"Blue"
+	],
+	"coats" : [
+		"Solid",
+		"Merle",
+		"Tuxedo",
+		"Harlequin",
+		"Spotted",
+		"Speckled",
+		"Brindle",
+		"Saddle",
+		"I can't describe it"
+	]
+}

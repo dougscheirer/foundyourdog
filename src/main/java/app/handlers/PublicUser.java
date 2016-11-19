@@ -1,6 +1,6 @@
 package app.handlers;
 
-import java.sql.Timestamp;
+import org.joda.time.DateTime;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ public class PublicUser {
 	private String email;
 	private String handle;
 	private Boolean confirmed;
-	private Timestamp signup_date;
-	private Timestamp confirm_date;
-	private Timestamp deactivate_date;
+	private DateTime signup_date;
+	private DateTime confirm_date;
+	private DateTime deactivate_date;
 }

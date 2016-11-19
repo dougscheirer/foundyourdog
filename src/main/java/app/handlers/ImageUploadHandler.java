@@ -3,9 +3,10 @@ package app.handlers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
+
+import org.joda.time.DateTime;
 
 import app.Main;
 import app.model.Image;
@@ -28,10 +29,9 @@ public class ImageUploadHandler implements Route {
 	public Object handle(Request request, Response response) throws Exception {
 		// first create the DB entry, then save the file
 		Image newImage = new Image();
-		java.util.Date utilDate = new java.util.Date();
 		newImage.setUser_id(Main.getCurrentUser(request).getUuid());
 		newImage.setImage_location(this.imageLocation);
-		newImage.setUpload_date(new java.sql.Timestamp(utilDate.getTime()));
+		newImage.setUpload_date(DateTime.now());
 		newImage.setStatus("unassigned");
 		// TODO: if it's not part of a report, it will have a dog id
 		String uuid = model.createImage(newImage);

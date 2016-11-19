@@ -1,6 +1,6 @@
 package app.handlers;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 import java.util.Map;
 
 import app.Answer;
@@ -28,10 +28,12 @@ public class CreateIncidentReportHandler extends AbstractRequestHandler<Incident
 		// 3) change the image status (if available) to "assigned"
 		
 		Dog newDog = new Dog();
-		Date utilDate = new java.util.Date();
-		newDog.setAdded_date(new java.sql.Timestamp(utilDate.getTime()));
-		newDog.setBasic_type(form.getDog_basic_type());
-		newDog.setColor(form.getDog_color());
+		newDog.setAdded_date(DateTime.now());
+		newDog.setPrimary_type(form.getDog_primary_type());
+		newDog.setSecondary_type(form.getDog_secondary_type());
+		newDog.setPrimary_color(form.getDog_secondary_color());
+		newDog.setSecondary_color(form.getDog_secondary_color());
+		newDog.setCoat_type(form.getDog_coat_type());
 		newDog.setGender(form.getDog_gender());
 		newDog.setIntact(form.getDog_breeding_status() == "intact");
 		newDog.setName(form.getDog_name());

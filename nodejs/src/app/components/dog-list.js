@@ -6,17 +6,9 @@ import { loginRequired, getIncidentInfo, getDogIncidents } from "../actions";
 import { connect } from 'react-redux';
 import ShowInfoCard from './info-card'
 import { Tab, TabContainer } from './tabs'
+import { incidentToString } from './helpers'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-
-function incidentToString(incident) {
-  return (
-    <div>
-      {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
-      {incident.dog_color}{" : "}
-      {incident.dog_basic_type}
-    </div>)
-}
 
 class DogMap extends Component {
   state = {
@@ -60,13 +52,11 @@ class DogMap extends Component {
     const theDate = new Date(incident.incident_date);
     return (
       <div>
-        { theDate.toString() }<br />
-        <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
-        &nbsp;<strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong>&nbsp;
-        {incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male' }{" : "}
-        {incident.dog_color}{" : "}
-        {incident.dog_basic_type}
-        </a>
+      { theDate.toString() }<br />
+      <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
+      <strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong>
+      { incidentToString(incident) }
+      </a>
       </div>)
   }
 

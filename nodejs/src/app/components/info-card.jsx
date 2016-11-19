@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
+import { optionalString, coatDescription } from './helpers'
 
 class ShowInfoCard extends Component {
 
@@ -95,8 +96,8 @@ class ShowInfoCard extends Component {
 							</thead>
 							<tbody>
 								{ this.getNameRow(dog.name) }
-								<tr><td>Breed</td><td>{ dog.basic_type }</td></tr>
-								<tr><td>Color</td><td>{ dog.color }</td></tr>
+								<tr><td>Breed</td><td>{ optionalString(dog.primary_type, dog.secondary_type) }</td></tr>
+								<tr><td>Coat</td><td>{ coatDescription(dog.primary_color, dog.secondary_color, dog.coat_type) }</td></tr>
 								{ this.getBreedingStatusRow(dog.intact) }
 								<tr><td>Added on</td><td>{ Date(dog.added_date) }</td></tr>
 								<tr><td></td><td>{ dog.tags }</td></tr>
