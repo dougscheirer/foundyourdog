@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { getIncidentInfo, getUserReports } from '../../actions'
 import ReactTable from 'react-table'
+import { dogFromIncident } from '../helpers'
 
 class ReportsPanel extends Component {
 	render() {
@@ -51,7 +52,7 @@ class ReportsTable extends Component {
 	}
 
 	describeDog(incident) {
-		let basicDesc = this.genderToText(incident.dog_gender) + " " + incident.dog_color + " " + incident.dog_basic_type;
+		let basicDesc = dogFromIncident(incident)
 		if (!!incident.dog_name) {
 			basicDesc = incident.dog_name + " : " + basicDesc
 		}

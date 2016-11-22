@@ -22,3 +22,9 @@ export function coatDescription(pri, sec, type) {
     retVal += " " + type;
   return retVal
 }
+
+export function dogFromIncident(incident) {
+    return (incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male') + " "
+      + optionalString(incident.dog_primary_color, incident.dog_secondary_color) + " "
+      + optionalString(incident.dog_primary_type, incident.dog_secondary_type)
+  }

@@ -128,12 +128,18 @@ public class Sql2oModel implements Model {
 			conn.createQuery(
 					"insert into dogs (uuid, primary_type, secondary_type, primary_color, secondary_color, " +
 					"coat_type, gender, intact, owner_id, name, added_date, image_id) " +
-					"values(:uuid, :gender, :intact, :owner_id, :name, :added_date, :image_id, "
+					"values(:uuid, "
 					+ ":primary_type, "
 					+ ":secondary_type, "
 					+ ":primary_color, "
 					+ ":secondary_color, "
-					+ ":coat_type)")
+					+ ":coat_type, "
+					+ ":gender, "
+					+ ":intact, "
+					+ ":owner_id, "
+					+ ":name, "
+					+ ":added_date, "
+					+ ":image_id)")
 					.addParameter("uuid", uuid)
 					.addParameter("primary_type", d.getPrimary_type())
 					.addParameter("secondary_type", d.getSecondary_type())
@@ -188,7 +194,14 @@ public class Sql2oModel implements Model {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
 					"insert into incidents (uuid, map_latitude, map_longitude, reporter_id, dog_id, incident_date, state)" +
-					"values(:uuid, :map_latitude, :map_longitude, :reporter_id, :dog_id, :incident_date, :state)")
+					"values("
+					+ ":uuid, "
+					+ ":map_latitude, "
+					+ ":map_longitude, "
+					+ ":reporter_id, "
+					+ ":dog_id, "
+					+ ":incident_date, "
+					+ ":state)")
 		    	.addParameter("uuid", uuid)
 		    	.addParameter("map_latitude", i.getMap_latitude())
 		    	.addParameter("map_longitude", i.getMap_longitude())
@@ -236,8 +249,14 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into images(uuid, user_id, image_location, upload_date, tags, dog_id, status)"
-							+ "   VALUES (:uuid, :user_id, :image_location, :upload_date, :tags, :dog_id, :status)")
+					"insert into images(uuid, user_id, image_location, upload_date, tags, dog_id, status) VALUES ("
+							+ ":uuid, "
+							+ ":user_id, "
+							+ ":image_location, "
+							+ ":upload_date, "
+							+ ":tags, "
+							+ ":dog_id, "
+							+ ":status)")
 					.addParameter("uuid", uuid)
 					.addParameter("user_id", i.getUser_id())
 					.addParameter("image_location", i.getImage_location())

@@ -1,6 +1,6 @@
 package app.model;
 
-import org.joda.time.DateTime;
+import java.sql.Timestamp;
 
 import app.Validatable;
 import lombok.Data;
@@ -13,9 +13,9 @@ public class User implements Validatable {
 	private String password_hash;
 	private String confirmation_token;
 	private Boolean confirmed;
-	private DateTime signup_date;
-	private DateTime confirm_date;
-	private DateTime deactivate_date;
+	private Timestamp signup_date;
+	private Timestamp confirm_date;
+	private Timestamp deactivate_date;
 	private String phone1;
 	private String phone2;
 	private Boolean inapp_notifications;

@@ -1,6 +1,6 @@
 package app.model;
 
-import org.joda.time.DateTime;
+import java.sql.Timestamp;
 
 import app.Validatable;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class Dog implements Validatable {
 	private String owner_id;
 	private String tags;
 	private String name;
-	private DateTime added_date;
+	private Timestamp added_date;
 	private String image_id;
 
 	@Override

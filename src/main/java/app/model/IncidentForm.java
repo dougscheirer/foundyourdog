@@ -1,6 +1,6 @@
 package app.model;
 
-import org.joda.time.DateTime;
+import java.sql.Timestamp;
 
 import app.Validatable;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.Data;
 public class IncidentForm implements Validatable {
 	private float map_latitude;
 	private float map_longitude;
-	private DateTime incident_date;
+	private Timestamp incident_date;
 	private String reporter_id;
 	private String dog_name;
 	private String dog_secondary_type;
