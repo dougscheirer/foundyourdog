@@ -68,6 +68,7 @@ class ReportsTable extends Component {
 
 		const columns = [
 		    { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
+		    { header: "State", accessor: "state" },
 				{ header: "Dog description", id: "description", accessor: (incident) => incident,
 					render: ({value}) => <a href="" onClick={ (e) => this.onDogClick(e, value) }>{ this.describeDog(value) }</a> }
 		]

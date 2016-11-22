@@ -5,7 +5,7 @@ import { getReportInfo } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
-import { optionalString, coatDescription } from './helpers'
+import { optionalColor, coatDescription } from './helpers'
 
 class ReportSummary extends Component {
 
@@ -20,8 +20,12 @@ class ReportSummary extends Component {
 		this.props.onLoadReport(this.props.params.reportId);
 	}
 
+	isLoggedInUser(id) {
+		return (this.props.login_status === "success" && this.props.login_data.uuid === id)
+	}
+
 	formatReporterField(report) {
-		if (this.props.login_status === "success" && this.props.login_data.uuid === report.incident.reporter_id) {
+		if (this.isLoggedInUser(report.incident.reporter_id)) {
 			return (<span>
 								<Link to="/profile">You</Link>
 								<button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-trash"></button>
@@ -30,15 +34,18 @@ class ReportSummary extends Component {
 		}
 
 		if (report.incident.state === "found") {
-			return (<button className="btn btn-default">Contact finder</button>)
+			// if the reporter id is the logged in user, gray out the button
+			const classes = "btn btn-default " + (this.isLoggedInUser(report.incident.reporter_id) ? "disabled" : "")
+			return (<button className={ classes }>Contact finder</button>)
 		} else {
-			return (<button className="btn btn-default">Contact owner</button>)
+			const classes = "btn btn-default " + (this.isLoggedInUser(report.incident.owner_id) ? "disabled" : "")
+			return (<button className={ classes }>Contact owner</button>)
 		}
 	}
 
 	formatOwnerField(report) {
 		if (report.incident.state === "lost") {
-			if (this.props.login_status === "success" && this.props.login_data.uuid === report.incident.reporter_id) {
+			if (this.isLoggedInUser(report.incident.reporter_id)) {
 				return (<Link to="/profile">You</Link>)
 			} else {
 				return (<button className="btn btn-default">Contact owner</button>)
@@ -101,7 +108,7 @@ class ReportSummary extends Component {
 							<tr><th>Dog profile</th></tr>
 						</thead>
 							<tbody>
-								<tr><td>Breed</td><td>{ optionalString(report.dog.primary_type, report.dog.secondary_type) }</td></tr>
+								<tr><td>Breed</td><td>{ optionalColor(report.dog.primary_type, report.dog.secondary_type) }</td></tr>
 								<tr><td>Coat</td><td>{ coatDescription(report.dog.primary_color, report.dog.secondary_color, report.dog.coat_type) }</td></tr>
 								<tr><td>Breeding status</td><td>{ report.dog.intact }</td></tr>
 								<tr><td>Name</td><td>{ report.dog.name }</td></tr>

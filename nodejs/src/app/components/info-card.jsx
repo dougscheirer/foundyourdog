@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
-import { optionalString, coatDescription } from './helpers'
+import { optionalColor, coatDescription } from './helpers'
 
 class ShowInfoCard extends Component {
 
@@ -52,6 +52,17 @@ class ShowInfoCard extends Component {
 			alt="dog" />)
 	}
 
+	isLoggedInUser(id) {
+		return (this.props.login_status === "success" && this.props.login_data.uuid === id)
+	}
+
+	getContactControl(incident) {
+		const classes="btn btn-default " + (this.isLoggedInUser(incident.reporter_id) ? "disabled" : "")
+		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ (e) => this.onContact.bind(this) }>
+							{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
+						</button>)
+	}
+
 	render() {
 		const dialogStyles = {
 			base: {
@@ -86,9 +97,7 @@ class ShowInfoCard extends Component {
 						<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
 							{ " on " }<strong>{ Date(incident.incident_date) }</strong>
 							{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
-							<button style={{marginLeft: "20px"}} className="btn btn-default" onClick={ (e) => this.onContact.bind(this) }>
-							{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
-							</button>
+							{ this.getContactControl(incident) }
 						</p>
 						<table className="table">
 							<thead>
@@ -96,10 +105,10 @@ class ShowInfoCard extends Component {
 							</thead>
 							<tbody>
 								{ this.getNameRow(dog.name) }
-								<tr><td>Breed</td><td>{ optionalString(dog.primary_type, dog.secondary_type) }</td></tr>
+								<tr><td>Breed</td><td>{ optionalColor(dog.primary_type, dog.secondary_type) }</td></tr>
 								<tr><td>Coat</td><td>{ coatDescription(dog.primary_color, dog.secondary_color, dog.coat_type) }</td></tr>
 								{ this.getBreedingStatusRow(dog.intact) }
-								<tr><td>Added on</td><td>{ Date(dog.added_date) }</td></tr>
+								<tr><td>Reported on</td><td>{ Date(dog.added_date) }</td></tr>
 								<tr><td></td><td>{ dog.tags }</td></tr>
 							</tbody>
 						</table>
@@ -112,7 +121,9 @@ class ShowInfoCard extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	incident_info: state.incident_info
+	incident_info: state.incident_info,
+	login_status: state.login_status,
+	login_data: state.login_data
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
