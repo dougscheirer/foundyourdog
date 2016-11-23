@@ -39,4 +39,5 @@ public interface Model {
 	void deleteImage(String id);
 
 	List<IncidentBrief> getUserIncidents(String userId, String type);
+	List<Notification> getUserNotifications(String userId, String type);
 }

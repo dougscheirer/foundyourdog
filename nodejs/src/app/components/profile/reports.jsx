@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { getIncidentInfo, getUserReports } from '../../actions'
 import ReactTable from 'react-table'
-import { dogFromIncident } from '../helpers'
+import { humanTimestamp, dogFromIncident } from '../helpers'
 
 class ReportsPanel extends Component {
 	render() {
@@ -61,13 +61,13 @@ class ReportsTable extends Component {
 
 	render() {
 		if (!!!this.props.dataSource || !this.props.dataSource.length) {
-			return (<div>No results</div>)
+			return (<div>No reports found</div>)
 		}
 
 		const rows = this.props.dataSource || []
 
 		const columns = [
-		    { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
+		    { header: "Date", id: "date", accessor: (incident) => incident.incident_date, render: ({value}) => <span>{ humanTimestamp(value) }</span> },
 		    { header: "State", accessor: "state" },
 				{ header: "Dog description", id: "description", accessor: (incident) => incident,
 					render: ({value}) => <a href="" onClick={ (e) => this.onDogClick(e, value) }>{ this.describeDog(value) }</a> }

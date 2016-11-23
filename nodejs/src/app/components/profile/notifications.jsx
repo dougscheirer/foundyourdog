@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import mockData from './mockdata/notifications.json'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+import { connect } from 'react-redux'
+import { getUserNotifications } from '../../actions'
 
 class NotificationPanel extends Component {
 	render() {
@@ -33,6 +34,9 @@ class NotificationTable extends Component {
 	}
 
 	render() {
+		if (!!!this.props.dataSource) {
+			return (<div>No notifications found</div>)
+		}
 		const readFilter = (this.props.filter === "read")
 		const rows = this.props.dataSource.notifications.filter( (val, key) => {
 			return (val.read === readFilter)
@@ -49,7 +53,7 @@ class NotificationTable extends Component {
 	}
 }
 
-export default class Notifications extends Component {
+class Notifications extends Component {
 	onTogglePanel(e, panel) {
 		e.preventDefault()
 		const panelStates = this.state.panel || {}
@@ -67,6 +71,11 @@ export default class Notifications extends Component {
 		return !!this.state.panel[panelId]
 	}
 
+	componentDidMount() {
+		this.props.getNotificationsList('unread')
+		this.props.getNotificationsList('read')
+	}
+
 	render() {
 		return (<div className="user-profile-container">
 			<div>
@@ -80,12 +89,24 @@ export default class Notifications extends Component {
 			<div>
 		{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ mockData } filter="read" />
+					<NotificationTable dataSource={ this.props.unreadNotifications } filter="read" />
 				</NotificationPanel>
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Older" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ mockData } filter="unread" />
+					<NotificationTable dataSource={ this.props.readNotifications } filter="unread" />
 				</NotificationPanel>
 			</div>
 		</div>)
 	}
 }
+
+const mapStateToProps = (state, myprops) => ({
+	unreadNotifications : state.myUnreadNotifications,
+	readNotifications : state.myReadNotifications
+});
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+	getNotificationsList : (type) => { dispatch(getUserNotifications(type)); }
+	// showNotificationInfo: (notification) => { dispatch(getNotificationInfo(incident.uuid)) }
+});
+
+export default Notifications = connect(mapStateToProps, mapDispatchToProps)(Notifications)

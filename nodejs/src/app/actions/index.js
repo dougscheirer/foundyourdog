@@ -157,7 +157,7 @@ export const getDogIncidents = ( type, location, zoom ) => {
 
 export const getUserReports = (type) => {
 	return dispatch => {
-		fetch('/api/auth/reports' + '?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
+		fetch('/api/auth/reports?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
 			switch (res.status) {
 				default:
 					console.log("failed: " + res);
@@ -171,6 +171,28 @@ export const getUserReports = (type) => {
 						type: 'USER_REPORTS',
 						filter: type,
 						incidents: res
+					})
+				}
+			})
+		}
+}
+
+export const getUserNotifications = (type) => {
+	return dispatch => {
+		fetch('/api/auth/notifications?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
+			switch (res.status) {
+				default:
+					console.log("failed: " + res);
+					return null
+				case 200:
+					return res.json()
+				}
+			}).then((res) => {
+				if (!!res) {
+					return dispatch({
+						type: 'USER_NOTIFICATIONS',
+						filter: type,
+						notifications: res
 					})
 				}
 			})

@@ -23,6 +23,7 @@ import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUserIncidents;
+import app.handlers.GetUserNotifications;
 import app.handlers.GetUsersIndexHandler;
 import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
@@ -126,6 +127,7 @@ public class Main {
 		// delete("/api/users/:id", new DeleteUserHandler(model));
 
 		get("/api/auth/reports", new GetUserIncidents(model));
+		get("/api/auth/notifications", new GetUserNotifications(model));
 		
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));

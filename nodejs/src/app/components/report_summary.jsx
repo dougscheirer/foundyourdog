@@ -5,7 +5,7 @@ import { getReportInfo } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
-import { optionalColor, coatDescription } from './helpers'
+import { humanTimestamp, optionalColor, coatDescription } from './helpers'
 
 class ReportSummary extends Component {
 
@@ -95,7 +95,7 @@ class ReportSummary extends Component {
 						<table className="table" width="100%">
 							<thead><tr><th>Report details</th></tr></thead>
 							<tbody>
-								<tr><td>Date</td><td>{ Date(report.incident.incident_date) }</td></tr>
+								<tr><td>Date</td><td>{ humanTimestamp(report.incident.incident_date) }</td></tr>
 								<tr><td>Status</td><td>{ report.incident.state }</td></tr>
 								<tr><td>Resolution</td><td>{ report.incident.resolution }</td></tr>
 								<tr><td>Reporter</td><td>{ this.formatReporterField(report) }</td></tr>

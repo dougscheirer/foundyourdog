@@ -12,6 +12,7 @@ import app.model.Image;
 import app.model.Incident;
 import app.model.IncidentBrief;
 import app.model.Model;
+import app.model.Notification;
 import app.model.User;
 import app.model.UserSignup;
 import app.handlers.PublicUser;
@@ -360,6 +361,16 @@ public class Sql2oModel implements Model {
 					.addParameter("userId", userId)
 					.executeAndFetch(IncidentBrief.class);
 			return incidents;
+		}
+	}
+
+	@Override
+	public List<Notification> getUserNotifications(String userId, String type) {
+		try (Connection conn = sql2o.open()) {
+			return conn.createQuery("select * from notifications where sender_id=:userid or receiver_id=:userid and sender_read=:read order by sent_date desc")
+					.addParameter("userid", userId)
+					.addParameter("read", type.equals("read"))
+					.executeAndFetch(Notification.class);
 		}
 	}
 }

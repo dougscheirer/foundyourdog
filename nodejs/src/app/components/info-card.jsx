@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
-import { optionalColor, coatDescription } from './helpers'
+import { humanTimestamp, optionalColor, coatDescription } from './helpers'
 
 class ShowInfoCard extends Component {
 
@@ -95,7 +95,7 @@ class ShowInfoCard extends Component {
 					<div>
 						<p></p>
 						<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
-							{ " on " }<strong>{ Date(incident.incident_date) }</strong>
+							{ " on " }<strong>{ humanTimestamp(incident.incident_date) }</strong>
 							{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
 							{ this.getContactControl(incident) }
 						</p>
@@ -108,7 +108,7 @@ class ShowInfoCard extends Component {
 								<tr><td>Breed</td><td>{ optionalColor(dog.primary_type, dog.secondary_type) }</td></tr>
 								<tr><td>Coat</td><td>{ coatDescription(dog.primary_color, dog.secondary_color, dog.coat_type) }</td></tr>
 								{ this.getBreedingStatusRow(dog.intact) }
-								<tr><td>Reported on</td><td>{ Date(dog.added_date) }</td></tr>
+								<tr><td>Reported on</td><td>{ humanTimestamp(incident.incident_date) }</td></tr>
 								<tr><td></td><td>{ dog.tags }</td></tr>
 							</tbody>
 						</table>

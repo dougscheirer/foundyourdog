@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 
 export function incidentToString(incident) {
   return (
@@ -31,4 +32,9 @@ export function dogFromIncident(incident) {
     return (incident.dog_gender.toLowerCase() === 'f' ? 'female' : 'male') + ", "
       + optionalColor(incident.dog_primary_color, incident.dog_secondary_color) + ", "
       + optionalBreed(incident.dog_primary_type, incident.dog_secondary_type)
-  }
+}
+
+export function humanTimestamp(ts) {
+  const m = moment(ts)
+  return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
+}

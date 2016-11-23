@@ -47,7 +47,7 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				incidents: incidents }
 		case 'USER_REPORTS':
-			if (action.filter == 'open') {
+			if (action.filter === 'open') {
 				return { ...state,
 					myOpenReports: action.incidents	}
 			} else {

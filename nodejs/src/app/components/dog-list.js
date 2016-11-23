@@ -4,9 +4,8 @@ import SimpleMap from "./simple_map";
 import { browserHistory } from 'react-router';
 import { loginRequired, getIncidentInfo, getDogIncidents } from "../actions";
 import { connect } from 'react-redux';
-import ShowInfoCard from './info-card'
 import { Tab, TabContainer } from './tabs'
-import { incidentToString } from './helpers'
+import { humanTimestamp, incidentToString } from './helpers'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
@@ -49,10 +48,9 @@ class DogMap extends Component {
   }
 
   incidentToInfo(incident) {
-    const theDate = new Date(incident.incident_date);
     return (
       <div>
-      Reported { incident.state } on { theDate.toString() }<br />
+      Reported { incident.state } on { humanTimestamp(incident.incident_date) }<br />
       <a href="" onClick={ (e) => this.props.showCard(e, incident) } >
       <strong>[ { (!!incident.dog_name) ? incident.dog_name : "no name" } ]</strong><br />
       { incidentToString(incident) }
@@ -111,7 +109,7 @@ class DogList extends Component {
 
   render() {
     const columns = [
-      { header: "Date", id: "date", accessor: (incident) => new Date(incident.incident_date), render: ({value}) => <span>{ value.toString() }</span> },
+      { header: "Date", id: "date", accessor: (incident) => incident.incident_date, render: ({value}) => <span>{ humanTimestamp(value) }</span> },
       { header: "Name", accessor: "dog_name" },
       { header: "Description", id: "description", accessor: (incident) => incident,
         render: ({value}) => <span><a href="" onClick={ (e) => this.props.showCard(e, value) }>{ incidentToString(value) }</a></span> },
