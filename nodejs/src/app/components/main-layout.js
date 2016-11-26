@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { checkLoginStatus } from '../actions';
 import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
+import SendNotification from './send-notification'
 
 class MainLayout extends React.Component {
 
@@ -21,6 +22,7 @@ class MainLayout extends React.Component {
         <Signup />
         <DevTools />
         <ShowInfoCard />
+        <SendNotification />
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">

@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     sender_id text not null,
     sender_read boolean default false,
     sender_delete boolean default false,
-    messsage text not null,
+    message text not null,
     sender_flagged bool default false,
     responding_to text
 );

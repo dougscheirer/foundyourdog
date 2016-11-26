@@ -3,9 +3,11 @@ package app.sql2o;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.Sql2oException;
 
 import app.model.Dog;
 import app.model.Image;
@@ -16,9 +18,12 @@ import app.model.Notification;
 import app.model.User;
 import app.model.UserSignup;
 import app.handlers.PublicUser;
+import app.Main;
+import app.handlers.DetailNotification;
 import app.handlers.DetailUser;
 
 public class Sql2oModel implements Model {
+	final static Logger logger = Logger.getLogger(Sql2oModel.class.getCanonicalName());
 	private Sql2o sql2o;
 
 	public Sql2oModel(Sql2o sql2o) {
@@ -33,7 +38,10 @@ public class Sql2oModel implements Model {
 							"select id, email, handle, confirmed, signup_date, confirm_date, deactivate_date from users order by id")
 					.executeAndFetch(PublicUser.class);
 			return users;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -50,7 +58,10 @@ public class Sql2oModel implements Model {
 			} else {
 				throw new RuntimeException();
 			}
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -71,7 +82,10 @@ public class Sql2oModel implements Model {
 					.addParameter("admin", false)
 					.executeUpdate();
 			return uuid;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -107,7 +121,10 @@ public class Sql2oModel implements Model {
 							+ "inner join dogs D on D.uuid=I.dog_id where I.state=:state")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -119,7 +136,10 @@ public class Sql2oModel implements Model {
 				return Optional.empty();
 			}
 			return Optional.of(dogs.get(0));
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -156,7 +176,10 @@ public class Sql2oModel implements Model {
 					.executeUpdate();
 			
 			return uuid;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -186,7 +209,10 @@ public class Sql2oModel implements Model {
 				return Optional.empty();
 			}
 			return Optional.of(incidents.get(0));
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -213,7 +239,10 @@ public class Sql2oModel implements Model {
 		    	.executeUpdate();
 			
 			return uuid;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -243,7 +272,10 @@ public class Sql2oModel implements Model {
 				return Optional.empty();
 			}
 			return Optional.of(images.get(0));
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 	@Override
 	public String createImage(Image i) {
@@ -267,7 +299,10 @@ public class Sql2oModel implements Model {
 					.addParameter("status", i.getStatus())
 					.executeUpdate();
 			return uuid;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -277,13 +312,17 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public void deleteImage(String id) {
+	public boolean deleteImage(String id) {
 		try (Connection conn = sql2o.open()) {
 			conn.createQuery(
 							"delete from images where uuid=:id")
 					.addParameter("id", id)
 					.executeUpdate();
+			return true;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return false;
 	}
 
 	@Override
@@ -299,7 +338,10 @@ public class Sql2oModel implements Model {
 			} else {
 				return Optional.empty();
 			}
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -316,7 +358,10 @@ public class Sql2oModel implements Model {
 					.addParameter("password_hash", u.getPassword())
 					.addParameter("confirmation_token", confirmationToken).executeUpdate();
 			return uuid;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -329,7 +374,10 @@ public class Sql2oModel implements Model {
 					.addParameter("status", status)
 					.executeUpdate();
 			return imageID;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -341,7 +389,10 @@ public class Sql2oModel implements Model {
 				return Optional.empty();
 			}
 			return Optional.of(images.get(0));
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -361,16 +412,29 @@ public class Sql2oModel implements Model {
 					.addParameter("userId", userId)
 					.executeAndFetch(IncidentBrief.class);
 			return incidents;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 
 	@Override
-	public List<Notification> getUserNotifications(String userId, String type) {
+	public List<DetailNotification> getUserNotifications(String userId, String type) {
 		try (Connection conn = sql2o.open()) {
-			return conn.createQuery("select * from notifications where sender_id=:userid or receiver_id=:userid and sender_read=:read order by sent_date desc")
+			// TODO: inner join on user handles, need a bridge model
+			return conn.createQuery("SELECT "
+						+ "N.uuid, N.incident_id, N.receiver_id, N.sent_date, N.sender_id, N.sender_read, N.sender_delete, N.message, N.sender_flagged, N.responding_to, "
+						+ "from_users.handle as sender_handle, to_users.handle AS receiver_handle FROM notifications N "
+					+ "JOIN users AS from_users on N.sender_id = from_users.uuid "
+					+ "JOIN users AS to_users on N.receiver_id = to_users.uuid "
+					+ "WHERE (receiver_id=:userid) AND sender_read=:read AND sender_delete=false "
+					+ "ORDER BY sent_date DESC")
 					.addParameter("userid", userId)
 					.addParameter("read", type.equals("read"))
-					.executeAndFetch(Notification.class);
+					.executeAndFetch(DetailNotification.class);
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
 		}
+		return null;
 	}
 }

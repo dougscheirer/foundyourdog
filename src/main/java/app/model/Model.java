@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import app.handlers.PublicUser;
+import app.handlers.DetailNotification;
 import app.handlers.DetailUser;
 
 public interface Model {
@@ -36,8 +37,8 @@ public interface Model {
 	String updateImage(Image i);
 	String updateImageStatus(String imageID, String dogId, String status);
 	Optional<Image> getUnassignedImage(String userid);
-	void deleteImage(String id);
+	boolean deleteImage(String id);
 
 	List<IncidentBrief> getUserIncidents(String userId, String type);
-	List<Notification> getUserNotifications(String userId, String type);
+	List<DetailNotification> getUserNotifications(String userId, String type);
 }

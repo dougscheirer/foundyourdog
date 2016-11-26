@@ -54,6 +54,19 @@ const reducerOne = (state = initialState, action) => {
 				return { ...state,
 					myClosedReports: action.incidents	}
 			}
+		case 'USER_NOTIFICATIONS':
+			if (action.filter === 'read') {
+				return { ...state,
+					myReadNotifications: action.notifications	}
+			} else {
+				return { ...state,
+					myUnreadNotifications: action.notifications	}
+			}
+		case 'SEND_NOTIFICATION':
+			const value = (action.notification_data && action.notification_data.incident && action.notification_data.target_user) ?
+							action.notification_data : undefined
+			return { ...state,
+						notification_data: value }
 		default:
 			return state;
 		}

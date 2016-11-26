@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import spinner from '../../spinner.svg'
 import { Link } from 'react-router'
-import { getReportInfo } from '../actions'
+import { getReportInfo, sendNotification } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
@@ -24,6 +24,16 @@ class ReportSummary extends Component {
 		return (this.props.login_status === "success" && this.props.login_data.uuid === id)
 	}
 
+	contactOwner(e) {
+		e.preventDefault();
+		const incident = this.props.report_detail.incident;
+		this.props.sendNotification(incident)
+	}
+
+	contactFinder(e) {
+		this.contactOwner(e)
+	}
+
 	formatReporterField(report) {
 		if (this.isLoggedInUser(report.incident.reporter_id)) {
 			return (<span>
@@ -36,10 +46,10 @@ class ReportSummary extends Component {
 		if (report.incident.state === "found") {
 			// if the reporter id is the logged in user, gray out the button
 			const classes = "btn btn-default " + (this.isLoggedInUser(report.incident.reporter_id) ? "disabled" : "")
-			return (<button className={ classes }>Contact finder</button>)
+			return (<button className={ classes } onClick={ this.contactFinder.bind(this) } >Contact finder</button>)
 		} else {
 			const classes = "btn btn-default " + (this.isLoggedInUser(report.incident.owner_id) ? "disabled" : "")
-			return (<button className={ classes }>Contact owner</button>)
+			return (<button className={ classes } onClick={ this.contactOwner.bind(this) } >Contact owner</button>)
 		}
 	}
 
@@ -48,7 +58,7 @@ class ReportSummary extends Component {
 			if (this.isLoggedInUser(report.incident.reporter_id)) {
 				return (<Link to="/profile">You</Link>)
 			} else {
-				return (<button className="btn btn-default">Contact owner</button>)
+				return (<button className="btn btn-default" onClick={ this.contactFinder.bind(this) }>Contact owner</button>)
 			}
 		} else {
 			return "unknown"
@@ -130,7 +140,8 @@ class ReportSummary extends Component {
 	});
 
 	const mapDispatchToProps = (dispatch, props) => ({
-		onLoadReport: (id) => { dispatch(getReportInfo(id)); }
+		onLoadReport: (id) => { dispatch(getReportInfo(id)); },
+		sendNotification: (incident) => { dispatch(sendNotification(incident.reporter_id, incident)) }
 	});
 
 	export default ReportSummary = connect(mapStateToProps, mapDispatchToProps)(ReportSummary);

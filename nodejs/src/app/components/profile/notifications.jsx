@@ -3,6 +3,7 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import { connect } from 'react-redux'
 import { getUserNotifications } from '../../actions'
+import { humanTimestamp } from '../helpers'
 
 class NotificationPanel extends Component {
 	render() {
@@ -34,18 +35,15 @@ class NotificationTable extends Component {
 	}
 
 	render() {
-		if (!!!this.props.dataSource) {
+		if (!!!this.props.dataSource || !!!this.props.dataSource.length) {
 			return (<div>No notifications found</div>)
 		}
-		const readFilter = (this.props.filter === "read")
-		const rows = this.props.dataSource.notifications.filter( (val, key) => {
-			return (val.read === readFilter)
-		})
+		const rows = this.props.dataSource
 		const columns = [
-			{ header: "From", accessor: "from",
+			{ header: "From", accessor: "sender_handle",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
-			{ header: "When", accessor: "sent",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+			{ header: "When", accessor: "sent_date",
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{humanTimestamp(value)}</a> },
 			{ header: "Message", accessor: "message",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> }
 		]

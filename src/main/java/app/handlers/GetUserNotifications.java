@@ -22,7 +22,7 @@ public class GetUserNotifications extends AbstractRequestHandler<EmptyPayload> {
 		if (u == null) {
 			return new Answer(403);
 		}
-		List<Notification> notifications = model.getUserNotifications(u.getUuid(), request.queryParams("type").toString());
+		List<DetailNotification> notifications = model.getUserNotifications(u.getUuid(), request.queryParams("type").toString());
 		return Answer.ok(dataToJson(notifications));
 	}
 }

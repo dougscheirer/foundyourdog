@@ -198,3 +198,21 @@ export const getUserNotifications = (type) => {
 			})
 		}
 }
+
+export const sendNotification = (userid, incident, reply_to) => {
+	return {
+		type: 'SEND_NOTIFICATION',
+		notification_data: { target_user: userid, incident: incident, reply_to: reply_to }
+	}
+}
+
+export const postNotification = (incident, reply_to, data) => {
+	return dispatch => {
+		fetch('/api/notify', {
+		  method: 'POST', credentials: 'include'
+		}).then((res) => {
+		  // TODO: check res for the status
+		  return dispatch({type: 'NOTIFCATION_SENT', result: res})
+		});
+	};
+}
