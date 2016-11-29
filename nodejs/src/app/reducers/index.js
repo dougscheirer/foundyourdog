@@ -18,6 +18,8 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				login_status: action.show,
 				login_data: action.userData };
+		case 'CLEAR_POST_LOGIN_ACTIONS':
+			return { ...state, post_login_actions: undefined }
 		case 'POST_LOGIN_ACTION':
 			let curActions = state.post_login_actions || []
 			curActions.push(action.post_login_action)

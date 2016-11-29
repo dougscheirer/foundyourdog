@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin, setPostLoginAction } from '../actions';
+import { showLogin, clearPostLoginActions } from '../actions';
 import spinner from '../../spinner.svg';
 import $ from 'jquery';
 
@@ -63,6 +63,7 @@ class Login extends Component {
 		hideModal() {
 			this.props.onHide();
 			this.setState({login_wait: false, error_msg: ''});
+			this.props.onClearPostLoginActions()
 		}
 
 		render() {
@@ -118,7 +119,7 @@ class Login extends Component {
 		onSignup: () 		=> { dispatch(showLogin('signup')); },
 		onPasswordReset: () => { dispatch(showLogin('reset_password')); },
 		onLoggedIn: (data)  => { dispatch(showLogin('success', data)); },
-		onClearPostLoginActions: () => { dispatch(setPostLoginAction(null)) }
+		onClearPostLoginActions: () => { dispatch(clearPostLoginActions()) }
 	});
 
 	export default Login=connect(mapStateToProps, mapDispatchToProps)(Login);
