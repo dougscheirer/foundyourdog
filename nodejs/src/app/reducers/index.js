@@ -19,8 +19,10 @@ const reducerOne = (state = initialState, action) => {
 				login_status: action.show,
 				login_data: action.userData };
 		case 'POST_LOGIN_ACTION':
+			let curActions = state.post_login_actions || []
+			curActions.push(action.post_login_action)
 			return { ...state,
-				post_login_action: action.post_login_action };
+				post_login_actions: curActions };
 		case 'UPLOAD_IMAGE':
 			return { ...state,
 				image_info: action.image_info }
