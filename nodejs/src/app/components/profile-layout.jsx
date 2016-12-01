@@ -3,8 +3,12 @@ import { Notifications, Reports, Dogs, Settings } from "./profile"
 import './home.css'
 import { TabContainer, Tab } from './tabs'
 import { connect } from 'react-redux'
+import { loginRequired } from '../actions'
+import { logged_in } from './helpers'
 
 class ProfileLayout extends Component {
+
+	state = { logged_in : false }
 
 	activePath(pathname) {
 		const parts = pathname.split('/')
@@ -18,7 +22,15 @@ class ProfileLayout extends Component {
 		}
 	}
 
+	componentDidMount() {
+		this.setState( { logged_in : this.props.login_status })
+		this.props.loginRequired((res) => { this.setState( { logged_in : this.props.login_status })})
+	}
+
 	render() {
+		if (!!!this.props.login_status)
+			return (<div className="homemain">You must be logged in to view this page</div>)
+
 		// figure out the active tab by the last in the url path
 		const active = this.activePath(this.props.location.pathname)
 
@@ -39,4 +51,12 @@ class ProfileLayout extends Component {
 	}
 }
 
-export default ProfileLayout = connect()(ProfileLayout)
+const mapStateToProps = (state, myprops) => ({
+	login_status : logged_in(state)
+})
+
+const mapDispatchToProps = (dispatch, myprops) => ({
+	loginRequired : (cb) => { dispatch(loginRequired(cb)) }
+})
+
+export default ProfileLayout = connect(mapStateToProps, mapDispatchToProps)(ProfileLayout)

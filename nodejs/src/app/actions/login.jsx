@@ -57,7 +57,8 @@ export const loginRequired = (postLoginAction) => {
 				postLoginAction();
 			}
 			else {
-				dispatch(setPostLoginAction(postLoginAction));
+				if (!!postLoginAction)
+					dispatch(setPostLoginAction(postLoginAction));
 				dispatch(showLogin('login', null));
 			}
 		});

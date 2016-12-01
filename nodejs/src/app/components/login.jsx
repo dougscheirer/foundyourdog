@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showLogin, clearPostLoginActions } from '../actions';
 import spinner from '../../spinner.svg';
-import $ from 'jquery';
+import fetch from 'isomorphic-fetch';
 
 class Login extends Component {
 
@@ -39,26 +39,30 @@ class Login extends Component {
 		// now do the network call, dispatch the results
 
 		// TODO: change this to use fetch() in the action folder?
-		$.ajax({ url: "/api/login",
-			type: "POST",
-			data: JSON.stringify({ user: this.refs.user.value, password: this.refs.password.value }),
-			contentType:"application/json; charset=utf-8",
-			dataType:"json",
-			success:
-			(data,status,xhr) => {
-				this.props.onLoggedIn(data);
-				if (!!this.props.postLoginActions) {
-					for (let i = 0; i < this.props.postLoginActions; i++) {
-						this.props.postLoginActions[i]()
-					}
-					this.props.onClearPostLoginActions()
+		fetch("/api/login", {
+			method: "POST",
+			body: JSON.stringify({ user: this.refs.user.value, password: this.refs.password.value }),
+			headers:{ "Content-Type" : "application/json" },
+			credentials: 'include'
+		}).then((res) => {
+			this.setState({login_wait: false});
+			if (res.ok) {
+				return res.json()
+			} else {
+				this.setState({error_msg: "Status " + res.status + " : " + res.statusText});
+				return undefined
+			}
+		}).then((data) => {
+			if (!!!data) return data
+			this.props.onLoggedIn(data);
+			if (!!this.props.postLoginActions) {
+				for (let i = 0; i < this.props.postLoginActions.length; i++) {
+					this.props.postLoginActions[i]()
 				}
-			}}).always(() => {
-				this.setState({login_wait: false});
-			}).fail(( jqXHR, textStatus, errorThrown ) => {
-				this.setState({error_msg: "Status " + jqXHR.status + " : " + errorThrown});
-			});
-		}
+				this.props.onClearPostLoginActions()
+			}
+		})
+	}
 
 		hideModal() {
 			this.props.onHide();
