@@ -92,9 +92,9 @@ export const getUserNotifications = (type) => {
 				})
 }
 
-export const sendNotification = (userid, incident, reply_to) => {
+export const sendMessage = (userid, incident, reply_to) => {
 	return {
-		type: 'SEND_NOTIFICATION',
+		type: 'SEND_MESSAGE',
 		notification_data: { target_user: userid, incident: incident, reply_to: reply_to }
 	}
 }

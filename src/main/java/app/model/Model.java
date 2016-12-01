@@ -40,5 +40,7 @@ public interface Model {
 	boolean deleteImage(String id);
 
 	List<IncidentBrief> getUserIncidents(String userId, String type);
+
 	List<DetailNotification> getUserNotifications(String userId, String type);
+	String createNotification(Notification value);
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 import app.Answer;
 import app.Main;
 import app.model.Model;
-import app.model.Notification;
 
 import spark.Request;
 
