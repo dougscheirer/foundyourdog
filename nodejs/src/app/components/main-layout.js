@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import 'bootstrap-loader';
 import AuthNavbar from './auth-navbar';
-import Login from './login';
+import { LoginPopup } from './login';
 import Signup from './signup';
 import { connect } from 'react-redux';
 import { checkLoginStatus } from '../actions';
@@ -18,7 +18,7 @@ class MainLayout extends React.Component {
   render() {
     return (
       <div className="app">
-        <Login />
+        <LoginPopup />
         <Signup />
         <DevTools />
         <ShowInfoCard />

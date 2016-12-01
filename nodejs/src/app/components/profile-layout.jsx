@@ -5,6 +5,7 @@ import { TabContainer, Tab } from './tabs'
 import { connect } from 'react-redux'
 import { loginRequired } from '../actions'
 import { logged_in } from './helpers'
+import { LoginView } from './login'
 
 class ProfileLayout extends Component {
 
@@ -22,14 +23,9 @@ class ProfileLayout extends Component {
 		}
 	}
 
-	componentDidMount() {
-		this.setState( { logged_in : this.props.login_status })
-		this.props.loginRequired((res) => { this.setState( { logged_in : this.props.login_status })})
-	}
-
 	render() {
 		if (!!!this.props.login_status)
-			return (<div className="homemain">You must be logged in to view this page</div>)
+			return (<LoginView />)
 
 		// figure out the active tab by the last in the url path
 		const active = this.activePath(this.props.location.pathname)

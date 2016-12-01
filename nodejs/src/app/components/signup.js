@@ -102,7 +102,7 @@ class Signup extends Component {
 			<Modal isOpen={this.props.isOpen} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 		  <ModalHeader>
 		    <ModalClose onClick={ this.hideModal.bind(this) }/>
-		    <ModalTitle>Sign in to your account</ModalTitle>
+		    <ModalTitle>Sign up for your account</ModalTitle>
 		  </ModalHeader>
 		  <ModalBody>
 		  	<form onSubmit={ this.login.bind(this) }>
