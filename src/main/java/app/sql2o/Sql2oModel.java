@@ -18,7 +18,6 @@ import app.model.Notification;
 import app.model.User;
 import app.model.UserSignup;
 import app.handlers.PublicUser;
-import app.Main;
 import app.handlers.DetailNotification;
 import app.handlers.DetailUser;
 
@@ -421,17 +420,38 @@ public class Sql2oModel implements Model {
 	@Override
 	public List<DetailNotification> getUserNotifications(String userId, String type) {
 		try (Connection conn = sql2o.open()) {
-			// TODO: inner join on user handles, need a bridge model
 			return conn.createQuery("SELECT "
 						+ "N.uuid, N.incident_id, N.receiver_id, N.sent_date, N.sender_id, N.sender_read, N.sender_delete, N.message, N.sender_flagged, N.responding_to, "
 						+ "from_users.handle as sender_handle, to_users.handle AS receiver_handle FROM notifications N "
 					+ "JOIN users AS from_users on N.sender_id = from_users.uuid "
 					+ "JOIN users AS to_users on N.receiver_id = to_users.uuid "
-					+ "WHERE (receiver_id=:userid) AND sender_read=:read AND sender_delete=false "
+					+ "WHERE (receiver_id=:userid OR sender_id=:userid) AND sender_read=:read AND sender_delete=false "
 					+ "ORDER BY sent_date DESC")
 					.addParameter("userid", userId)
 					.addParameter("read", type.equals("read"))
 					.executeAndFetch(DetailNotification.class);
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public String createNotification(Notification n) {
+		try (Connection conn = sql2o.open()) {
+			String uuid = UUID.randomUUID().toString();
+			conn.createQuery(
+					"insert into notifications(uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) "
+					+ "values (:uuid, :incident_id, :receiver_id, :sent_date, :sender_id, false, false, :message, false, :responding_to);")
+					.addParameter("uuid", uuid)
+					.addParameter("incident_id", n.getIncident_id())
+					.addParameter("receiver_id", n.getReceiver_id())
+					.addParameter("sent_date", n.getSent_date())
+					.addParameter("sender_id", n.getSender_id())
+					.addParameter("message", n.getMessage())
+					.addParameter("responding_to", n.getResponding_to())
+					.executeUpdate();
+			return uuid;
 		} catch (Sql2oException e) {
 			logger.severe(e.getLocalizedMessage());
 		}

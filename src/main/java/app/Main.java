@@ -16,7 +16,9 @@ import com.beust.jcommander.JCommander;
 
 import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
+import app.handlers.CreateNotificationHandler;
 import app.handlers.CreateUserHandler;
+import app.handlers.DeleteNotificationHandler;
 import app.handlers.DetailUser;
 import app.handlers.FindUnassignedImageHandler;
 import app.handlers.GetImageHandler;
@@ -29,6 +31,7 @@ import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
+import app.handlers.UpdateNotificationHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
 import spark.Spark;
@@ -127,7 +130,6 @@ public class Main {
 		// delete("/api/users/:id", new DeleteUserHandler(model));
 
 		get("/api/auth/reports", new GetUserIncidents(model));
-		get("/api/auth/notifications", new GetUserNotifications(model));
 		
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
@@ -139,6 +141,11 @@ public class Main {
 		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation));
 		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
+
+		get("/api/auth/messages", new GetUserNotifications(model));
+		post("/api/auth/message", new CreateNotificationHandler(model));
+		put("/api/auth/message/:id?mark=:flag", new UpdateNotificationHandler(model));
+		delete("/api/auth/message/:id", new DeleteNotificationHandler(model));
 		
 		// what is java bad about? serving static image files, so change this when really using it
 		get("/api/images/:id", new GetImageHandler(model));

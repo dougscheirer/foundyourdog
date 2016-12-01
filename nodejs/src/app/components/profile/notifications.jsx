@@ -42,6 +42,8 @@ class NotificationTable extends Component {
 		const columns = [
 			{ header: "From", accessor: "sender_handle",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+			{ header: "To", accessor: "receiver_handle",
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
 			{ header: "When", accessor: "sent_date",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{humanTimestamp(value)}</a> },
 			{ header: "Message", accessor: "message",

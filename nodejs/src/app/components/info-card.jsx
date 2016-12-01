@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showIncidentInfo } from '../actions';
+import { sendMessage, showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
 import { humanTimestamp, optionalColor, coatDescription } from './helpers'
 
@@ -25,7 +25,8 @@ class ShowInfoCard extends Component {
 
 	onContact(e) {
 		e.preventDefault();
-		// this.props.dispatch(contact_options(uuid));
+		this.props.sendMessage(this.props.incident_info.incident);
+		this.hideModal()
 	}
 
 	getBreedingStatusRow(status) {
@@ -58,7 +59,9 @@ class ShowInfoCard extends Component {
 
 	getContactControl(incident) {
 		const classes="btn btn-default " + (this.isLoggedInUser(incident.reporter_id) ? "disabled" : "")
-		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ (e) => this.onContact.bind(this) }>
+		const clickHandler = (this.isLoggedInUser(incident.reporter_id) ? undefined : this.onContact.bind(this))
+
+		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ clickHandler }>
 							{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
 						</button>)
 	}
@@ -127,7 +130,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-	hide : () => { dispatch(showIncidentInfo(undefined)); }
+	hide : () => { dispatch(showIncidentInfo(undefined)); },
+	sendMessage : (incident) => { dispatch(sendMessage(incident.reporter_id, incident))}
 });
 
 export default ShowInfoCard=connect(mapStateToProps, mapDispatchToProps)(ShowInfoCard);

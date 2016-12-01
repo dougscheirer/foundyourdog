@@ -179,7 +179,7 @@ export const getUserReports = (type) => {
 
 export const getUserNotifications = (type) => {
 	return dispatch => {
-		fetch('/api/auth/notifications?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
+		fetch('/api/auth/messages?type=' + type + '&user=current', { credentials: 'include' }).then((res) => {
 			switch (res.status) {
 				default:
 					console.log("failed: " + res);
@@ -190,7 +190,7 @@ export const getUserNotifications = (type) => {
 			}).then((res) => {
 				if (!!res) {
 					return dispatch({
-						type: 'USER_NOTIFICATIONS',
+						type: 'USER_MESSAGES',
 						filter: type,
 						notifications: res
 					})
@@ -199,20 +199,40 @@ export const getUserNotifications = (type) => {
 		}
 }
 
-export const sendNotification = (userid, incident, reply_to) => {
+export const sendMessage = (userid, incident, reply_to) => {
 	return {
-		type: 'SEND_NOTIFICATION',
+		type: 'SEND_MESSAGE',
 		notification_data: { target_user: userid, incident: incident, reply_to: reply_to }
 	}
 }
 
-export const postNotification = (incident, reply_to, data) => {
+export const requires_login = (fetch_func, then_func) => {
 	return dispatch => {
-		fetch('/api/notify', {
-		  method: 'POST', credentials: 'include'
-		}).then((res) => {
-		  // TODO: check res for the status
-		  return dispatch({type: 'NOTIFCATION_SENT', result: res})
-		});
-	};
+			const result = fetch_func().then((res) => {
+				switch (res.status) {
+					case 403:
+						dispatch(setPostLoginAction(fetch_func))
+						dispatch(showLogin('login', null));
+						return
+					case 200:
+						return res
+					default:
+						return
+				}
+			})
+			if (result.then) { }
+		})
 }
+
+
+export const postMessage = (postData) => {
+	return requires_login(() => {
+		return fetch('/api/auth/message', {
+		  method: 'POST',
+		  credentials: 'include',
+		  body: JSON.stringify(postData)
+		})}, (res) => {
+		  return {type: 'MESSAGE_SENT', result: res}
+		})
+}
+

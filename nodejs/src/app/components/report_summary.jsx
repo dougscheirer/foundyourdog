@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import spinner from '../../spinner.svg'
 import { Link } from 'react-router'
-import { getReportInfo, sendNotification } from '../actions'
+import { getReportInfo, sendMessage } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
@@ -27,7 +27,7 @@ class ReportSummary extends Component {
 	contactOwner(e) {
 		e.preventDefault();
 		const incident = this.props.report_detail.incident;
-		this.props.sendNotification(incident)
+		this.props.sendMessage(incident)
 	}
 
 	contactFinder(e) {
@@ -141,7 +141,7 @@ class ReportSummary extends Component {
 
 	const mapDispatchToProps = (dispatch, props) => ({
 		onLoadReport: (id) => { dispatch(getReportInfo(id)); },
-		sendNotification: (incident) => { dispatch(sendNotification(incident.reporter_id, incident)) }
+		sendMessage: (incident) => { dispatch(sendMessage(incident.reporter_id, incident)) }
 	});
 
 	export default ReportSummary = connect(mapStateToProps, mapDispatchToProps)(ReportSummary);
