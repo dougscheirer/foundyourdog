@@ -33,7 +33,7 @@ public class ImageDeleteHandler implements Route {
 		if (image.get() == null) {
 			return new Answer(404);
 		}
-		if (image.get().getUser_id() != u.getUuid() && !u.getAdmin()) {
+		if (!image.get().getUser_id().equals(u.getUuid()) && !u.isAdmin()) {
 			return new Answer(403);
 		}
 		

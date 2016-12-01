@@ -1,6 +1,14 @@
 import React from 'react'
 import moment from 'moment'
 
+export function logged_in(state) {
+  return (state.login_status === "success")
+}
+
+export function auth_user(state) {
+  return (logged_in(state)) ? state.login_data : undefined
+}
+
 export function incidentToString(incident) {
   return (
       // basic format is: {sex} {primary[/secondary] color} {primary[/secondary] type}

@@ -64,24 +64,31 @@ export const loginRequired = (postLoginAction) => {
 	}
 }
 
+export const auth_method = (url, method, fn_complete, body) => {
+	return dispatch => {
+		requires_login(
+			dispatch,
+			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: { 'Content-Type': 'application/json' }})},
+			(res) => { return fn_complete(res) })
+		}
+}
+
 export const auth_fetch = (url, fn_complete) => {
-	return dispatch => {
-		requires_login(
-			dispatch,
-			() =>	{ return fetch(url, {credentials: 'include' }) },
-			(res) => { return fn_complete(res) })
-		}
+	return auth_method(url, "GET", fn_complete)
 }
 
-export const auth_post = (url, fn_complete) => {
-	return dispatch => {
-		requires_login(
-			dispatch,
-			() =>	{ return fetch(url, {method: "POST", credentials: 'include' }) },
-			(res) => { return fn_complete(res) })
-		}
+export const auth_post = (url, data, fn_complete) => {
+	if (!!data && typeof data !== "string") {
+		data = JSON.stringify(data)
+	}
+	return auth_method(url, "POST", fn_complete, data)
 }
 
+export const auth_delete = (url, fn_complete) => {
+	return auth_method(url, "DELETE", fn_complete)
+}
+
+// login is not technically required here, it's just a check
 export const checkLoginStatus = () => {
 	return dispatch => {
 		return fetch('/api/auth/authenticated', { credentials: 'include' }).then((res) => {

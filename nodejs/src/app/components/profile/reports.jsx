@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { getIncidentInfo, getUserReports } from '../../actions'
 import ReactTable from 'react-table'
-import { humanTimestamp, dogFromIncident } from '../helpers'
+import { logged_in, humanTimestamp, dogFromIncident } from '../helpers'
 
 class ReportsPanel extends Component {
 	render() {
@@ -100,6 +100,10 @@ class Reports extends Component {
 	}
 
 	render() {
+		if (!!!this.props.logged_in) {
+			return (<div></div>)
+		}
+
 		return (<div className="user-profile-container">
 			<div>
 				<div className="panel-group input-group" style={{ width: "50%" }} >
@@ -124,7 +128,8 @@ class Reports extends Component {
 
 const mapStateToProps = (state, myprops) => ({
 	openReports : state.myOpenReports,
-	closedReports : state.myClosedReports
+	closedReports : state.myClosedReports,
+	logged_in : logged_in(state)
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({

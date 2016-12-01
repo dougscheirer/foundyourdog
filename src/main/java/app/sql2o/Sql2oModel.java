@@ -78,7 +78,7 @@ public class Sql2oModel implements Model {
 					.addParameter("confirmation_token", u.getConfirmation_token())
 					.addParameter("phone1", u.getPhone1())
 					.addParameter("phone2", u.getPhone2())
-					.addParameter("inapp_notifications", u.getInapp_notifications())
+					.addParameter("inapp_notifications", u.isInapp_notifications())
 					.addParameter("admin", false)
 					.executeUpdate();
 			return uuid;

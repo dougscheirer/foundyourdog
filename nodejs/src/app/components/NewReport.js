@@ -7,13 +7,13 @@ import 'react-date-picker/index.css'
 import SimpleMap from "./simple_map"
 import Dropzone from "react-dropzone"
 import { connect } from "react-redux"
-import { showLogin, uploadReportImage, getUnassignedImages } from "../actions"
-import fetch from 'isomorphic-fetch'
+import { showLogin, auth_post, auth_delete, uploadReportImage, getUnassignedImages } from "../actions"
 import FormData from 'form-data'
 import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
 import dogTypes from './common_dogs.json'
 import coatTypes from './coats.json'
+import { logged_in } from './helpers'
 
 class NewFormBase extends Component {
 	state = {
@@ -44,21 +44,7 @@ class NewFormBase extends Component {
 		var data = new FormData()
 		data.append('file', this.state.image_preview)
 
-		fetch('/api/auth/report/images/new', {
-		  credentials: 'include',
-		  method: 'POST',
-		  body: data
-		}).then((res) => {
-			switch (res.status) {
-				case 403:
-					this.props.onLoginRequired();
-					return null;
-				case 500:
-					return null;
-				default:
-					return res.json();
-			}
-		}).then((res) => {
+		auth_post('/api/auth/report/images/new', data, (res) => {
 			if (!!res) {
 				this.props.onUploadComplete(res);
 				this.setState({uploaded_image: res});
@@ -162,9 +148,7 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
-		fetch('/api/auth/report/images/' + this.state.uploaded_image.uuid, {
-		  credentials: 'include',
-		  method: 'DELETE' }).then((res) => {
+		auth_delete('/api/auth/report/images/' + this.state.uploaded_image.uuid, (res) => {
 			this.setState({image_preview: undefined, uploaded_image: undefined});
 		});
 	}
@@ -383,7 +367,7 @@ class NewFormBase extends Component {
 }
 
 const mapFoundStateToProps = (state, myprops) => ({
-	logged_in: state.login_status === 'success',
+	logged_in: logged_in(state),
 	nameRequired : false,
 	submitUrl : "/api/auth/found/new",
 	title : "I found a dog",
@@ -391,7 +375,7 @@ const mapFoundStateToProps = (state, myprops) => ({
 });
 
 const mapLostStateToProps = (state, myprops) => ({
-	logged_in: state.login_status === 'success',
+	logged_in: logged_in(state),
 	nameRequired : true,
 	submitUrl : "/api/auth/lost/new",
 	title : "I lost a dog",
@@ -399,7 +383,7 @@ const mapLostStateToProps = (state, myprops) => ({
 });
 
 const mapEditStateToProps = (state, myprops) => ({
-	logged_in: state.login_status === 'success',
+	logged_in: logged_in(state),
 	edit: true,
 	submitUrl : "/api/auth/report/edit",
 	title : "Edit exisitng report (put something here)",

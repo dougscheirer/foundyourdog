@@ -5,7 +5,7 @@ import { getReportInfo, sendNotification } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
-import { humanTimestamp, optionalColor, coatDescription } from './helpers'
+import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } from './helpers'
 
 class ReportSummary extends Component {
 
@@ -21,7 +21,7 @@ class ReportSummary extends Component {
 	}
 
 	isLoggedInUser(id) {
-		return (this.props.login_status === "success" && this.props.login_data.uuid === id)
+		return (this.props.login_status && this.props.login_data.uuid === id)
 	}
 
 	contactOwner(e) {
@@ -135,8 +135,8 @@ class ReportSummary extends Component {
 
 	const mapStateToProps = (state, myprops) => ({
 		report_detail: 	state.report_detail,
-		login_status: state.login_status,
-		login_data: state.login_data
+		login_status: logged_in(state),
+		login_data: auth_user(state)
 	});
 
 	const mapDispatchToProps = (dispatch, props) => ({

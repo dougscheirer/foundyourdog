@@ -1,7 +1,18 @@
 import React, { Component } from 'react'
+import { logged_in } from '../helpers'
+import { connect } from 'react-redux'
 
-export default class Settings extends Component {
+class Settings extends Component {
 	render() {
+		if (!!!this.props.logged_in) {
+			return (<div></div>)
+		}
 		return (<div>My settings</div>)
 	}
 }
+
+const mapStateToProps = (state, myprops) => ({
+	logged_in : logged_in(state)
+})
+
+export default Settings = connect(mapStateToProps)(Settings)

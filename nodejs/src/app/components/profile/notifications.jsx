@@ -3,7 +3,7 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import { connect } from 'react-redux'
 import { getUserNotifications } from '../../actions'
-import { humanTimestamp } from '../helpers'
+import { logged_in, humanTimestamp } from '../helpers'
 
 class NotificationPanel extends Component {
 	render() {
@@ -75,6 +75,10 @@ class Notifications extends Component {
 	}
 
 	render() {
+		if (!!!this.props.logged_in) {
+			return (<div></div>)
+		}
+
 		return (<div className="user-profile-container">
 			<div>
 				<div className="panel-group input-group" style={{ width: "50%" }} >
@@ -98,6 +102,7 @@ class Notifications extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
+	logged_in : logged_in(state),
 	unreadNotifications : state.myUnreadNotifications,
 	readNotifications : state.myReadNotifications
 });

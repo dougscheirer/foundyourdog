@@ -38,7 +38,7 @@ class Login extends Component {
 		this.setState({login_wait: true, error_msg: ''});
 		// now do the network call, dispatch the results
 
-		// TODO: change this to use fetch() in the action folder
+		// TODO: change this to use fetch() in the action folder?
 		$.ajax({ url: "/api/login",
 			type: "POST",
 			data: JSON.stringify({ user: this.refs.user.value, password: this.refs.password.value }),
@@ -48,9 +48,9 @@ class Login extends Component {
 			(data,status,xhr) => {
 				this.props.onLoggedIn(data);
 				if (!!this.props.postLoginActions) {
-					this.props.postLoginActions.map((action) => {
-						action()
-					})
+					for (let i = 0; i < this.props.postLoginActions; i++) {
+						this.props.postLoginActions[i]()
+					}
 					this.props.onClearPostLoginActions()
 				}
 			}}).always(() => {

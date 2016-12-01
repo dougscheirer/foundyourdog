@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { showLogin, logout } from '../actions';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router'
+import { logged_in } from './helpers'
 
 class AuthNavbar extends Component {
     static propTypes = {
@@ -25,7 +27,7 @@ class AuthNavbar extends Component {
 
     getNotificationCount() {
       // TODO: display the notification count that the server returns
-      return (!!!this.props.notifications) ? undefined : 
+      return (!!!this.props.notifications) ? undefined :
         (<div className="numberCircle">
           <Link to="/profile/notifications">{ this.props.notifications }</Link>
         </div>);
@@ -41,9 +43,9 @@ class AuthNavbar extends Component {
                (<li key="signup"><a href="" onClick={ this.handleSignup.bind(this) }>Sign up<span className="sr-only"></span></a></li>) ];
     }
     render() {
-		const varRows = (this.props.authenticated) ? this.signedInRows() : this.signedOutRows();
+		  const varRows = (this.props.authenticated) ? this.signedInRows() : this.signedOutRows();
 
-        return (
+      return (
               <ul className="nav navbar-nav navbar-right">
               	{ varRows }
                 <li><Link to="/feedback">Feedback<span className="sr-only">(current)</span></Link></li>
@@ -53,14 +55,14 @@ class AuthNavbar extends Component {
 };
 
 const mapStateToProps = (state, myprops) => ({
-  authenticated: state.login_status === 'success',
+  authenticated: logged_in(state),
   userInfo : state.login_data
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
   onSignin    : () => { dispatch(showLogin('login')); },
   onSignup    : () => { dispatch(showLogin('signup')); },
-  onSignout    : () => { dispatch(logout()); }
+  onSignout    : () => { dispatch(logout()); browserHistory.push("/") }
 });
 
 export default AuthNavbar = connect(mapStateToProps, mapDispatchToProps)(AuthNavbar);

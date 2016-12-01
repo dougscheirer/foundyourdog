@@ -2,6 +2,9 @@ import { auth_fetch, auth_post } from './login'
 
 export { showLogin,
 				 clearPostLoginActions,
+				 auth_fetch,
+				 auth_post,
+				 auth_delete,
 				 checkLoginStatus,
 				 loginRequired,
 				 logout } from './login'
@@ -96,8 +99,8 @@ export const sendNotification = (userid, incident, reply_to) => {
 	}
 }
 
-export const postNotification = (incident, reply_to, data) => {
-	return auth_post('/api/notify',
+export const postNotification = (incident, data) => {
+	return auth_post('/api/notify', data,
 			(res) => {
 			  return {type: 'NOTIFCATION_SENT', result: res}
 			})

@@ -57,7 +57,7 @@ public class Main {
 
     private static void checkAdminAuthentication(Request request, Response res) {
     	DetailUser u = getCurrentUser(request);
-    	if (u == null || !u.getAdmin())
+		if (u == null || !u.isAdmin())
     		halt(403);
     }
     
@@ -142,5 +142,11 @@ public class Main {
 		
 		// what is java bad about? serving static image files, so change this when really using it
 		get("/api/images/:id", new GetImageHandler(model));
+		
+		exception(Exception.class, (exception, request, response) -> {
+		    // Handle the exception here
+			logger.severe("Exception handling route: " + request.url());
+			logger.severe(exception.getLocalizedMessage());
+		});
 	}
 }
