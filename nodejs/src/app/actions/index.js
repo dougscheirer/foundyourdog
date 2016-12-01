@@ -82,10 +82,10 @@ export const getUserReports = (type) => {
 }
 
 export const getUserNotifications = (type) => {
-	return auth_fetch('/api/auth/notifications?type=' + type + '&user=current',
+	return auth_fetch('/api/auth/messages?type=' + type + '&user=current',
 			(res) => {
 					return {
-						type: 'USER_NOTIFICATIONS',
+						type: 'USER_MESSAGES',
 						filter: type,
 						notifications: res
 					}
