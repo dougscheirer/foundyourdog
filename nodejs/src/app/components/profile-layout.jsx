@@ -3,7 +3,6 @@ import { Notifications, Reports, Dogs, Settings } from "./profile"
 import './home.css'
 import { TabContainer, Tab } from './tabs'
 import { connect } from 'react-redux'
-import { loginRequired } from '../actions'
 import { logged_in } from './helpers'
 import { LoginView } from './login'
 
@@ -52,7 +51,6 @@ const mapStateToProps = (state, myprops) => ({
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-	loginRequired : (cb) => { dispatch(loginRequired(cb)) }
 })
 
 export default ProfileLayout = connect(mapStateToProps, mapDispatchToProps)(ProfileLayout)

@@ -12,7 +12,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showLogin } from '../actions';
 import spinner from '../../spinner.svg';
-import $ from 'jquery';
 import toastr from 'toastr';
 
 class Signup extends Component {
@@ -39,32 +38,21 @@ class Signup extends Component {
 	signup(e) {
 		e.preventDefault();
 
-		if (this.validate() === null) return;
+		const form = this.validate();
+		if (!!!form) return;
 
 		// first dispatch a spinner
 		this.setState({signup_wait: true, error_msg: ''});
 
 		// now do the network call, dispatch the results
-		$.ajax({ url: "/api/signup",
-			 	type: "POST",
-				data: JSON.stringify({ email: this.refs.email.value, userid: this.refs.user.value, password: this.refs.password.value }),
-				contentType:"application/json; charset=utf-8",
-	  			dataType:"json",
-	  			success:
-					(data,status,xhr) => {
-						this.onSignedUp();
-					}}).always(() => {
-						this.setState({signup_wait: false});
-					}).fail(( jqXHR, textStatus, errorThrown ) => {
-						this.setState({error_msg: "Status " + jqXHR.status + " : " + jqXHR.responseText});
-					});
+		this.props.send_signup(form)
 	}
 
 	validate() {
 		const formdata = {
 			email: 				this.refs.email.value,
 			user_id: 			this.refs.user.value,
-			password: 			this.refs.password.value
+			password: 		this.refs.password.value
 		};
 		const password_confirm = this.refs.password_confirm.value;
 

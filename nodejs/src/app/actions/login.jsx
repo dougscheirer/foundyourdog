@@ -1,25 +1,5 @@
 import fetch from 'isomorphic-fetch';
 
-class ExtendableError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = this.constructor.name;
-    this.message = message;
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, this.constructor);
-    } else {
-      this.stack = (new Error(message)).stack;
-    }
-  }
-}
-
-class RequestError extends ExtendableError {
-  constructor(message, obj) {
-    super(message);
-    this.obj = obj
-  }
-}
-
 export const showLogin = (show, userData) => {
 	return {
 		type: 'SHOW_LOGIN',
@@ -42,18 +22,19 @@ export const clearPostLoginActions = () => {
 }
 
 // method for queuing up requests that could fail for auth reasons
-export const requires_login = (dispatch, fetch_func, process_func) => {
+export const requires_login = (dispatch, fetch_func, process_func, error_func) => {
 		fetch_func().then((res) => {
 			switch (res.status) {
 				case 403:
-					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func) }))
+					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func, error_func) }))
 					dispatch(showLogin('login', null))
 					break;
 				case 200:
 					res.json().then((res) => dispatch(process_func(res)))
 					break;
 				default:
-					throw new RequestError("requires_login failed with (" + res.status + ") : " + res.statusText, res)
+					if (!!error_func) dispatch(error_func(res))
+					break;
 			}
 		})
 }

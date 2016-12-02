@@ -17,10 +17,12 @@ import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } 
 class ShowInfoCard extends Component {
 
 	state = {
+		image_source : undefined
 	}
 
 	hideModal() {
 		this.props.hide();
+		this.setState({image_source: undefined})
 	}
 
 	onContact(e) {
@@ -43,13 +45,20 @@ class ShowInfoCard extends Component {
 			return undefined
 	}
 
+	setNoImage() {
+		this.setState({image_source: no_image})
+	}
+
+	urlFromImageID(incident) {
+		if (!!incident.image && !!incident.image.uuid)	return "/api/images/" + incident.image.uuid
+		return no_image
+	}
+
 	imageOrEmpty(incident_info) {
-		const source = (!!incident_info.image && !!incident_info.image.uuid) ?
-		"/api/images/" + incident_info.image.uuid :
-		no_image;
+		const source = (!!!this.state.image_source) ? this.urlFromImageID(incident_info) : this.state.image_source
 
 		return (<img style={{display:"block", margin:"auto", width: "200px"}}
-			src={ source }
+			src={ source } onError={ this.setNoImage.bind(this) }
 			alt="dog" />)
 	}
 
