@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import $ from 'jquery'
 import { DateField } from "react-date-picker"
 import toastr from 'toastr'
 import 'toastr/build/toastr.css'
@@ -7,7 +6,7 @@ import 'react-date-picker/index.css'
 import SimpleMap from "./simple_map"
 import Dropzone from "react-dropzone"
 import { connect } from "react-redux"
-import { showLogin, auth_post, auth_delete, uploadReportImage, getUnassignedImages } from "../actions"
+import { showLogin, uploadImage, uploadReportImage, getUnassignedImages, submitReportForm } from "../actions"
 import FormData from 'form-data'
 import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
@@ -33,23 +32,19 @@ class NewFormBase extends Component {
 
 	previewImage(files) {
 		this.setState({image_preview: files[0]});
+		this.uploadImageFile(files[0])
+	}
+
+	uploadImageFile(file) {
+		const data = new FormData()
+		data.append('file', file)
+
+		this.props.uploadImage(data)
 	}
 
 	uploadImage(e) {
-		e.preventDefault();
-		if (this.requireLoginCheck()) {
-			return;
-		}
-
-		var data = new FormData()
-		data.append('file', this.state.image_preview)
-
-		auth_post('/api/auth/report/images/new', data, (res) => {
-			if (!!res) {
-				this.props.onUploadComplete(res);
-				this.setState({uploaded_image: res});
-			}
-		});
+		if (!!e) e.preventDefault();
+		this.uploadImageFile(this.state.image_preview)
 	}
 
 	requireLoginCheck() {
@@ -71,10 +66,6 @@ class NewFormBase extends Component {
 	}
 
 	validate() {
-		if (this.requireLoginCheck()) {
-			return null;
-		}
-
 		const formdata = {
 			map_latitude: 		parseFloat(this.props.location.query['lat']),
 			map_longitude: 		parseFloat(this.props.location.query['lng']),
@@ -115,24 +106,13 @@ class NewFormBase extends Component {
 			return;
 		}
 
-		// TODO: move this to redux
-		const loginFunc = this.props.onLoginRequired;
-		$.ajax({
-		    url: this.props.submitUrl,
-		    type: "POST",
-		    data: JSON.stringify(formdata),
-    		dataType: "json",
-    		contentType: "application/json; charset=utf-8",
-    		success: function (response,status,jXHR) {
-				browserHistory.push("/reports/" + response.id);
-			}}).fail(function(e) {
-				if (e.status === 403) {
-					toastr.error("You have to be signed in to file a report");
-					loginFunc();
-				} else {
-					toastr.error("The server responded with an error, please try again later.")
-				}
-			});
+		try {
+			this.props.submitReportForm(this.props.submitUrl, JSON.stringify(formdata), (res) => {
+					browserHistory.push("/reports/" + res.id)
+				})
+		} catch (e) {
+			console.log(e.message)
+		}
 	}
 
 	getSelected(fieldName) {
@@ -148,7 +128,7 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
-		auth_delete('/api/auth/report/images/' + this.state.uploaded_image.uuid, (res) => {
+		fetch('/api/auth/report/images/' + this.state.uploaded_image.uuid, { method: "DELETE", credentials: "include" }).then((res) => {
 			this.setState({image_preview: undefined, uploaded_image: undefined});
 		});
 	}
@@ -165,31 +145,31 @@ class NewFormBase extends Component {
 		// 3) no image (show dropzone)
 		const uploaded = this.state.uploaded_image;
 
-  		if (!!uploaded) {
+		if (!!uploaded) {
 			const image_src = "/api/images/" + this.state.uploaded_image.uuid;
-            return (
-            	<div>
-            		<div>
-		           		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >
-		           			<img src={ checkbox } width="20px" alt="checked" /> Upload
-		           		</button>
-		           		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
-	         	    </div>
-	           		<img style={{width: "200px"}} alt="current report" src={ image_src } />
-	           	</div>)
-  		} else if (!!this.state.image_preview) {
+	    return (
+	    	<div>
+	    		<div>
+	       		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >
+	       			<img src={ checkbox } width="20px" alt="checked" /> Uploaded
+	       		</button>
+	       		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
+	   	    </div>
+	     		<img style={{width: "200px"}} alt="current report" src={ image_src } />
+	     	</div>)
+		} else if (!!this.state.image_preview) {
 			return (
 				<div>
-	               	<div>
-	               		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
-	               		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetLocalImage(e) }>Reset</button>
-	             	</div>
-	               	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
-	            </div>)
-        } else {
+	       	<div>
+	       		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
+	       		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetLocalImage(e) }>Reset</button>
+	       	</div>
+	       	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
+		    </div>)
+    } else {
 			return (<Dropzone multiple={false} accept="image/*" onDrop={(file) => this.previewImage(file) }>
-						<p>Drop an image or click to select a file to upload.</p>
-					</Dropzone>)
+				<p>Drop an image or click to select a file to upload.</p>
+				</Dropzone>)
 		}
  	}
 
@@ -393,7 +373,9 @@ const mapEditStateToProps = (state, myprops) => ({
 const mapDispatchToProps = (dispatch, myprops) => ({
 	onLoginRequired : () => { dispatch(showLogin('login')); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
-	getUnassignedImages: () => { dispatch(getUnassignedImages()); }
+	getUnassignedImages: () => { dispatch(getUnassignedImages()); },
+	uploadImage : (imageForm) => { dispatch(uploadImage(imageForm)) },
+	submitReportForm : (url, data, post) => { dispatch(submitReportForm(url, data, post)) }
 });
 
 export const NewFound = connect(mapFoundStateToProps, mapDispatchToProps)(NewFormBase);

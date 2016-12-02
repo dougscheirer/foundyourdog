@@ -1,5 +1,25 @@
 import fetch from 'isomorphic-fetch';
 
+class ExtendableError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+    this.message = message;
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
+}
+
+class RequestError extends ExtendableError {
+  constructor(message, obj) {
+    super(message);
+    this.obj = obj
+  }
+}
+
 export const showLogin = (show, userData) => {
 	return {
 		type: 'SHOW_LOGIN',
@@ -22,19 +42,18 @@ export const clearPostLoginActions = () => {
 }
 
 // method for queuing up requests that could fail for auth reasons
-export const requires_login = (dispatch, fetch_func, process_func, error_func) => {
+export const requires_login = (dispatch, fetch_func, process_func) => {
 		fetch_func().then((res) => {
 			switch (res.status) {
 				case 403:
-					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func, error_func) }))
+					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func) }))
 					dispatch(showLogin('login', null))
 					break;
 				case 200:
 					res.json().then((res) => dispatch(process_func(res)))
 					break;
 				default:
-					if (!!error_func) dispatch(error_func(res))
-					break;
+					throw new RequestError("requires_login failed with (" + res.status + ") : " + res.statusText, res)
 			}
 		})
 }
@@ -67,9 +86,10 @@ export const loginRequired = (postLoginAction) => {
 
 export const auth_method = (url, method, fn_complete, body) => {
 	return dispatch => {
+		const headers = (typeof body === "string") ? { 'Content-Type': 'application/json' } : undefined
 		requires_login(
 			dispatch,
-			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: { 'Content-Type': 'application/json' }})},
+			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: headers})},
 			(res) => { return fn_complete(res) })
 		}
 }
@@ -79,9 +99,6 @@ export const auth_fetch = (url, fn_complete) => {
 }
 
 export const auth_post = (url, data, fn_complete) => {
-	if (!!data && typeof data !== "string") {
-		data = JSON.stringify(data)
-	}
 	return auth_method(url, "POST", fn_complete, data)
 }
 

@@ -1,9 +1,11 @@
 package app.handlers;
 
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import app.Answer;
 import app.Main;
@@ -15,7 +17,8 @@ import spark.Route;
 
 public class ImageDeleteHandler implements Route {
 	private Model model;
-
+	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
+	
 	public ImageDeleteHandler(Model model) {
 		this.model = model;
 	}
@@ -39,7 +42,11 @@ public class ImageDeleteHandler implements Route {
 		
 		// delete the image file
 		Path path = Paths.get(image.get().getImage_location() + "/" + imageID);
-		Files.delete(path);
+		try {
+			Files.delete(path);
+		} catch (NoSuchFileException e) {
+			logger.warning(e.getMessage());
+		}
 		// clean up the DB
 		model.deleteImage(imageID);
 		return new Answer(200);

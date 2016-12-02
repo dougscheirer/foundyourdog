@@ -99,9 +99,25 @@ export const sendMessage = (userid, incident, reply_to) => {
 	}
 }
 
-export const postNotification = (incident, data) => {
-	return auth_post('/api/notify', data,
+export const postMessage = (data) => {
+	if (typeof data !== "string") {
+		data = JSON.stringify(data)
+	}
+	return auth_post('/api/auth/message', data,
 			(res) => {
 			  return {type: 'NOTIFCATION_SENT', result: res}
 			})
+}
+
+export const uploadImage = (imageForm) => {
+	return auth_post('/api/auth/report/images/new', imageForm, (res) => {
+		return getUnassignedImages()
+	})
+}
+
+export const submitReportForm = (url, form, post) => {
+	return auth_post(url, form, (res) => {
+			post(res)
+			return {}
+	})
 }
