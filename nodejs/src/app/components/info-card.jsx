@@ -50,12 +50,13 @@ class ShowInfoCard extends Component {
 	}
 
 	urlFromImageID(incident) {
+		if (!!this.state.image_source) return this.state.image_source
 		if (!!incident.image && !!incident.image.uuid)	return "/api/images/" + incident.image.uuid
 		return no_image
 	}
 
 	imageOrEmpty(incident_info) {
-		const source = (!!!this.state.image_source) ? this.urlFromImageID(incident_info) : this.state.image_source
+		const source = this.urlFromImageID(incident_info)
 
 		return (<img style={{display:"block", margin:"auto", width: "200px"}}
 			src={ source } onError={ this.setNoImage.bind(this) }
