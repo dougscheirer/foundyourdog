@@ -9,6 +9,8 @@ import { checkLoginStatus } from '../actions';
 import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
+import ReduxToastr from 'react-redux-toastr'
+
 
 class MainLayout extends React.Component {
 
@@ -18,6 +20,7 @@ class MainLayout extends React.Component {
   render() {
     return (
       <div className="app">
+        <ReduxToastr timeOut={4000} newestOnTop={false} preventDuplicates={true} position="top-left" transitionIn="fadeIn" transitionOut="fadeOut" progressBar/>
         <LoginPopup />
         <Signup />
         <DevTools />
@@ -51,8 +54,11 @@ class MainLayout extends React.Component {
   }
 }
 
+const mapStateToProps = (state, myprops) => ({
+})
+
 const mapDispatchToProps = (dispatch, myprops) => ({
   checkLogin : () => { dispatch(checkLoginStatus()); }
 });
 
-export default MainLayout = connect(undefined, mapDispatchToProps)(MainLayout);
+export default MainLayout = connect(mapStateToProps, mapDispatchToProps)(MainLayout);

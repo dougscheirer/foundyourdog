@@ -229,7 +229,7 @@ class DogViewController extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-  incidents: (state.incidents ? state.incidents[myprops.showtype] : [])
+  incidents: (state.incidents.incidents ? state.incidents.incidents[myprops.showtype] : [])
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({

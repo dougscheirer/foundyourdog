@@ -134,7 +134,7 @@ class ReportSummary extends Component {
 	}
 
 	const mapStateToProps = (state, myprops) => ({
-		report_detail: 	state.report_detail,
+		report_detail: 	state.incidents.report_detail,
 		login_status: logged_in(state),
 		login_data: auth_user(state)
 	});

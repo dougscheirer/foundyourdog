@@ -1,4 +1,6 @@
 import { auth_fetch, auth_post } from './login'
+import { toastr } from 'react-redux-toastr'
+import '../../react-redux-toastr.min.css'
 
 export { showLogin,
 				 clearPostLoginActions,
@@ -105,7 +107,8 @@ export const postMessage = (data) => {
 	}
 	return auth_post('/api/auth/message', data,
 			(res) => {
-			  return {type: 'NOTIFCATION_SENT', result: res}
+				toastr.message("Message sent");
+			  return {type: 'MESSAGE_SENT', result: res}
 			})
 }
 

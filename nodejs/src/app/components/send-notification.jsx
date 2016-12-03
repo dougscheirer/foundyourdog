@@ -93,7 +93,7 @@ class SendNotification extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	notification_data: state.notification_data
+	notification_data: state.messages.notification_data
 })
 
 const mapDispatchToProps = (dispatch, props) => ({

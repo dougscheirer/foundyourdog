@@ -4,7 +4,7 @@ import './home.css';
 
 const Home = React.createClass({
   render: function() {
-    var style = "jumbotron homemain";
+    const style = "jumbotron homemain";
     return (
       <div className={style}>
         <table>

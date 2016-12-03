@@ -351,7 +351,7 @@ const mapFoundStateToProps = (state, myprops) => ({
 	nameRequired : false,
 	submitUrl : "/api/auth/found/new",
 	title : "I found a dog",
-	existing_image : state.unassigned_image
+	existing_image : state.images.unassigned_image
 });
 
 const mapLostStateToProps = (state, myprops) => ({
@@ -359,7 +359,7 @@ const mapLostStateToProps = (state, myprops) => ({
 	nameRequired : true,
 	submitUrl : "/api/auth/lost/new",
 	title : "I lost a dog",
-	existing_image : state.unassigned_image
+	existing_image : state.images.unassigned_image
 });
 
 const mapEditStateToProps = (state, myprops) => ({

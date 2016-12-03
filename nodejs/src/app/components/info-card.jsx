@@ -133,7 +133,7 @@ class ShowInfoCard extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	incident_info: state.incident_info,
+	incident_info: state.incidents.incident_info,
 	login_status: logged_in(state),
 	login_data: auth_user(state)
 });

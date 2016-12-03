@@ -105,8 +105,8 @@ class Notifications extends Component {
 
 const mapStateToProps = (state, myprops) => ({
 	logged_in : logged_in(state),
-	unreadNotifications : state.myUnreadNotifications,
-	readNotifications : state.myReadNotifications
+	unreadNotifications : state.messages.myUnreadNotifications,
+	readNotifications : state.messages.myReadNotifications
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
