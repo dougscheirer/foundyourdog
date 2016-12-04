@@ -10,15 +10,22 @@ import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
 import toastr from 'toastr'
+import Websocket from 'react-websocket';
 
 class MainLayout extends React.Component {
 
   componentDidMount() {
     this.props.checkLogin();
   }
+
+  handleData(data) {
+    const result = JSON.parse(data)
+    toastr.message(result.userMessage)
+  }
+
   render() {
     toastr.options = { "positionClass": "toast-top-center" }
-
+    const wsAddress = "ws://" + location.host + "/ws"
     return (
       <div className="app">
         <LoginPopup />
@@ -26,7 +33,8 @@ class MainLayout extends React.Component {
         <DevTools />
         <ShowInfoCard />
         <SendNotification />
-        <nav className="navbar navbar-default">
+        <Websocket url={ wsAddress } onMessage={this.handleData.bind(this)}/>
+          <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
               <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">

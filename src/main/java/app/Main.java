@@ -4,9 +4,12 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.jetty.websocket.api.Session;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -32,6 +35,7 @@ import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
 import app.handlers.UpdateNotificationHandler;
+import app.handlers.WebsocketHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
 import spark.Spark;
@@ -41,6 +45,8 @@ public class Main {
 	
 	// TODO: move this to where constants live
 	public static final String SESSION_USERID = "userid";
+	private static Map<Session, String> websocketMap = new ConcurrentHashMap<>();
+	
 	public static DetailUser getCurrentUser(Request request) {
 		return request.session().attribute(SESSION_USERID);
 	}
@@ -98,6 +104,9 @@ public class Main {
 
 		Spark.staticFileLocation("/public");
 
+		// websockets: we got em
+		webSocket("/ws", WebsocketHandler.class);
+		
 		// authentication filter
 		/* the pattern here is: 
 		*		/api/auth : requires authenticated user session
@@ -155,5 +164,23 @@ public class Main {
 			logger.severe("Exception handling route: " + request.url());
 			logger.severe(exception.getLocalizedMessage());
 		});
+	}
+
+	public static void addWebsocketConnection(Session user) {
+		websocketMap.put(user, user.toString());
+	}
+
+	public static void removeWebsocketConnection(Session user) {
+		websocketMap.remove(user);
+	}
+
+	public static void sendMessage(String message) {
+		websocketMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+	        try {
+	            session.getRemote().sendString("{\"userMessage\":\"" + message + "\"}");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
 	}
 }

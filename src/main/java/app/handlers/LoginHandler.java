@@ -35,6 +35,7 @@ public class LoginHandler implements Route {
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());
+			Main.sendMessage("You logged in");
 			return answer.getBody();
 		}
 	}
