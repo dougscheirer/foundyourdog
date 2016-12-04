@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 import reducerOne, { login, messages, incidents, images } from './app/reducers';
-import {reducer as toastrReducer} from 'react-redux-toastr'
 import { Provider } from 'react-redux'
 import DevTools, { logger, crashReporter } from './app/devtools';
 import thunkMiddleware from 'redux-thunk';
@@ -26,8 +25,7 @@ const reducers = {
 	login: login,
 	messages: messages,
 	images: images,
-	incidents: incidents,
-	toastr: toastrReducer }
+	incidents: incidents }
 const reducer = combineReducers(reducers)
 
 // careful with the initialState param, if you pass something

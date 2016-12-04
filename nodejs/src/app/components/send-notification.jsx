@@ -62,7 +62,7 @@ class SendNotification extends Component {
 		const state = notification_data.incident.state;
 		const incident_date = humanTimestamp(notification_data.incident.incident_date)
 
-		const btnClassNames = "btn btn-primary " + (!!!this.state.submit && !!!this.state.submitting ? "disabled" : "")
+		const btnClassNames = "button btn btn-primary " + (!!!this.state.submit && !!!this.state.submitting ? "disabled" : "")
 		let editClassStyles = { width: "100%", resize: "vertical" }
 		if (!!this.state.submitting)
 			editClassStyles = {...editClassStyles, disabled: "true" }
@@ -83,7 +83,7 @@ class SendNotification extends Component {
 						ref="message_input"
 						placeholder="Send contact info or arrange a place nearby to meet">
 					</textarea>
-					<button className={btnClassNames} onClick={ this.sendMessage.bind(this) } >Send</button>
+					<a className={btnClassNames} onClick={ this.sendMessage.bind(this) } >Send</a>
 					</form>
 				</ModalBody>
 				<ModalFooter>

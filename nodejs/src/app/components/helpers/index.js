@@ -43,6 +43,7 @@ export function dogFromIncident(incident) {
 }
 
 export function humanTimestamp(ts) {
+  // TODO: make this use timeago (sometimes)
   const m = moment(ts)
   return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
 }
