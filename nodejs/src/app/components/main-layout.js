@@ -9,6 +9,7 @@ import { checkLoginStatus } from '../actions';
 import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
+import toastr from 'toastr'
 
 class MainLayout extends React.Component {
 
@@ -16,6 +17,8 @@ class MainLayout extends React.Component {
     this.props.checkLogin();
   }
   render() {
+    toastr.options = { "positionClass": "toast-top-center" }
+
     return (
       <div className="app">
         <LoginPopup />
@@ -51,8 +54,11 @@ class MainLayout extends React.Component {
   }
 }
 
+const mapStateToProps = (state, myprops) => ({
+})
+
 const mapDispatchToProps = (dispatch, myprops) => ({
   checkLogin : () => { dispatch(checkLoginStatus()); }
 });
 
-export default MainLayout = connect(undefined, mapDispatchToProps)(MainLayout);
+export default MainLayout = connect(mapStateToProps, mapDispatchToProps)(MainLayout);

@@ -2,11 +2,11 @@ import React from 'react'
 import moment from 'moment'
 
 export function logged_in(state) {
-  return (state.login_status === "success")
+  return (state.login.status === "success")
 }
 
 export function auth_user(state) {
-  return (logged_in(state)) ? state.login_data : undefined
+  return (logged_in(state)) ? state.login.data : undefined
 }
 
 export function incidentToString(incident) {
@@ -43,6 +43,7 @@ export function dogFromIncident(incident) {
 }
 
 export function humanTimestamp(ts) {
+  // TODO: make this use timeago (sometimes)
   const m = moment(ts)
   return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
 }

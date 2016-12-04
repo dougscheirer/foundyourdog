@@ -3,7 +3,7 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import { connect } from 'react-redux'
 import { getUserNotifications } from '../../actions'
-import { logged_in, humanTimestamp } from '../helpers'
+import { auth_user, logged_in, humanTimestamp } from '../helpers'
 
 class NotificationPanel extends Component {
 	render() {
@@ -34,6 +34,10 @@ class NotificationTable extends Component {
 		e.preventDefault();
 	}
 
+	youOrHandle(userID) {
+		return (userID === this.props.currentUser.handle) ? "You" : userID
+	}
+
 	render() {
 		if (!!!this.props.dataSource || !!!this.props.dataSource.length) {
 			return (<div>No notifications found</div>)
@@ -41,11 +45,13 @@ class NotificationTable extends Component {
 		const rows = this.props.dataSource
 		const columns = [
 			{ header: "From", accessor: "sender_handle",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{this.youOrHandle(value)}</a> },
 			{ header: "To", accessor: "receiver_handle",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> },
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{this.youOrHandle(value)}</a> },
 			{ header: "When", accessor: "sent_date",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{humanTimestamp(value)}</a> },
+			{ header: "Subject", id: 'subject', accessor: (message) => message,
+				render: ({value}) => <div>{value.incident_id}</div> },
 			{ header: "Message", accessor: "message",
 				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> }
 		]
@@ -93,10 +99,10 @@ class Notifications extends Component {
 			<div>
 		{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ this.props.unreadNotifications } filter="read" />
+					<NotificationTable dataSource={ this.props.unreadNotifications } filter="read" currentUser={ this.props.login_data } />
 				</NotificationPanel>
 				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Older" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ this.props.readNotifications } filter="unread" />
+					<NotificationTable dataSource={ this.props.readNotifications } filter="unread" currentUser={ this.props.login_data } />
 				</NotificationPanel>
 			</div>
 		</div>)
@@ -105,8 +111,9 @@ class Notifications extends Component {
 
 const mapStateToProps = (state, myprops) => ({
 	logged_in : logged_in(state),
-	unreadNotifications : state.myUnreadNotifications,
-	readNotifications : state.myReadNotifications
+	login_data : auth_user(state),
+	unreadNotifications : state.messages.myUnreadNotifications,
+	readNotifications : state.messages.myReadNotifications
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({

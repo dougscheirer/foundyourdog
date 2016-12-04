@@ -137,8 +137,8 @@ class LoginViewLocal extends LoginBase {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	isOpen: 						state.login_status === 'login',
-	postLoginActions: 	state.post_login_actions
+	isOpen: 			state.login.login_status === 'login',
+	postLoginActions: 	state.login.post_login_actions
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
