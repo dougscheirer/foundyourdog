@@ -7,6 +7,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import app.Main;
+import app.WebSocketServer;
 
 @WebSocket
 public class WebsocketHandler {
@@ -18,17 +19,17 @@ public class WebsocketHandler {
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
     	// TODO: add it to a map
-    	Main.addWebsocketConnection(user);
+    	WebSocketServer.addWebsocketConnection(user);
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
     	// TODO: remove it from the map
-    	Main.removeWebsocketConnection(user);
+    	WebSocketServer.removeWebsocketConnection(user);
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        Main.messageReceived(user, message);
+    	WebSocketServer.messageReceived(user, message);
     }
 }

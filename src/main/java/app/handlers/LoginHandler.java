@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.Answer;
 import app.Main;
+import app.WebSocketServer;
 import app.model.Model;
 import app.model.UserAuth;
 import spark.Request;
@@ -32,7 +33,7 @@ public class LoginHandler implements Route {
 		} else {
 			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user.get()));
 			request.session().attribute(Main.SESSION_USERID, user.get());
-			Main.updateWebsocketMap(request.cookie("JSESSIONID"), user.get());
+			WebSocketServer.updateWebsocketMap(request.cookie("JSESSIONID"), user.get());
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());

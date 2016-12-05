@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import app.Answer;
 import app.Main;
+import app.WebSocketServer;
 import app.model.Incident;
 import app.model.Model;
 import app.model.Notification;
@@ -40,7 +41,7 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 			return new Answer(500);
 		}
 		// send a websocket message to the target
-		Main.sendMessage(value.getReceiver_id(), "You have a new message");
+		WebSocketServer.sendMessage(value.getReceiver_id(), "You have a new message");
 		return new Answer(200, "{\"id\":\"" + messageId + "\"}");
 	}
 }
