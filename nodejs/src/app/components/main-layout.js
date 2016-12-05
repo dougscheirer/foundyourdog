@@ -36,7 +36,7 @@ class MainLayout extends React.Component {
         return;
       case 'REGISTER':
         this.props.registerSocket(result.messageText);
-        cookie.save('ws', result.messageText);
+        cookie.save('ws', result.messageText, { path: '/' });
         this.props.checkLogin();
         break;
       case "USER_MESSAGE": {
