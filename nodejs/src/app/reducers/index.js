@@ -26,6 +26,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				websocket: action.websocket
 			}
+		case 'REGISTER_SOCKET':
+			return { ...state,
+				socketID: action.socket_id
+			}
 		default:
 			return state;
 		}

@@ -5,14 +5,14 @@ import AuthNavbar from './auth-navbar';
 import { LoginPopup } from './login';
 import Signup from './signup';
 import { connect } from 'react-redux';
-import { checkLoginStatus } from '../actions';
 import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
 import toastr from 'toastr'
-import Websocket from 'react-websocket';
+import Websocket from './websocket';
 import { ws_ping, ws_send, auth_user } from './helpers'
-import { setWebsocket } from '../actions'
+import { setWebsocket, registerSocket, checkLoginStatus } from '../actions'
+import cookie from 'react-cookie'
 
 class MainLayout extends React.Component {
 
@@ -20,7 +20,6 @@ class MainLayout extends React.Component {
 
   componentDidMount() {
     this.props.setWebsocket(this.refs.websocket.state.ws)
-    this.props.checkLogin(this.subscribe.bind(this));
     this.state = { pingpong : setInterval(() => { ws_ping(this.props.websocket) }, 60000) }
   }
 
@@ -35,19 +34,33 @@ class MainLayout extends React.Component {
     switch (result.type) {
       case "PONG":
         return;
+      case 'REGISTER':
+        this.props.registerSocket(result.messageText);
+        cookie.save('ws', result.messageText);
+        this.props.checkLogin();
+        break;
       case "USER_MESSAGE": {
-        const options = { "positionClass": "toast-top-left", "timeOut": "0", "closeButton" : true }
+        const options = { "timeOut": "0", "closeButton" : true }
         toastr.info(result.messageText, "USER MESSAGE", options)
         return;
       }
       case "BROADCAST_MESSAGE": {
-        const options = { "positionClass": "toast-top-center", "timeout" : "0", "closeButton" : true }
+        const options = { "timeout" : "5000", "closeButton" : true }
         toastr.success(result.messageText, "BROADCAST MESSAGE", options)
         return;
       }
       default:
         console.log(result.messageText)
     }
+  }
+
+  handleConnect(ws) {
+    if (!!this.props.login_data)
+      this.subscribe(this.props.login_data)
+  }
+
+  handleClose(ws) {
+    console.log("WS disconnected")
   }
 
   subscribe(res) {
@@ -70,7 +83,8 @@ class MainLayout extends React.Component {
         <DevTools />
         <ShowInfoCard />
         <SendNotification />
-        <Websocket ref="websocket" url={ wsAddress } onMessage={this.handleData.bind(this)}/>
+        <Websocket ref="websocket" url={ wsAddress } onMessage={this.handleData.bind(this)} onConnect={this.handleConnect.bind(this)} 
+                   onClose={this.handleClose.bind(this)} />
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
@@ -106,7 +120,8 @@ const mapStateToProps = (state, myprops) => ({
 
 const mapDispatchToProps = (dispatch, myprops) => ({
   checkLogin : (after) => { dispatch(checkLoginStatus(after)); },
-  setWebsocket: (ws) => { dispatch(setWebsocket(ws)) }
+  setWebsocket: (ws) => { dispatch(setWebsocket(ws)) },
+  registerSocket: (sockid) => { dispatch(registerSocket(sockid)) },
 });
 
 export default MainLayout = connect(mapStateToProps, mapDispatchToProps)(MainLayout);

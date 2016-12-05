@@ -35,3 +35,10 @@ export const setWebsocket = (ws) => {
 		websocket: ws
 	}
 }
+
+export const registerSocket = (id) => {
+	return {
+		type: "REGISTER_SOCKET",
+		socket_id: id
+	}
+}

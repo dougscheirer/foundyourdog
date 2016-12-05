@@ -2,7 +2,7 @@ package app.handlers;
 
 import app.Answer;
 import app.Main;
-import app.WebSocketServer;
+import app.handlers.WebsocketHandler;
 import app.model.Model;
 import spark.Request;
 import spark.Response;
@@ -24,7 +24,7 @@ public class AuthenticatedHandler implements Route {
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());
-			WebSocketServer.updateWebsocketMap(request.cookie("JSESSIONID"), user);
+			WebsocketHandler.updateWebsocketMap(request.cookie("ws"), user);
 			return answer.getBody();
 		}
 	}

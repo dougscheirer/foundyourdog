@@ -10,7 +10,7 @@ public class SocketMessage {
 	private int duration;
 	private DISPLAY_TYPE displayType;
 	
-	public enum TYPE { PING, PONG, USER_MESSAGE, BROADCAST_MESSAGE }
+	public enum TYPE { PING, PONG, REGISTER, USER_MESSAGE, BROADCAST_MESSAGE }
 	public enum DISPLAY_TYPE { NONE, MESSAGE, ERROR, WARNING, SUCCESS }
 	
 	public SocketMessage(TYPE type, String messageText, DISPLAY_TYPE displayType, int duration) {

@@ -7,7 +7,7 @@ public class WSSessionData {
 	public String sessionID;
 	public String userID;
 	
-	WSSessionData(String sessionID) {
+	public WSSessionData(String sessionID) {
 		this.sessionID = sessionID;
 	}
 }
