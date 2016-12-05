@@ -4,11 +4,19 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
+import org.eclipse.jetty.http.HttpCookie;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -16,6 +24,7 @@ import org.sql2o.Sql2oException;
 import org.sql2o.quirks.PostgresQuirks;
 
 import com.beust.jcommander.JCommander;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
@@ -23,6 +32,7 @@ import app.handlers.CreateNotificationHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.DeleteNotificationHandler;
 import app.handlers.DetailUser;
+import app.handlers.EmptyPayload;
 import app.handlers.FindUnassignedImageHandler;
 import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
@@ -42,34 +52,35 @@ import spark.Spark;
 
 public class Main {
 	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
-	
+
 	// TODO: move this to where constants live
 	public static final String SESSION_USERID = "userid";
-	private static Map<Session, String> websocketMap = new ConcurrentHashMap<>();
-	
+	// map web sockets to a user ID (might be NULL)
+	private static Map<Session, WSSessionData> websocketMap = new ConcurrentHashMap<>();
+
 	public static DetailUser getCurrentUser(Request request) {
 		return request.session().attribute(SESSION_USERID);
 	}
-		
-    static int getPortByEnv(int optionsPort) {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }
+
+	static int getPortByEnv(int optionsPort) {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		if (processBuilder.environment().get("PORT") != null) {
+			return Integer.parseInt(processBuilder.environment().get("PORT"));
+		}
 		return optionsPort;
-    }
+	}
 
-    private static void checkAuthentication(Request request, Response res) {
-    	if (getCurrentUser(request) == null)
-    		halt(403);
-    }
+	private static void checkAuthentication(Request request, Response res) {
+		if (getCurrentUser(request) == null)
+			halt(403);
+	}
 
-    private static void checkAdminAuthentication(Request request, Response res) {
-    	DetailUser u = getCurrentUser(request);
+	private static void checkAdminAuthentication(Request request, Response res) {
+		DetailUser u = getCurrentUser(request);
 		if (u == null || !u.isAdmin())
-    		halt(403);
-    }
-    
+			halt(403);
+	}
+
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
@@ -92,9 +103,8 @@ public class Main {
 				});
 
 		// do a basic DB connection test on the users table, quit if it fails
-        try (Connection conn = sql2o.open()) {
-        	conn.createQuery("select * from users limit 1")
-        		.executeAndFetchTable();
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery("select * from users limit 1").executeAndFetchTable();
 		} catch (Sql2oException e) {
 			logger.log(Level.SEVERE, e.toString(), e);
 			return;
@@ -106,13 +116,13 @@ public class Main {
 
 		// websockets: we got em
 		webSocket("/ws", WebsocketHandler.class);
-		
+
 		// authentication filter
-		/* the pattern here is: 
-		*		/api/auth : requires authenticated user session
-		*		/api/admin: requires authenticated admin session
-		*		(anything else): no auth required
-		*/
+		/*
+		 * the pattern here is: /api/auth : requires authenticated user session
+		 * /api/admin: requires authenticated admin session (anything else): no
+		 * auth required
+		 */
 		before((request, response) -> {
 			if (request.pathInfo().startsWith("/api/auth/")) {
 				checkAuthentication(request, response);
@@ -129,7 +139,7 @@ public class Main {
 		// basics, login, logout, and an auth check method
 		post("/api/login", new LoginHandler(model));
 		post("/api/logout", new LogoutHandler(model));
-		
+
 		get("/api/auth/authenticated", new AuthenticatedHandler(model));
 
 		// TODO: group the /api/... stuff under one route path?
@@ -139,14 +149,14 @@ public class Main {
 		// delete("/api/users/:id", new DeleteUserHandler(model));
 
 		get("/api/auth/reports", new GetUserIncidents(model));
-		
+
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
-		
+
 		post("/api/auth/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/auth/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		get("/api/reports/:id", new GetIncidentDetailHandler(model));
-		
+
 		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation));
 		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
@@ -155,32 +165,111 @@ public class Main {
 		post("/api/auth/message", new CreateNotificationHandler(model));
 		put("/api/auth/message/:id?mark=:flag", new UpdateNotificationHandler(model));
 		delete("/api/auth/message/:id", new DeleteNotificationHandler(model));
-		
-		// what is java bad about? serving static image files, so change this when really using it
+
+		// what is java bad about? serving static image files, so change this
+		// when really using it
 		get("/api/images/:id", new GetImageHandler(model));
-		
+
 		exception(Exception.class, (exception, request, response) -> {
-		    // Handle the exception here
+			// Handle the exception here
 			logger.severe("Exception handling route: " + request.url());
 			logger.severe(exception.getLocalizedMessage());
 		});
 	}
 
+	// TODO: make a class to handle this
 	public static void addWebsocketConnection(Session user) {
-		websocketMap.put(user, user.toString());
+		Optional<java.net.HttpCookie> sessionID = user.getUpgradeRequest().getCookies().stream()
+				.filter(x -> "JSESSIONID".equals(x.getName())).findFirst();
+		if (sessionID.isPresent())
+			websocketMap.put(user, new WSSessionData(sessionID.get().getValue()));
 	}
 
 	public static void removeWebsocketConnection(Session user) {
 		websocketMap.remove(user);
 	}
 
-	public static void sendMessage(String message) {
+	// send something to everyone
+	public static void sendMessage(SocketMessage.TYPE type, String message) {
+		SocketMessage msg = new SocketMessage(type, message, SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
 		websocketMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-	        try {
-	            session.getRemote().sendString("{\"userMessage\":\"" + message + "\"}");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    });
+			try {
+				session.getRemote().sendString(msg.toJson());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	public static void sendMessage(RemoteEndpoint remoteEndpoint, SocketMessage msg) {
+		try {
+			remoteEndpoint.sendString(msg.toJson());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// send something to a user
+	public static void sendMessage(String receiver_id, String message) {
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, message,
+				SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
+		websocketMap.entrySet().stream().filter(map -> map.getKey().isOpen())
+				.filter(map -> receiver_id.equals(map.getValue().getUserID())).forEach(entry -> {
+					sendMessage(entry.getKey().getRemote(), msg);
+				});
+	}
+
+	public static void sendPong(Session user) {
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.PONG, null, SocketMessage.DISPLAY_TYPE.NONE, 0);
+		try {
+			user.getRemote().sendString(msg.toJson());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void updateWebsocketMap(String cookie, DetailUser user) {
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, "Your websocket entry was updated",
+				SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
+		Stream<Entry<Session, WSSessionData>> entries = websocketMap.entrySet().stream()
+				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().sessionID.equals(cookie));
+		try {
+			entries.forEach(entry -> {
+				WSSessionData s = entry.getValue();
+				s.userID = user.getUuid();
+				entry.setValue(s);
+				sendMessage(entry.getKey().getRemote(), msg);
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void messageReceived(Session user, String message) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			// set the date format for our app
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			objectMapper.setDateFormat(df);
+			SocketMessage msg;
+			msg = objectMapper.readValue(message, SocketMessage.class);
+			switch (msg.getType()) {
+			case PING:
+				sendPong(user);
+				break;
+			case USER_MESSAGE: // for debugging
+				sendMessage(msg.getType(), msg.getMessageText());
+				break;
+			case BROADCAST_MESSAGE: // for debugging
+				sendMessage(msg.getType(), msg.getMessageText());
+				break;
+			default:
+				logger.severe("Received unhandled message type:");
+				logger.severe(message);
+				break;
+			}
+		} catch (IOException e) {
+			logger.severe(e.getMessage());
+		}
 	}
 }

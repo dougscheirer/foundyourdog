@@ -22,7 +22,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				show_wait_dialog: action.show
 			}
-
+		case 'SET_WEBSOCKET':
+			return { ...state,
+				websocket: action.websocket
+			}
 		default:
 			return state;
 		}

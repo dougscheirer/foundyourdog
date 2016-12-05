@@ -88,7 +88,7 @@ export const auth_delete = (url, fn_complete) => {
 }
 
 // login is not technically required here, it's just a check
-export const checkLoginStatus = () => {
+export const checkLoginStatus = (after) => {
 	return dispatch => {
 		return fetch('/api/auth/authenticated', { credentials: 'include' }).then((res) => {
 			if (res.ok)
@@ -96,8 +96,10 @@ export const checkLoginStatus = () => {
 			else
 				return undefined
 		}).then((res) => {
-			if (!!res)
+			if (!!res) {
+				if (!!after) after(res);
 				return dispatch(showLogin('success', res));
+			}
 			else
 				return undefined
 		});

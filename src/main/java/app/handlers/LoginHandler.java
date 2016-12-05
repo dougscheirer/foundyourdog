@@ -32,10 +32,10 @@ public class LoginHandler implements Route {
 		} else {
 			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user.get()));
 			request.session().attribute(Main.SESSION_USERID, user.get());
+			Main.updateWebsocketMap(request.cookie("JSESSIONID"), user.get());
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());
-			Main.sendMessage("You logged in");
 			return answer.getBody();
 		}
 	}

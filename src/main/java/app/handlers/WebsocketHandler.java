@@ -15,8 +15,6 @@ public class WebsocketHandler {
 		// TODO Auto-generated constructor stub
 	}
 
-    private String sender, msg;
-
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
     	// TODO: add it to a map
@@ -31,6 +29,6 @@ public class WebsocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        Main.sendMessage(message);
+        Main.messageReceived(user, message);
     }
 }

@@ -47,3 +47,11 @@ export function humanTimestamp(ts) {
   const m = moment(ts)
   return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
 }
+
+export function ws_send(socket, message, type = "USER_MESSAGE", displayType: undefined, duration = undefined) {
+  socket.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
+}
+
+export function ws_ping(socket) {
+  ws_send(socket, undefined, "PING");
+}

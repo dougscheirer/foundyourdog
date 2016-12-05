@@ -24,6 +24,7 @@ public class AuthenticatedHandler implements Route {
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());
+			Main.updateWebsocketMap(request.cookie("JSESSIONID"), user);
 			return answer.getBody();
 		}
 	}

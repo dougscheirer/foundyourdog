@@ -28,3 +28,10 @@ export const wait_dialog = (show) => {
 		show: show
 	}
 }
+
+export const setWebsocket = (ws) => {
+	return {
+		type: "SET_WEBSOCKET",
+		websocket: ws
+	}
+}
