@@ -127,8 +127,8 @@ class Reports extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	openReports : state.myOpenReports,
-	closedReports : state.myClosedReports,
+	openReports : state.incidents.myOpenReports,
+	closedReports : state.incidents.myClosedReports,
 	logged_in : logged_in(state)
 });
 

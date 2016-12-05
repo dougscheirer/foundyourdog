@@ -39,6 +39,8 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 		if (messageId == null) {
 			return new Answer(500);
 		}
+		// send a websocket message to the target
+		WebsocketHandler.sendMessage(value.getReceiver_id(), "You have a new message");
 		return new Answer(200, "{\"id\":\"" + messageId + "\"}");
 	}
 }

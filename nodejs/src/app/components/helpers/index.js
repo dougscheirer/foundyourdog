@@ -2,11 +2,11 @@ import React from 'react'
 import moment from 'moment'
 
 export function logged_in(state) {
-  return (state.login_status === "success")
+  return (state.login.status === "success")
 }
 
 export function auth_user(state) {
-  return (logged_in(state)) ? state.login_data : undefined
+  return (logged_in(state)) ? state.login.data : undefined
 }
 
 export function incidentToString(incident) {
@@ -43,6 +43,15 @@ export function dogFromIncident(incident) {
 }
 
 export function humanTimestamp(ts) {
+  // TODO: make this use timeago (sometimes)
   const m = moment(ts)
   return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
+}
+
+export function ws_send(socket, message, type = "USER_MESSAGE", displayType: undefined, duration = undefined) {
+  socket.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
+}
+
+export function ws_ping(socket) {
+  ws_send(socket, undefined, "PING");
 }
