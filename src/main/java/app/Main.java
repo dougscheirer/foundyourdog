@@ -34,6 +34,7 @@ import app.handlers.DeleteNotificationHandler;
 import app.handlers.DetailUser;
 import app.handlers.EmptyPayload;
 import app.handlers.FindUnassignedImageHandler;
+import app.handlers.GetConversationHandler;
 import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
@@ -163,6 +164,8 @@ public class Main {
 		post("/api/auth/message", new CreateNotificationHandler(model));
 		put("/api/auth/message/:id?mark=:flag", new UpdateNotificationHandler(model));
 		delete("/api/auth/message/:id", new DeleteNotificationHandler(model));
+
+		get("/api/auth/conversation", new GetConversationHandler(model));
 
 		// what is java bad about? serving static image files, so change this
 		// when really using it

@@ -29,3 +29,15 @@ export const postMessage = (data) => {
 			  	return {type: 'MESSAGE_SENT', result: res}
 			})
 }
+
+export const getConversation = (incident_id, msg_id) => {
+	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id, 
+		(res) => {
+			return {
+				type: 'CONVERSATION',
+				incident: incident_id,
+				message: msg_id,
+				conversation: res
+			}
+		})
+}

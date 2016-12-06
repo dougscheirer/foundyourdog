@@ -9,7 +9,8 @@ export { showLogin,
 
 export { getUserNotifications,
 		 sendMessage,
-		 postMessage } from './messages'
+		 postMessage,
+		 getConversation } from './messages'
 
 export { getReportInfo,
 		 showIncidentInfo,

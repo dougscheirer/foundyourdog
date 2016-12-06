@@ -19,6 +19,13 @@ export const messages = (state = initialState, action) => {
 		case 'MESSAGE_SENT':
 			return { ...state,
 						notification_data: undefined }
+		case 'CONVERSATION':
+			return { ...state,
+						conversation: { 
+							incident: action.incident,
+							message: action.message,
+							conversation: action.conversation }
+						}
 		default:
 			return state;
 	}

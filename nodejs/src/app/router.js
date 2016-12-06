@@ -15,6 +15,7 @@ import Feedback from './components/feedback';
 import { EditReport, NewFound, NewLost } from "./components/NewReport";
 import ReportSummary from './components/report_summary'
 import ProfileLayout from './components/profile-layout'
+import Conversation from './components/conversation'
 
 export default class Routes extends Component {
   render() {
@@ -26,6 +27,10 @@ export default class Routes extends Component {
     { /* not super happy with the routing, but tabs inside of the page make it generally weird */ }
       <Route path="profile" component={ProfileLayout} />
       <Route path="profile/*" component={ProfileLayout} />
+
+      <Route path="conversation">
+        <Route path=":incident/:message_id" component={Conversation} />
+      </Route>
 
       <Route path="lost">
         <Route component={LostSearchLayout}>

@@ -4,6 +4,7 @@ import 'react-table/react-table.css'
 import { connect } from 'react-redux'
 import { getUserNotifications } from '../../actions'
 import { auth_user, logged_in, humanTimestamp } from '../helpers'
+import { browserHistory } from 'react-router'
 
 class NotificationPanel extends Component {
 	render() {
@@ -30,8 +31,9 @@ class NotificationPanel extends Component {
 }
 
 class NotificationTable extends Component {
-	onMessageClick(e) {
-		e.preventDefault();
+	onMessageClick(e, message) {
+		e.preventDefault()
+		browserHistory.push('/conversation/' + message.incident_id + "/" + message.uuid)
 	}
 
 	youOrHandle(userID) {
@@ -44,16 +46,16 @@ class NotificationTable extends Component {
 		}
 		const rows = this.props.dataSource
 		const columns = [
-			{ header: "From", accessor: "sender_handle",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{this.youOrHandle(value)}</a> },
-			{ header: "To", accessor: "receiver_handle",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{this.youOrHandle(value)}</a> },
-			{ header: "When", accessor: "sent_date",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{humanTimestamp(value)}</a> },
-			{ header: "Subject", id: 'subject', accessor: (message) => message,
+			{ header: "From", id: 'from', accessor: (i) => i,
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e, value) }>{this.youOrHandle(value.sender_handle)}</a> },
+			{ header: "To", id: 'to', accessor: (i) => i,
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e, value) }>{this.youOrHandle(value.receiver_handle)}</a> },
+			{ header: "When", id: 'when', accessor: (i) => i,
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e, value) }>{humanTimestamp(value.sent_date)}</a> },
+			{ header: "Subject", id: 'subject', accessor: (i) => i,
 				render: ({value}) => <div>{value.incident_id}</div> },
-			{ header: "Message", accessor: "message",
-				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e) }>{value}</a> }
+			{ header: "Message", id: 'message', accessor: (i) => i,
+				render: ({value}) => <a href="" onClick={ (e) => this.onMessageClick(e, value) }>{value.message}</a> }
 		]
 		return (<ReactTable data={rows} columns={columns} pageSize={ rows.length } />)
 	}

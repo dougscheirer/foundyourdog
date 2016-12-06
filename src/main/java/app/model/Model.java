@@ -43,4 +43,8 @@ public interface Model {
 
 	List<DetailNotification> getUserNotifications(String userId, String type);
 	String createNotification(Notification value);
+
+	Optional<Notification> getNotification(String incident_id);
+
+	List<Notification> getConversation(String incident_id, String receiver_id, String sender_id);
 }
