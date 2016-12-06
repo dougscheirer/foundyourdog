@@ -26,7 +26,7 @@ class Conversation extends Component {
 
 		return (<div className="container">
 			<div className="row">
-				<div className="col-sm-12">Conversation between You and { this.props.conversation.conversation.partner_handle }</div>
+				<div className="col-sm-12" style={{textAlign:"center"}}>Conversation between <strong>You</strong> and <strong>{ this.props.conversation.conversation.partner_handle }</strong></div>
 			</div>
 			<div className="row">
 				<div className="col-sm-3"></div>
