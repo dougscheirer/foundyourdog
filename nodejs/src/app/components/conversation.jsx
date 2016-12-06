@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { getConversation } from '../actions'
 import { connect } from 'react-redux'
 import { auth_user } from './helpers'
-import './home.css'
+import './chat.css'
 
 class Conversation extends Component {
 	componentDidMount() {
@@ -14,17 +14,13 @@ class Conversation extends Component {
 			return (<div>Get conversation for incident { this.props.params.incident } : {this.props.params.message_id}</div>)
 
 		const rows = this.props.conversation.conversation.messages.map((val,key) => {
-			let className = "col-sm-6 message "
-			if (key.sender_id === this.props.login_data.uuid)
-				className += "message-right"
-			else
-				className += "message-left"
+			let className = "col-sm-6 bubble "
+			if (val.sender_id === this.props.login_data.uuid)
+				className += "bubble-alt green"
 			return (<div className="row" key={ key }>
-								<div className="col-sm-3"></div>
 								<div className={ className }>
 									{ val.message }
 								</div>
-								<div className="col-sm-3"></div>
 							</div>)
 		})
 
@@ -40,7 +36,11 @@ class Conversation extends Component {
 				</div>
 				<div className="col-sm-3"></div>
 			</div>
+			<div className="col-sm-3"></div>
+			<div className="col-sm-6">
 			{ rows }
+			</div>
+			<div className="col-sm-3"></div>
 			<div className="row">
 				<div className="col-sm-3"></div>
 				<div className="col-sm-6">
