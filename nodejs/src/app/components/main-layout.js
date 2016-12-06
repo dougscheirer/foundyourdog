@@ -40,12 +40,12 @@ class MainLayout extends React.Component {
         this.props.checkLogin();
         break;
       case "USER_MESSAGE": {
-        const options = { "timeOut": "0", "closeButton" : true }
+        const options = { "timeOut": result.duration || 0, "closeButton" : true }
         toastr.info(result.messageText, "USER MESSAGE", options)
         return;
       }
       case "BROADCAST_MESSAGE": {
-        const options = { "timeout" : "5000", "closeButton" : true }
+        const options = { "timeout" : result.duration || 5000, "closeButton" : true }
         toastr.success(result.messageText, "BROADCAST MESSAGE", options)
         return;
       }
