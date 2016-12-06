@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
 import 'bootstrap-loader';
 import AuthNavbar from './auth-navbar';
@@ -11,16 +11,13 @@ import SendNotification from './send-notification'
 import toastr from 'toastr'
 import Websocket from './websocket';
 import { ws_ping, ws_send, auth_user } from './helpers'
-import { setWebsocket, registerSocket, checkLoginStatus } from '../actions'
+import { getWebSocketAddr, setWebsocket, registerSocket, checkLoginStatus } from '../actions'
 import cookie from 'react-cookie'
 
-class MainLayout extends React.Component {
-
-  state = { }
-
+class WSComponent extends Component {
   componentDidMount() {
     this.props.setWebsocket(this.refs.websocket.state.ws)
-    this.state = { pingpong : setInterval(() => { ws_ping(this.props.websocket) }, 60000) }
+    this.state = { pingpong : setInterval(() => { ws_ping(this.refs.websocket.state.ws) }, 60000) }
   }
 
   componentWillUnmount() {
@@ -40,12 +37,12 @@ class MainLayout extends React.Component {
         this.props.checkLogin();
         break;
       case "USER_MESSAGE": {
-        const options = { "timeOut": "0", "closeButton" : true }
+        const options = { "timeOut": result.duration || 0, "closeButton" : true }
         toastr.info(result.messageText, "USER MESSAGE", options)
         return;
       }
       case "BROADCAST_MESSAGE": {
-        const options = { "timeout" : "5000", "closeButton" : true }
+        const options = { "timeout" : result.duration || 5000, "closeButton" : true }
         toastr.success(result.messageText, "BROADCAST MESSAGE", options)
         return;
       }
@@ -67,15 +64,39 @@ class MainLayout extends React.Component {
     ws_send(this.props.websocket, "MAIN SUBSCRIBE " + res.uuid, "BROADCAST_MESSAGE")
   }
 
-  createToastContainer(id) {
-    return (<div id={ id } aria-live polite role="alert"></div>)
+  render() {
+    return <Websocket ref="websocket" url={ this.props.wsAddr }
+              onMessage={this.handleData.bind(this)} onConnect={this.handleConnect.bind(this)}
+              onClose={this.handleClose.bind(this)} />
+  }
+}
+
+const mapWSDispatchToProps = (dispatch, myprops) => ({
+  setWebsocket: (ws) => { dispatch(setWebsocket(ws)) },
+  checkLogin : (after) => { dispatch(checkLoginStatus(after)); },
+  registerSocket: (sockid) => { dispatch(registerSocket(sockid)) }
+});
+
+WSComponent = connect(undefined, mapWSDispatchToProps)(WSComponent)
+
+class MainLayout extends Component {
+
+  state = { }
+
+  componentDidMount() {
+    this.props.getWebSocketAddr()
+  }
+
+  websocketRender() {
+    if (!!this.props.websocketAddr)
+      return (<WSComponent wsAddr={ this.props.websocketAddr } />)
+    else
+      return (<div></div>)
   }
 
   render() {
     toastr.options = { "positionClass": "toast-top-left", "timeOut": "5000" }
 
-    // TODO: this should come from somewhere...
-    const wsAddress = "ws://localhost:4567/ws"
     return (
       <div className="app">
         <LoginPopup />
@@ -83,8 +104,7 @@ class MainLayout extends React.Component {
         <DevTools />
         <ShowInfoCard />
         <SendNotification />
-        <Websocket ref="websocket" url={ wsAddress } onMessage={this.handleData.bind(this)} onConnect={this.handleConnect.bind(this)} 
-                   onClose={this.handleClose.bind(this)} />
+        { this.websocketRender() }
         <nav className="navbar navbar-default">
           <div className="container-fluid">
             <div className="navbar-header">
@@ -115,13 +135,12 @@ class MainLayout extends React.Component {
 
 const mapStateToProps = (state, myprops) => ({
   login_data : auth_user(state),
-  websocket: state.reducerOne.websocket
+  websocket: state.reducerOne.websocket,
+  websocketAddr: state.reducerOne.websockAddr
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-  checkLogin : (after) => { dispatch(checkLoginStatus(after)); },
-  setWebsocket: (ws) => { dispatch(setWebsocket(ws)) },
-  registerSocket: (sockid) => { dispatch(registerSocket(sockid)) },
+  getWebSocketAddr : () => { dispatch(getWebSocketAddr()) }
 });
 
 export default MainLayout = connect(mapStateToProps, mapDispatchToProps)(MainLayout);

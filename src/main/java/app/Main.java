@@ -171,6 +171,13 @@ public class Main {
 		// when really using it
 		get("/api/images/:id", new GetImageHandler(model));
 
+		// a little api for retreiving the websocket addr
+		get("/api/wsaddr", (req, res) -> {
+			return "{\"address\":\""
+					+ req.url().replace(req.scheme(), "ws").replaceAll(req.pathInfo(), "/ws") 
+					+ "\"}";
+		});
+		
 		exception(Exception.class, (exception, request, response) -> {
 			// Handle the exception here
 			logger.severe("Exception handling route: " + request.url());
