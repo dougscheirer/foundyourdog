@@ -49,7 +49,12 @@ export function humanTimestamp(ts) {
 }
 
 export function ws_send(socket, message, type = "USER_MESSAGE", displayType: undefined, duration = undefined) {
-  socket.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
+  const ws = socket.getRawSocket()
+  if (!!ws && ws.readyState === 1)
+    ws.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
+  else {
+    console.log("Could not send to socket: " + ((!!!ws) ? "socket undefined" : "readyState = " + ws.readyState))
+  }
 }
 
 export function ws_ping(socket) {

@@ -30,6 +30,10 @@ const reducerOne = (state = initialState, action) => {
 			return { ...state,
 				socketID: action.socket_id
 			}
+		case 'WEBSOCK_ADDR':
+			return { ...state,
+				websockAddr: action.address
+			}
 		default:
 			return state;
 		}

@@ -1,3 +1,5 @@
+import { auth_fetch } from './login'
+
 export { showLogin,
 				 clearPostLoginActions,
 				 auth_fetch,
@@ -42,4 +44,13 @@ export const registerSocket = (id) => {
 		type: "REGISTER_SOCKET",
 		socket_id: id
 	}
+}
+
+export const getWebSocketAddr = () => {
+	return auth_fetch("/api/wsaddr", (res) => {
+		return {
+			type: "WEBSOCK_ADDR",
+			address: res.address
+		}
+	})
 }
