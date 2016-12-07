@@ -5,12 +5,14 @@ import reducerOne, { login, messages, incidents, images } from './app/reducers';
 import { Provider } from 'react-redux'
 import DevTools, { logger, crashReporter } from './app/devtools';
 import thunkMiddleware from 'redux-thunk';
+// import injectTapEventPlugin from 'react-tap-event-plugin';
 import './index.css';
-
-// import routes
 import Router from './app/router';
-
 import './index.css';
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+// injectTapEventPlugin();
 
 const enhancer = compose(
   // Middleware you want to use in development:

@@ -10,6 +10,9 @@ import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
 import toastr from 'toastr'
 import WSComponent from './wscomponent'
+import Toolbar from 'material-ui/Toolbar';
+import FlatButton from 'material-ui/FlatButton'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 class MainLayout extends Component {
 
@@ -24,38 +27,22 @@ class MainLayout extends Component {
   render() {
     toastr.options = { "positionClass": "toast-top-left", "timeOut": "5000" }
 
-    return (
-      <div className="app">
-        <LoginPopup />
-        <Signup />
-        <DevTools />
-        <ShowInfoCard />
-        <SendNotification />
-        <WSComponent />
-        <nav className="navbar navbar-default">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
-              <Link to="/" className="navbar-brand">Found your dog!</Link>
-            </div>
-            <div id="navbar" className="navbar-collapse collapse">
-              <ul className="nav navbar-nav">
-                <li><Link to="/">Home</Link></li>
-              </ul>
-              <AuthNavbar authenticated={false} />
-            </div>
-          </div>
-        </nav>
+    const buttonStyle = {
+        backgroundColor: 'transparent',
+        color: 'white',
+        verticalAlign: 'middle'
+      };
 
-        <main>
-          {this.props.children}
-        </main>
-      </div>
+    return (
+      <MuiThemeProvider>
+        <Toolbar style={{backgroundColor: "rgb(0, 188, 212)"}}
+          title="Found your dog!">
+            <FlatButton style={buttonStyle} label="Home" />
+            <FlatButton style={buttonStyle} label="Sign in" />
+            <FlatButton style={buttonStyle} label="Sign up" />
+            <FlatButton style={buttonStyle} label="Feedback" />
+        </Toolbar>
+      </MuiThemeProvider>
     )
   }
 }
