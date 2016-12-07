@@ -18,6 +18,9 @@ class MainLayout extends Component {
   componentDidMount() {
   }
 
+  componentWillUnmount() {
+  }
+
   render() {
     toastr.options = { "positionClass": "toast-top-left", "timeOut": "5000" }
 
