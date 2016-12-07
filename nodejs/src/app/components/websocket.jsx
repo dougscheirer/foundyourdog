@@ -1,14 +1,14 @@
-import React from 'react';
-
+import React from 'react'
 
 class Websocket extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-          ws: new WebSocket(this.props.url, this.props.protocol),
-          attempts: 1
-        };
+        this.state = { ws: undefined, attempts: 1};
+    }
+
+    getRawSocket() {
+      return this.state.ws
     }
 
     logging(logline) {
@@ -22,10 +22,12 @@ class Websocket extends React.Component {
     }
 
     setupWebsocket() {
-        let websocket = this.state.ws;
+        let websocket = new WebSocket(this.props.url, this.props.protocol)
+        this.setState({ws: websocket});
 
         websocket.onopen = () => {
           this.logging('Websocket connected');
+          this.setState({attempts: 1})
           if (!!this.props.onConnect)
             this.props.onConnect(this)
         };
@@ -42,7 +44,7 @@ class Websocket extends React.Component {
           if (this.props.reconnect) {
             let time = this.generateInterval(this.state.attempts);
             setTimeout(() => {
-              this.setState({attempts: this.state.attempts++});
+              this.setState({attempts: this.state.attempts+1});
               this.setupWebsocket();
             }, time);
           }

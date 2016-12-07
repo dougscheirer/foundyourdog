@@ -101,7 +101,7 @@ export const checkLoginStatus = (after) => {
 				return dispatch(showLogin('success', res));
 			}
 			else
-				return undefined
+				dispatch(showLogin(undefined));
 		});
 	}
 }

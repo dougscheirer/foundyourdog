@@ -13,7 +13,6 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import { showLogin, clearPostLoginActions } from '../actions';
 import spinner from '../../spinner.svg';
 import fetch from 'isomorphic-fetch';
-import { ws_send } from "./helpers"
 
 class LoginBase extends Component {
 
@@ -56,7 +55,8 @@ class LoginBase extends Component {
 	}
 
 	subscribe(data) {
-		ws_send(this.props.websocket, "LOGIN SUBSCRIBE " + data.uuid, "BROADCAST_MESSAGE")
+		if (!!this.props.websocket)
+			this.props.websocket.send("LOGIN SUBSCRIBE " + data.uuid, "BROADCAST_MESSAGE")
 	}
 
 	login(e) {
