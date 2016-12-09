@@ -21,9 +21,9 @@ class WSComponent extends Component {
   }
 
   getWebSocketAddr() {
-    // this seems like a thing to put in actions...but really it's only us that manages this bit, so why bother?
     try {
-      fetch("/api/wsaddr").then((res) => {
+      // TODO: either make dev mode forward websockets, or switch to pusher
+      fetch("/api/wsaddr?host=" + window.location.hostname).then((res) => {
         if (!res.ok) {
           this.setState({wsaddr_timer: setTimeout(() => { this.getWebSocketAddr() }, 5000)})
           toastr.error("Error connecting to server, retrying", undefined, { preventDuplicates : true, timeout: 0 })
@@ -44,17 +44,25 @@ class WSComponent extends Component {
     return this.refs.websocket.state.ws
   }
 
-  send(message, type = "USER_MESSAGE", displayType: undefined, duration = undefined) {
+  send(type, data) {
     const ws = this.getRawSocket()
     if (!!ws && ws.readyState === 1)
-      ws.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
+      ws.send(JSON.stringify({type: type, data: data}));
     else {
       console.log("Could not send to socket: " + ((!!!ws) ? "socket undefined" : "readyState = " + ws.readyState))
     }
   }
 
+  send_message(message, displayType = undefined, duration = undefined, broadcast = undefined) {
+    this.send("USER_MESSAGE", {
+        message: message,
+        displayType: undefined,
+        duration: duration,
+        broadcast: broadcast});
+  }
+
   ping() {
-    this.send(undefined, "PING");
+    this.send("PING");
   }
 
   pingpong() {
@@ -64,29 +72,36 @@ class WSComponent extends Component {
     }
   }
 
+  // our message format is:
+  // { type: (type of message),
+  //   data: { ...depends on type }
+  // }
   handleData(data) {
     const result = JSON.parse(data)
     if (!!!result) return
     switch (result.type) {
       case "PONG":
-        return;
+        break;
       case 'REGISTER':
-        this.props.registerSocket(result.messageText);
-        cookie.save('ws', result.messageText, { path: '/' });
+        this.props.registerSocket(result.data.id);
+        cookie.save('ws', result.data.id, { path: '/' });
         this.props.checkLogin();
         break;
-      case "USER_MESSAGE": {
-        const options = { "timeOut": result.duration || 0, "closeButton" : true }
-        toastr.info(result.messageText, "USER MESSAGE", options)
-        return;
-      }
-      case "BROADCAST_MESSAGE": {
-        const options = { "timeout" : result.duration || 5000, "closeButton" : true }
-        toastr.success(result.messageText, "BROADCAST MESSAGE", options)
-        return;
-      }
+      case "USER_MESSAGE":
+        if (result.data.broadcast) {
+          const options = { "timeout" : result.data.duration || 5000, "closeButton" : true }
+          toastr.success(result.data.message, "BROADCAST MESSAGE", options)
+        }
+        else {
+          const options = { "timeOut": result.data.duration || 0, "closeButton" : true }
+          toastr.info(result.data.message, "USER MESSAGE", options)
+        }
+        break;
+      case "NEW_MESSAGE": 
+        toastr.info("You have a new message from " + result.data.fromHandle)
+        break;
       default:
-        console.log(result.messageText)
+        console.log(result.message)
     }
   }
 
@@ -101,7 +116,7 @@ class WSComponent extends Component {
   }
 
   subscribe(res) {
-    this.send("MAIN SUBSCRIBE " + res.uuid, "BROADCAST_MESSAGE")
+    this.send_message("MAIN SUBSCRIBE " + res.uuid, "INFO", 0, true)
   }
 
   render() {

@@ -34,13 +34,19 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 		if (!i.isPresent() || (!i.get().getReporter_id().equals(u.getUuid()) && !i.get().getReporter_id().equals(value.getReceiver_id()))) {
 			// TODO: audit log, this look like an attempt to hack into our message sending system
 			return new Answer(500);
-		}
+		}	
 		String messageId = model.createNotification(value);
 		if (messageId == null) {
 			return new Answer(500);
 		}
-		// send a websocket message to the target
-		WebsocketHandler.sendMessage(value.getReceiver_id(), "You have a new message");
+		Optional<DetailUser> from = model.getDetailUser(value.getSender_id());
+		if (from == null) {
+			return new Answer(500);
+		}
+		// send a websocket message to the target and the source
+		WebsocketHandler.notifyNewMessage(i.get().getUuid(), messageId, value.getReceiver_id(), from.get().getHandle());
+		WebsocketHandler.notifyNewMessage(i.get().getUuid(), messageId, value.getSender_id(), null);
+		// TODO: um, make an object?
 		return new Answer(200, "{\"id\":\"" + messageId + "\"}");
 	}
 }

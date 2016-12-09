@@ -107,7 +107,8 @@ public class Sql2oModel implements Model {
 							+ "D.gender as dog_gender, " + "D.primary_type as dog_primary_type, "
 							+ "D.secondary_type as dog_secondary_type, " + "D.primary_color as dog_primary_color, "
 							+ "D.secondary_color as dog_secondary_color, " + "D.coat_type as dog_coat_type "
-							+ "from incidents I " + "inner join dogs D on D.uuid=I.dog_id where I.state=:state")
+							+ "from incidents I " + "inner join dogs D on D.uuid=I.dog_id where I.state=:state "
+							+ "order by I.incident_date desc")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
 		} catch (Sql2oException e) {
@@ -416,7 +417,10 @@ public class Sql2oModel implements Model {
 	@Override
 	public List<Notification> getConversation(String incident_id, String id1, String id2) {
 		try (Connection conn = sql2o.open()) {
-			return conn.createQuery("select * from notifications where incident_id=:incident AND (receiver_id=:id1 OR sender_id=:id1) AND (receiver_id=:id2 OR sender_id=:id2)")
+			return conn.createQuery("select * from notifications where incident_id=:incident "
+					+ "AND (receiver_id=:id1 OR sender_id=:id1) "
+					+ "AND (receiver_id=:id2 OR sender_id=:id2) "
+					+ "ORDER BY sent_date DESC")
 					.addParameter("incident", incident_id)
 					.addParameter("id1", id1)
 					.addParameter("id2", id2)

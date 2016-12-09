@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class Notification implements Validatable {
     private String uuid;
+    private int ordinal;
     private String incident_id;
     private String receiver_id;
     private Timestamp sent_date;

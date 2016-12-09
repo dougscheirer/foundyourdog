@@ -174,7 +174,7 @@ public class Main {
 		// a little api for retreiving the websocket addr
 		get("/api/wsaddr", (req, res) -> {
 			return "{\"address\":\""
-					+ req.url().replace(req.scheme(), "ws").replaceAll(req.pathInfo(), "/ws") 
+					+ "ws://" + req.queryParams("host") + ":" + servicePort + "/ws" 
 					+ "\"}";
 		});
 		

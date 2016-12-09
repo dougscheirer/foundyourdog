@@ -21,6 +21,8 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.SocketMessage;
+import app.SocketNotificationMessage;
+import app.SocketUserMessage;
 import app.WSSessionData;
 
 @WebSocket
@@ -39,7 +41,7 @@ public class WebsocketHandler {
 		String uuid = UUID.randomUUID().toString();
     	logger.severe("Connection for " + uuid);
 		websocketMap.put(user, new WSSessionData(uuid));
-		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.REGISTER, uuid, SocketMessage.DISPLAY_TYPE.NONE, 0);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.REGISTER, "id", uuid);
 		sendMessage(user.getRemote(), msg);
 	}
 
@@ -48,16 +50,20 @@ public class WebsocketHandler {
 		websocketMap.remove(user);
 	}
 
-	// send something to everyone
-	public void sendMessage(SocketMessage.TYPE type, String message) {
-		SocketMessage msg = new SocketMessage(type, message, SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
-		websocketMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-			try {
+    public void broadcastMessage(SocketMessage msg) {
+    	websocketMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+    		try {
 				session.getRemote().sendString(msg.toJson());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
+    }
+
+	// send something to everyone
+	public void sendMessage(SocketMessage.TYPE type, String message) {
+		SocketUserMessage umsg = new SocketUserMessage(message, 5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, true);
+		SocketMessage msg = new SocketMessage(type, umsg.toJson());
 	}
 
 	// send something to an endpoint
@@ -71,8 +77,16 @@ public class WebsocketHandler {
 
 	// send something to a user
 	public static void sendMessage(String receiver_id, String message) {
-		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, message,
-				SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
+		SocketUserMessage umsg = new SocketUserMessage(message, 5000, 
+				SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
+		websocketMap.entrySet().stream().filter(map -> map.getKey().isOpen())
+				.filter(map -> receiver_id.equals(map.getValue().getUserID())).forEach(entry -> {
+					sendMessage(entry.getKey().getRemote(), msg);
+				});
+	}
+
+	public static void sendMessage(String receiver_id, SocketMessage msg) {
 		websocketMap.entrySet().stream().filter(map -> map.getKey().isOpen())
 				.filter(map -> receiver_id.equals(map.getValue().getUserID())).forEach(entry -> {
 					sendMessage(entry.getKey().getRemote(), msg);
@@ -80,7 +94,7 @@ public class WebsocketHandler {
 	}
 
 	public void sendPong(Session user) {
-		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.PONG, null, SocketMessage.DISPLAY_TYPE.NONE, 0);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.PONG, null);
 		try {
 			user.getRemote().sendString(msg.toJson());
 		} catch (Exception e) {
@@ -89,8 +103,10 @@ public class WebsocketHandler {
 	}
 
 	public static void updateWebsocketMap(String cookie, DetailUser user) {
-		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, "Your websocket entry was updated",
-				SocketMessage.DISPLAY_TYPE.MESSAGE, 5000);
+		// for debugging, send a message
+		SocketUserMessage umsg = new SocketUserMessage("Your websocket entry was updated",
+				5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
 		Stream<Entry<Session, WSSessionData>> entries = websocketMap.entrySet().stream()
 				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().sessionID.equals(cookie));
 		logger.severe("request modified entry for " + cookie + "/" + user.getHandle());
@@ -121,10 +137,7 @@ public class WebsocketHandler {
 				sendPong(user);
 				break;
 			case USER_MESSAGE: // for debugging
-				sendMessage(msg.getType(), msg.getMessageText());
-				break;
-			case BROADCAST_MESSAGE: // for debugging
-				sendMessage(msg.getType(), msg.getMessageText());
+				broadcastMessage(msg);
 				break;
 			default:
 				logger.severe("Received unhandled message type:");
@@ -134,5 +147,32 @@ public class WebsocketHandler {
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}
+	}
+
+	public static void removeUserFromMap(String sid, DetailUser u) {
+		try {
+			SocketUserMessage umsg = new SocketUserMessage("You logged out of another session",
+					5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
+			SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
+			websocketMap.entrySet().stream()
+				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().userID.equals(u.getUuid()))
+				.forEach(entry -> {
+					WSSessionData s = entry.getValue();
+					if (sid != null && sid != s.sessionID)
+						return;
+					s.userID = null;
+					entry.setValue(s);
+					sendMessage(entry.getKey().getRemote(), msg);
+					logger.severe("removed entry for " + s.sessionID + "/" + u.getHandle()); 
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void notifyNewMessage(String incidentId, String messageId, String receiverId, String fromHandle) {
+		SocketNotificationMessage nmsg = new SocketNotificationMessage(incidentId, messageId, receiverId, fromHandle);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.NEW_MESSAGE, nmsg.toJson());
+		sendMessage(receiverId, msg);
 	}
 }

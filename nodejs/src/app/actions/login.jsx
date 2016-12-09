@@ -1,10 +1,39 @@
 import fetch from 'isomorphic-fetch';
 
-export const showLogin = (show, userData) => {
+export const hideLogin = () => {
 	return {
-		type: 'SHOW_LOGIN',
-		show: show,
+		type: 'SHOW_LOGIN'
+	}
+}
+
+export const showLogin = () => {
+	return {
+		type: 'SHOW_LOGIN'
+	}
+}
+
+export const showSignup = () => {
+	return {
+		type: 'SHOW_SIGNUP'
+	}
+}
+
+export const loginSuccess = (userData) => {
+	return {
+		type: 'LOGIN_OK',
 		userData: userData
+	}
+}
+
+export const loggedOut = () => {
+	return {
+		type: 'LOGGED_OUT'
+	}
+}
+
+export const resetPassword = () => {
+	return {
+		type: 'RESET_PASSWORD'
 	}
 }
 
@@ -27,7 +56,7 @@ export const requires_login = (dispatch, fetch_func, process_func, error_func) =
 			switch (res.status) {
 				case 403:
 					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func, error_func) }))
-					dispatch(showLogin('login', null))
+					dispatch(showLogin())
 					break;
 				case 200:
 					res.json().then((res) => dispatch(process_func(res)))
@@ -45,7 +74,7 @@ export const logout = () => {
 		  method: 'POST', credentials: 'include'
 		}).then((res) => {
 		  // TODO: check res for the status
-		  dispatch(showLogin(undefined));
+		  dispatch(loggedOut());
 		});
 	};
 }
@@ -59,7 +88,7 @@ export const loginRequired = (postLoginAction) => {
 			else {
 				if (!!postLoginAction)
 					dispatch(setPostLoginAction(postLoginAction));
-				dispatch(showLogin('login', null));
+				dispatch(showLogin());
 			}
 		});
 	}
@@ -98,10 +127,10 @@ export const checkLoginStatus = (after) => {
 		}).then((res) => {
 			if (!!res) {
 				if (!!after) after(res);
-				return dispatch(showLogin('success', res));
+				return dispatch(loginSuccess(res));
 			}
 			else
-				dispatch(showLogin(undefined));
+				dispatch(loggedOut());
 		});
 	}
 }

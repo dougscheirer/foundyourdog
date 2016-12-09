@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { showLogin, logout } from '../actions';
+import { showSignup, showLogin, logout } from '../actions';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router'
 import { logged_in, auth_user } from './helpers'
@@ -60,8 +60,8 @@ const mapStateToProps = (state, myprops) => ({
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-  onSignin    : () => { dispatch(showLogin('login')); },
-  onSignup    : () => { dispatch(showLogin('signup')); },
+  onSignin    : () => { dispatch(showLogin()); },
+  onSignup    : () => { dispatch(showSignup()); },
   onSignout    : () => { dispatch(logout()); browserHistory.push("/") }
 });
 

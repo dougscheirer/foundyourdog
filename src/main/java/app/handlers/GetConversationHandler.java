@@ -47,7 +47,7 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		
 		// get the conversation
 		List<Notification> data = model.getConversation(incident_id, notification.get().getReceiver_id(), notification.get().getSender_id());
-		return new Answer(200, dataToJson(new Conversation(data, partner.get().getHandle())));
+		return new Answer(200, dataToJson(new Conversation(data, partner.get())));
 	}
 
 }

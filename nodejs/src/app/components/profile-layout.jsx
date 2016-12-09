@@ -3,8 +3,9 @@ import { Notifications, Reports, Dogs, Settings } from "./profile"
 import './home.css'
 import { TabContainer, Tab } from './tabs'
 import { connect } from 'react-redux'
-import { logged_in } from './helpers'
+import { logged_in, waiting_login } from './helpers'
 import { LoginView } from './login'
+import loading from './loading.svg'
 
 class ProfileLayout extends Component {
 
@@ -23,6 +24,13 @@ class ProfileLayout extends Component {
 	}
 
 	render() {
+		// determine login status?
+		if (!!this.props.waiting_login)
+			return (<div>
+				<img alt="loading" style={{display:"block",margin: "0 auto"}} src={ loading }></img>
+				</div>)
+
+		// not logged in?
 		if (!!!this.props.login_status)
 			return (<LoginView />)
 
@@ -47,7 +55,8 @@ class ProfileLayout extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	login_status : logged_in(state)
+	login_status : logged_in(state),
+	waiting_login: waiting_login(state)
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({

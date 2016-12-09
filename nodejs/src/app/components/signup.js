@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin } from '../actions';
+import { showLogin, resetPassword } from '../actions';
 import spinner from '../../spinner.svg';
 import toastr from 'toastr';
 
@@ -121,10 +121,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-	onHide: () 			=> { dispatch(showLogin(undefined)); },
-	onLogin: () 		=> { dispatch(showLogin('login')); },
-	onPasswordReset: () => { dispatch(showLogin('reset_password')); },
-	onSignedIn: ()      => { dispatch(showLogin('success')) }
+	onLogin: () 		=> { dispatch(showLogin()); },
+	onPasswordReset: () => { dispatch(resetPassword()); }
 });
 
 export default Signup=connect(mapStateToProps, mapDispatchToProps)(Signup);

@@ -1,29 +1,41 @@
 package app;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import app.handlers.AbstractRequestHandler;
 import lombok.Data;
 
 @Data
 public class SocketMessage {
-	private String messageText;
 	private TYPE type;
-	private int duration;
-	private DISPLAY_TYPE displayType;
-	
-	public enum TYPE { PING, PONG, REGISTER, USER_MESSAGE, BROADCAST_MESSAGE }
-	public enum DISPLAY_TYPE { NONE, MESSAGE, ERROR, WARNING, SUCCESS }
-	
-	public SocketMessage(TYPE type, String messageText, DISPLAY_TYPE displayType, int duration) {
-		 this.messageText = messageText;
-		 this.type = type;
-		 this.duration = duration;
-		 this.displayType = displayType;
+	private ObjectNode data;
+
+	// ping/pong are keepalives
+	// register is for handshake
+	// user message is a SocketUserMessage (popups)
+
+	public enum TYPE {
+		PING, PONG, REGISTER, USER_MESSAGE, NEW_MESSAGE
 	}
-	
+
+	public SocketMessage(TYPE type, ObjectNode jsondata) {
+		this.type = type;
+		this.data = jsondata;
+	}
+
+	public SocketMessage(TYPE type, String id, String data) {
+		this.type = type;
+		JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
+
+		this.data = nodeFactory.objectNode();
+		this.data.put(id, data);
+	}
+
 	public String toJson() {
 		return AbstractRequestHandler.dataToJson(this);
 	}
-	
+
 	public SocketMessage() {
 		// dummy constructor
 	}

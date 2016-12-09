@@ -369,7 +369,7 @@ const mapEditStateToProps = (state, myprops) => ({
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-	onLoginRequired : () => { dispatch(showLogin('login')); },
+	onLoginRequired : () => { dispatch(showLogin()); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
 	getUnassignedImages: () => { dispatch(getUnassignedImages()); },
 	uploadImage : (imageForm) => { dispatch(uploadImage(imageForm)) },

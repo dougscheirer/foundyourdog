@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 CREATE TABLE IF NOT EXISTS notifications (
     uuid text primary key,
+    ordinal SERIAL,
     incident_id text not null,
     receiver_id text not null,
     sent_date timestamptz not null,
@@ -78,6 +79,10 @@ CREATE TABLE IF NOT EXISTS notifications (
     sender_flagged bool default false,
     responding_to text
 );
+
+CREATE INDEX notifications_incident ON notifications (incident_id);
+CREATE INDEX notifications_receiver ON notifications (receiver_id);
+CREATE INDEX notifications_sender   ON notifications (sender_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public to admin;

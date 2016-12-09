@@ -14,11 +14,3 @@ export const registerSocket = (id) => {
 	}
 }
 
-export const getWebSocketAddr = () => {
-	return auth_fetch("/api/wsaddr", (res) => {
-		return {
-			type: "WEBSOCK_ADDR",
-			address: res.address
-		}
-	})
-}

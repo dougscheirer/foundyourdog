@@ -1,6 +1,10 @@
 import React from 'react'
 import moment from 'moment'
 
+export function waiting_login(state) {
+  return state.login.status === undefined
+}
+
 export function logged_in(state) {
   return (state.login.status === "success")
 }
@@ -48,15 +52,9 @@ export function humanTimestamp(ts) {
   return m.format("ddd MMM Do YYYY") + " at " + m.format("h:mm A (ZZ)")
 }
 
-export function ws_send(socket, message, type = "USER_MESSAGE", displayType: undefined, duration = undefined) {
-  const ws = socket.getRawSocket()
-  if (!!ws && ws.readyState === 1)
-    ws.send(JSON.stringify({type: type, messageText: message, displayType: undefined, duration: duration}));
-  else {
-    console.log("Could not send to socket: " + ((!!!ws) ? "socket undefined" : "readyState = " + ws.readyState))
-  }
+export function humanDaytime(ts) {
+  // TODO: make this use timeago (sometimes)
+  const m = moment(ts)
+  return m.format("h:mm A")
 }
 
-export function ws_ping(socket) {
-  ws_send(socket, undefined, "PING");
-}

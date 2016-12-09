@@ -1,13 +1,15 @@
-import { auth_fetch } from './login'
-
 export { showLogin,
-				 clearPostLoginActions,
-				 auth_fetch,
-				 auth_post,
-				 auth_delete,
-				 checkLoginStatus,
-				 loginRequired,
-				 logout } from './login'
+		 hideLogin,
+		 resetPassword,
+		 loginSuccess,
+		 loggedOut,
+		 clearPostLoginActions,
+		 auth_fetch,
+		 auth_post,
+		 auth_delete,
+		 checkLoginStatus,
+		 loginRequired,
+		 logout } from './login'
 
 export { getUserNotifications,
 		 sendMessage,

@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin, clearPostLoginActions } from '../actions';
+import { hideLogin, loginSuccess, showSignup, resetPassword, clearPostLoginActions } from '../actions';
 import spinner from '../../spinner.svg';
 import fetch from 'isomorphic-fetch';
 
@@ -56,7 +56,7 @@ class LoginBase extends Component {
 
 	subscribe(data) {
 		if (!!this.props.websocket)
-			this.props.websocket.send("LOGIN SUBSCRIBE " + data.uuid, "BROADCAST_MESSAGE")
+			this.props.websocket.send_message("LOGIN SUBSCRIBE " + data.uuid, "INFO", 5000, true)
 	}
 
 	login(e) {
@@ -143,16 +143,16 @@ class LoginViewLocal extends LoginBase {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	isOpen: 			state.login.status === 'login',
+	isOpen: 			state.login.status === 'show',
 	postLoginActions: 	state.login.post_login_actions,
 	websocket: 			state.reducerOne.websocket
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-	onHide: () 			=> { dispatch(showLogin(undefined)); },
-	onSignup: () 		=> { dispatch(showLogin('signup')); },
-	onPasswordReset: () => { dispatch(showLogin('reset_password')); },
-	onLoggedIn: (data)  => { dispatch(showLogin('success', data)); },
+	onHide: () 			=> { dispatch(hideLogin()); },
+	onSignup: () 		=> { dispatch(showSignup()); },
+	onPasswordReset: () => { dispatch(resetPassword()); },
+	onLoggedIn: (data)  => { dispatch(loginSuccess(data)); },
 	onClearPostLoginActions: () => { dispatch(clearPostLoginActions()) }
 });
 
