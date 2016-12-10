@@ -7,6 +7,10 @@ export const login = (state = initialState, action) => {
 			return { ...state,
 				status: "show"
 			}
+		case 'SHOW_SIGNUP':
+			return { ...state,
+				status: "signup"
+			}
 		// don't show the UI
 		case 'HIDE_LOGIN':
 			return { ...state,

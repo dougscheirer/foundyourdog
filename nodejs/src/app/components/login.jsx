@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import { hideLogin, loginSuccess, showSignup, resetPassword, clearPostLoginActions } from '../actions';
 import spinner from '../../spinner.svg';
 import fetch from 'isomorphic-fetch';
+import { processPostLoginActions } from './helpers'
 
 class LoginBase extends Component {
 
@@ -84,12 +85,8 @@ class LoginBase extends Component {
 			if (!!!data) return data
 			this.props.onLoggedIn(data);
 			this.subscribe(data)
-			if (!!this.props.postLoginActions) {
-				for (let i = 0; i < this.props.postLoginActions.length; i++) {
-					this.props.postLoginActions[i]()
-				}
-				this.props.onClearPostLoginActions()
-			}
+			processPostLoginActions(this.props.postLoginActions)
+		    this.props.onClearPostLoginActions()
 		})
 	}
 }

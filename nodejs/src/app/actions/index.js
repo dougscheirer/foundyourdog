@@ -9,7 +9,9 @@ export { showLogin,
 		 auth_delete,
 		 checkLoginStatus,
 		 loginRequired,
-		 logout } from './login'
+		 logout,
+		 showSignup,
+		 signUp } from './login'
 
 export { getUserNotifications,
 		 sendMessage,

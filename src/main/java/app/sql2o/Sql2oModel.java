@@ -1,10 +1,13 @@
 package app.sql2o;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -281,15 +284,22 @@ public class Sql2oModel implements Model {
 	@Override
 	public Optional<DetailUser> authenticateUser(String user, String password) {
 		try (Connection conn = sql2o.open()) {
-			List<DetailUser> users = conn
-					.createQuery(
-							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications from users where (email=:id or handle=:id) and password_hash=:password")
-					.addParameter("id", user).addParameter("password", password).executeAndFetch(DetailUser.class);
-			if (users.size() == 1) {
-				return Optional.of(users.get(0));
-			} else {
-				return Optional.empty();
-			}
+			List<Map<String, Object>> passwords = conn.createQuery(
+							"select uuid, password_hash from users where (email=:id or handle=:id)")
+					.addParameter("id", user)
+					.executeAndFetchTable().asList();
+			if (passwords.size() == 1) {
+				try {
+					BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+					if (passwordEncryptor.checkPassword(password, passwords.get(0).get("password_hash").toString())) {
+						return getDetailUser(passwords.get(0).get("uuid").toString());
+					}
+				} catch (EncryptionOperationNotPossibleException e) {
+					// usually means that the pasword_hash is not a valid "encrypted value"
+				}
+			} 
+			
+			return Optional.empty();
 		} catch (Sql2oException e) {
 			logger.severe(e.getLocalizedMessage());
 		}
@@ -303,8 +313,10 @@ public class Sql2oModel implements Model {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery("insert into users(uuid, email, handle, password_hash, confirmation_token)"
 					+ "   VALUES (:uuid, :email, :handle, :password_hash, :confirmation_token)")
-					.addParameter("uuid", uuid).addParameter("email", u.getEmail())
-					.addParameter("handle", u.getUserid()).addParameter("password_hash", u.getPassword())
+					.addParameter("uuid", uuid)
+					.addParameter("email", u.getEmail())
+					.addParameter("handle", u.getUserid())
+					.addParameter("password_hash", u.getPassword())
 					.addParameter("confirmation_token", confirmationToken).executeUpdate();
 			return uuid;
 		} catch (Sql2oException e) {

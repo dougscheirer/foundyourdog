@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 
 export const hideLogin = () => {
 	return {
-		type: 'SHOW_LOGIN'
+		type: 'HIDE_LOGIN'
 	}
 }
 
@@ -54,13 +54,14 @@ export const clearPostLoginActions = () => {
 export const requires_login = (dispatch, fetch_func, process_func, error_func) => {
 		fetch_func().then((res) => {
 			switch (res.status) {
-				case 403:
+				case 401: // unauthorized, you need to log in
 					dispatch(setPostLoginAction(() => { requires_login(dispatch, fetch_func, process_func, error_func) }))
 					dispatch(showLogin())
 					break;
 				case 200:
 					res.json().then((res) => dispatch(process_func(res)))
 					break;
+				case 403: // forbidden, login will not help
 				default:
 					if (!!error_func) error_func(res)
 					break;
@@ -134,4 +135,13 @@ export const checkLoginStatus = (after) => {
 				dispatch(loggedOut());
 		});
 	}
+}
+
+export const signUp = (form) => {
+	// now do the network call, dispatch the results
+	return dispatch => 
+			auth_post("/api/signup",
+				JSON.stringify(form),
+				(res) => { dispatch(hideLogin()) },
+				(res) => { console.log(res) /* try again? */})
 }

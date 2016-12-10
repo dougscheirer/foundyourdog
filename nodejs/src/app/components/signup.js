@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin, resetPassword } from '../actions';
+import { showLogin, resetPassword, signUp } from '../actions';
 import spinner from '../../spinner.svg';
 import toastr from 'toastr';
 
@@ -51,7 +51,7 @@ class Signup extends Component {
 	validate() {
 		const formdata = {
 			email: 				this.refs.email.value,
-			user_id: 			this.refs.user.value,
+			userid: 			this.refs.user.value,
 			password: 		this.refs.password.value
 		};
 		const password_confirm = this.refs.password_confirm.value;
@@ -59,7 +59,7 @@ class Signup extends Component {
 		let errors = false;
 		if (!!!formdata.password || formdata.password !== password_confirm)
 									{ toastr.error('Password is required or does not match'); errors = true; }
-		if (!!!formdata.user_id) 	{ toastr.error('User name is required'); errors = true; }
+		if (!!!formdata.userid) 	{ toastr.error('User name is required'); errors = true; }
 		if (!!!formdata.email) 		{ toastr.error('Email is required'); errors = true; }
 
 		return errors ? null : formdata;
@@ -122,7 +122,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
 	onLogin: () 		=> { dispatch(showLogin()); },
-	onPasswordReset: () => { dispatch(resetPassword()); }
+	onPasswordReset: () => { dispatch(resetPassword()); },
+	send_signup: (form) => { dispatch(signUp(form)) }
 });
 
 export default Signup=connect(mapStateToProps, mapDispatchToProps)(Signup);

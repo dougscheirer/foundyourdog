@@ -2,6 +2,8 @@ package app.handlers;
 
 import java.util.Map;
 
+import org.jasypt.util.password.BasicPasswordEncryptor;
+
 import app.Answer;
 import app.model.Model;
 import app.model.UserSignup;
@@ -16,9 +18,10 @@ public class CreateUserHandler extends AbstractRequestHandler<UserSignup> {
 
 	@Override
 	protected Answer processImpl(UserSignup value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
-		// TODO: create a hash of the password in password_hash
 		// TODO: validate the User data before the attempt
 		// create a confirmation token
+		BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+		value.setPassword(passwordEncryptor.encryptPassword(value.getPassword()));
 		String  userId = model.signupUser(value);
 		return new Answer(200, "{\"id\":\"" + userId + "\"}");
 	}

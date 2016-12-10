@@ -71,13 +71,13 @@ public class Main {
 
 	private static void checkAuthentication(Request request, Response res) {
 		if (getCurrentUser(request) == null)
-			halt(403);
+			halt(401);
 	}
 
 	private static void checkAdminAuthentication(Request request, Response res) {
 		DetailUser u = getCurrentUser(request);
 		if (u == null || !u.isAdmin())
-			halt(403);
+			halt(401);
 	}
 
 	public static void main(String[] args) {

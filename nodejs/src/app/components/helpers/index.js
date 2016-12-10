@@ -58,3 +58,9 @@ export function humanDaytime(ts) {
   return m.format("h:mm A")
 }
 
+export function processPostLoginActions(list) {
+  if (!!!list) return;
+  for (let i = 0; i < list.length; i++) {
+    list[i]()
+  }
+}

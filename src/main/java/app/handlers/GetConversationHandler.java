@@ -44,7 +44,7 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		DetailUser u = Main.getCurrentUser(request);
 		if (!notification.get().getReceiver_id().equals(u.getUuid()) && 
 			!notification.get().getSender_id().equals(u.getUuid())) 
-				return new Answer(403);
+			return new Answer(401);
 		
 		// get the other user in the conversation
 		Optional<DetailUser> partner = model.getDetailUser((notification.get().getReceiver_id().equals(u.getUuid()) ?

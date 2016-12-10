@@ -3,11 +3,12 @@ import { newMessage,
          getWebSocketAddr,
          setWebsocket,
          registerSocket,
-         checkLoginStatus } from '../actions'
+         checkLoginStatus,
+         clearPostLoginActions } from '../actions'
 import cookie from 'react-cookie'
 import Websocket from './websocket';
 import toastr from 'toastr'
-import { auth_user } from './helpers'
+import { auth_user, processPostLoginActions } from './helpers'
 import { connect } from 'react-redux'
 
 class WSComponent extends Component {
@@ -89,7 +90,10 @@ class WSComponent extends Component {
       case 'REGISTER':
         this.props.registerSocket(result.data.id);
         cookie.save('ws', result.data.id, { path: '/' });
-        this.props.checkLogin();
+        this.props.checkLogin(() => {
+          processPostLoginActions(this.props.postLoginActions);
+          this.props.clearPostLoginActions();
+        });
         break;
       case "USER_MESSAGE":
         if (result.data.broadcast) {
@@ -104,8 +108,8 @@ class WSComponent extends Component {
       case "NEW_MESSAGE":
         // display a toast if the meesage fromHandle is not you
         if (!!this.props.login_data && this.props.login_data.handle !== result.data.fromHandle)
-          toastr.info("<a href=\"/conversation/" + 
-            result.data.incidentID + "/" + result.data.messageID + 
+          toastr.info("<a href=\"/conversation/" +
+            result.data.incidentID + "/" + result.data.messageID +
             "\">You have a new message from " + result.data.fromHandle + "</a>")
         // refresh conversation?
         if (this.props.conversation.incident === result.data.incidentID)
@@ -142,7 +146,8 @@ class WSComponent extends Component {
 
 const mapStateToProps = (state, myprops) => ({
     login_data : auth_user(state),
-    conversation: state.messages.conversation
+    conversation: state.messages.conversation,
+    postLoginActions: state.login.post_login_actions
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({
@@ -150,7 +155,8 @@ const mapDispatchToProps = (dispatch, myprops) => ({
   checkLogin : (after) => { dispatch(checkLoginStatus(after)); },
   getWebSocketAddr : () => { dispatch(getWebSocketAddr()) },
   registerSocket: (sockid) => { dispatch(registerSocket(sockid)) },
-  newMessage: (message_data, ordinal) => { dispatch(newMessage(message_data, ordinal)); }
+  newMessage: (message_data, ordinal) => { dispatch(newMessage(message_data, ordinal)); },
+  clearPostLoginActions: () => { dispatch(clearPostLoginActions()) }
 });
 
 export default WSComponent = connect(mapStateToProps, mapDispatchToProps)(WSComponent)

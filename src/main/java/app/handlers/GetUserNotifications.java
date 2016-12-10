@@ -19,7 +19,7 @@ public class GetUserNotifications extends AbstractRequestHandler<EmptyPayload> {
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		DetailUser u = Main.getCurrentUser(request);
 		if (u == null) {
-			return new Answer(403);
+			return new Answer(401);
 		}
 		List<DetailNotification> notifications = model.getUserNotifications(u.getUuid(), request.queryParams("type").toString());
 		return Answer.ok(dataToJson(notifications));

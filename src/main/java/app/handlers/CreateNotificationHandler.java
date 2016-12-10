@@ -22,7 +22,7 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 	protected Answer processImpl(Notification value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		DetailUser u = Main.getCurrentUser(request);
 		if (u == null) {
-			return new Answer(403);
+			return new Answer(401);
 		}
 		// some values are self determined
 		value.setSender_id(u.getUuid());

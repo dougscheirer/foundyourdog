@@ -27,7 +27,7 @@ public class ImageDeleteHandler implements Route {
 	public Object handle(Request request, Response response) throws Exception {
 		DetailUser u = Main.getCurrentUser(request);
 		if (u == null) {
-			return new Answer(403);
+			return new Answer(401);
 		}
 		
 		String imageID = request.params(":id");
@@ -37,7 +37,7 @@ public class ImageDeleteHandler implements Route {
 			return new Answer(404);
 		}
 		if (!image.get().getUser_id().equals(u.getUuid()) && !u.isAdmin()) {
-			return new Answer(403);
+			return new Answer(403); // you are forbidden
 		}
 		
 		// delete the image file
