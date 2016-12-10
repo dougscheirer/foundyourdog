@@ -104,7 +104,9 @@ class WSComponent extends Component {
       case "NEW_MESSAGE":
         // display a toast if the meesage fromHandle is not you
         if (!!this.props.login_data && this.props.login_data.handle !== result.data.fromHandle)
-          toastr.info("You have a new message from " + result.data.fromHandle)
+          toastr.info("<a href=\"/conversation/" + 
+            result.data.incidentID + "/" + result.data.messageID + 
+            "\">You have a new message from " + result.data.fromHandle + "</a>")
         // refresh conversation?
         if (this.props.conversation.incident === result.data.incidentID)
           this.props.newMessage(result.data, this.props.conversation.conversation.messages[0].ordinal);
