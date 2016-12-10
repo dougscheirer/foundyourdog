@@ -52,6 +52,18 @@ class Conversation extends Component {
 		browserHistory.push("/profile/notifications")
 	}
 
+	backToNotifications() {
+		return (<div className="row">
+				<div className="col-sm-3"></div>
+				<div className="col-sm-6">
+					<a href="#" onClick={ this.returnToNotifications.bind(this) }>
+						<span className="glyphicon glyphicon-chevron-left back-to-notifications" />
+						<span>Back to notifications</span>
+					</a>
+				</div>
+			</div>)
+	}
+
 	render() {
 		// determine login status?
 		if (!!this.props.waiting_login)
@@ -67,15 +79,7 @@ class Conversation extends Component {
 		if (!!this.state.fetch_result) {
 			return (<div>
 			<div className="container">
-			<div className="row">
-				<div className="col-sm-3"></div>
-				<div className="col-sm-6">
-					<a onClick={ this.returnToNotifications.bind(this) }>
-						<span className="glyphicon glyphicon-chevron-left back-to-notifications" />
-						Back to notifications
-					</a>
-				</div>
-			</div>
+			{ this.backToNotifications() }
 			</div>
 			<div className="container">
 			<div className="row">
@@ -112,15 +116,7 @@ class Conversation extends Component {
 
 		return (<div>
 			<div className="container">
-			<div className="row">
-				<div className="col-sm-3"></div>
-				<div className="col-sm-6">
-					<a onClick={ this.returnToNotifications.bind(this) }>
-						<span className="glyphicon glyphicon-chevron-left back-to-notifications" />
-						Back to notifications
-					</a>
-				</div>
-			</div>
+			{ this.backToNotifications() }
 			</div>
 			<div className="container">
 			<div className="row">
