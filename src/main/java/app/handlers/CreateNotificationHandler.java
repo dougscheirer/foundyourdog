@@ -44,8 +44,8 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 			return new Answer(500);
 		}
 		// send a websocket message to the target and the source
-		WebsocketHandler.notifyNewMessage(i.get().getUuid(), messageId, value.getReceiver_id(), from.get().getHandle());
-		WebsocketHandler.notifyNewMessage(i.get().getUuid(), messageId, value.getSender_id(), null);
+		WebsocketHandler.notifyNewMessage(value.getSender_id(), i.get().getUuid(), messageId, from.get().getHandle());
+		WebsocketHandler.notifyNewMessage(value.getReceiver_id(), i.get().getUuid(), messageId, from.get().getHandle());
 		// TODO: um, make an object?
 		return new Answer(200, "{\"id\":\"" + messageId + "\"}");
 	}

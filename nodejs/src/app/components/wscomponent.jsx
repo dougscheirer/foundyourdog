@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { getWebSocketAddr, setWebsocket, registerSocket, checkLoginStatus } from '../actions'
+import { newMessage,
+         getWebSocketAddr,
+         setWebsocket,
+         registerSocket,
+         checkLoginStatus } from '../actions'
 import cookie from 'react-cookie'
 import Websocket from './websocket';
 import toastr from 'toastr'
@@ -97,8 +101,13 @@ class WSComponent extends Component {
           toastr.info(result.data.message, "USER MESSAGE", options)
         }
         break;
-      case "NEW_MESSAGE": 
-        toastr.info("You have a new message from " + result.data.fromHandle)
+      case "NEW_MESSAGE":
+        // display a toast if the meesage fromHandle is not you
+        if (!!this.props.login_data && this.props.login_data.handle !== result.data.fromHandle)
+          toastr.info("You have a new message from " + result.data.fromHandle)
+        // refresh conversation?
+        if (this.props.conversation.incident === result.data.incidentID)
+          this.props.newMessage(result.data, this.props.conversation.conversation.messages[0].ordinal);
         break;
       default:
         console.log(result.message)
@@ -131,13 +140,15 @@ class WSComponent extends Component {
 
 const mapStateToProps = (state, myprops) => ({
     login_data : auth_user(state),
+    conversation: state.messages.conversation
 })
 
 const mapDispatchToProps = (dispatch, myprops) => ({
   setWebsocket: (ws) => { dispatch(setWebsocket(ws)) },
   checkLogin : (after) => { dispatch(checkLoginStatus(after)); },
   getWebSocketAddr : () => { dispatch(getWebSocketAddr()) },
-  registerSocket: (sockid) => { dispatch(registerSocket(sockid)) }
+  registerSocket: (sockid) => { dispatch(registerSocket(sockid)) },
+  newMessage: (message_data, ordinal) => { dispatch(newMessage(message_data, ordinal)); }
 });
 
 export default WSComponent = connect(mapStateToProps, mapDispatchToProps)(WSComponent)

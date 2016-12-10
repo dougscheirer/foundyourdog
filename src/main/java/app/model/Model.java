@@ -46,5 +46,5 @@ public interface Model {
 
 	Optional<Notification> getNotification(String incident_id);
 
-	List<Notification> getConversation(String incident_id, String receiver_id, String sender_id);
+	List<Notification> getConversation(String incident_id, String receiver_id, String sender_id, int ordinal_start);
 }

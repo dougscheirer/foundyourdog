@@ -13,7 +13,7 @@ public class SocketNotificationMessage {
 	private String receiverID;
 	private String fromHandle;
 	
-	public SocketNotificationMessage(String incidentID, String messageID, String receiverID, String fromHandle) {
+	public SocketNotificationMessage(String receiverID, String incidentID, String messageID, String fromHandle) {
 		 this.messageID = messageID;
 		 this.incidentID = incidentID;
 		 this.fromHandle = fromHandle;

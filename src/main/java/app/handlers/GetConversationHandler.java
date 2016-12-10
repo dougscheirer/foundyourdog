@@ -24,6 +24,14 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		// get the message from the message ID
 		String incident_id = request.queryParams("incident");
 		String message_id = request.queryParams("msg");
+		// the first fetch "ordinal" is undefined.  if the conversation updates, just fetch with ordinal > ordinal_start
+		String ordinal = request.queryParams("ordinal");
+		int ordinal_start = 0;
+		try {
+			ordinal_start = Integer.parseInt(ordinal); 
+		} catch (NumberFormatException e) {
+			// 0 is a fine start
+		}
 		
 		if (incident_id == null || message_id == null)
 			return new Answer(404);
@@ -46,7 +54,7 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 			return new Answer(404);
 		
 		// get the conversation
-		List<Notification> data = model.getConversation(incident_id, notification.get().getReceiver_id(), notification.get().getSender_id());
+		List<Notification> data = model.getConversation(incident_id, notification.get().getReceiver_id(), notification.get().getSender_id(), ordinal_start);
 		return new Answer(200, dataToJson(new Conversation(data, partner.get())));
 	}
 

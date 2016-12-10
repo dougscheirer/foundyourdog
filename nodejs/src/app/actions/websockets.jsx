@@ -1,5 +1,3 @@
-import { auth_fetch } from './login'
-
 export const setWebsocket = (ws) => {
 	return {
 		type: "SET_WEBSOCKET",

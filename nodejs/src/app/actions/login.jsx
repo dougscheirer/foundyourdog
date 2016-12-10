@@ -62,7 +62,7 @@ export const requires_login = (dispatch, fetch_func, process_func, error_func) =
 					res.json().then((res) => dispatch(process_func(res)))
 					break;
 				default:
-					if (!!error_func) dispatch(error_func(res))
+					if (!!error_func) error_func(res)
 					break;
 			}
 		})
@@ -94,26 +94,27 @@ export const loginRequired = (postLoginAction) => {
 	}
 }
 
-export const auth_method = (url, method, fn_complete, body) => {
+export const auth_method = (url, method, fn_complete, fn_err, body) => {
 	return dispatch => {
 		const headers = (typeof body === "string") ? { 'Content-Type': 'application/json' } : undefined
 		requires_login(
 			dispatch,
 			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: headers})},
-			(res) => { return fn_complete(res) })
+			(res) => { return fn_complete(res) },
+			(res) => { fn_err(res) } )
 		}
 }
 
-export const auth_fetch = (url, fn_complete) => {
-	return auth_method(url, "GET", fn_complete)
+export const auth_fetch = (url, fn_complete, fn_err) => {
+	return auth_method(url, "GET", fn_complete, fn_err)
 }
 
-export const auth_post = (url, data, fn_complete) => {
-	return auth_method(url, "POST", fn_complete, data)
+export const auth_post = (url, data, fn_complete, fn_err) => {
+	return auth_method(url, "POST", fn_complete, fn_err, data)
 }
 
-export const auth_delete = (url, fn_complete) => {
-	return auth_method(url, "DELETE", fn_complete)
+export const auth_delete = (url, fn_complete, fn_err) => {
+	return auth_method(url, "DELETE", fn_complete, fn_err)
 }
 
 // login is not technically required here, it's just a check

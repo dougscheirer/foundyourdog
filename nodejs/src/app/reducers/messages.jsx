@@ -19,13 +19,21 @@ export const messages = (state = initialState, action) => {
 		case 'MESSAGE_SENT':
 			return { ...state,
 						notification_data: undefined }
-		case 'CONVERSATION':
+		case 'NEW_MESSAGE':
 			return { ...state,
-						conversation: { 
+						new_message_data: action.message_data }
+		case 'CONVERSATION': 
+			// action.conversation.messages might be a partial list, so prepend it on the existing one
+			const msgList = (!!state.conversation && !!state.conversation.messages) ?
+				action.conversation.messages.append(state.conversation.messages) :
+				action.conversation.messages
+			return { ...state,
+						conversation: {
 							incident: action.incident,
 							message: action.message,
-							conversation: action.conversation }
+							conversation: { ...action.conversation, messages: msgList }
 						}
+					}
 		default:
 			return state;
 	}

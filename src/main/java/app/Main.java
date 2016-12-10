@@ -162,7 +162,7 @@ public class Main {
 
 		get("/api/auth/messages", new GetUserNotifications(model));
 		post("/api/auth/message", new CreateNotificationHandler(model));
-		put("/api/auth/message/:id?mark=:flag", new UpdateNotificationHandler(model));
+		put("/api/auth/message/:id", new UpdateNotificationHandler(model));
 		delete("/api/auth/message/:id", new DeleteNotificationHandler(model));
 
 		get("/api/auth/conversation", new GetConversationHandler(model));

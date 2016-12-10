@@ -9,12 +9,18 @@ import { LoginView } from './login'
 import { browserHistory } from 'react-router'
 
 class Conversation extends Component {
+	state = {}
 	componentDidMount() {
 		this.refreshConversation()
 	}
 
-	refreshConversation() {
-		this.props.getConversation(this.props.params.incident, this.props.params.message_id)
+	refreshConversation(from_ordinal = 0) {
+		this.setState({fetch_result: undefined})
+		this.props.getConversation(this.props.params.incident, this.props.params.message_id, from_ordinal, this.loadFailed.bind(this))
+	}
+
+	loadFailed(res) {
+		this.setState({fetch_result: res})
 	}
 
 	formatMessage(yourMessage, message) {
@@ -61,6 +67,28 @@ class Conversation extends Component {
 		// not logged in?
 		if (!!!this.props.login_data)
 			return (<LoginView />)
+
+		// failed?
+		if (!!this.state.fetch_result) {
+			return (<div>
+			<div className="container">
+			<div className="row">
+				<div className="col-sm-3"></div>
+				<div className="col-sm-6">
+					<a onClick={ this.returnToNotifications.bind(this) }>
+						<span className="glyphicon glyphicon-chevron-left back-to-notifications" />
+						Back to notifications
+					</a>
+				</div>
+			</div>
+			</div>
+			<div className="container">
+			<div className="row">
+				<div className="col-sm-12" style={{textAlign:"center", lineHeight: "4"}}><strong>Failed to load conversation</strong></div>
+			</div>
+			</div>
+			</div>)
+		}
 
 		// waiting on page load?
 		if (!!!this.props.conversation)
@@ -136,12 +164,12 @@ class Conversation extends Component {
 const mapStateToProps = (state, myprops) => ({
 	conversation: state.messages.conversation,
 	waiting_login: waiting_login(state),
-	login_data: auth_user(state)
-	// TODO: add in a "new message" handler somehow
+	login_data: auth_user(state),
+  new_message_data: state.messages.new_message_data
 })
 
 const mapDispatchToProps = (dispatch, props) => ({
-	getConversation : (incident_id, msg_id) => { dispatch(getConversation(incident_id, msg_id)) },
+	getConversation : (incident_id, msg_id, from_ordinal, failed) => { dispatch(getConversation(incident_id, msg_id, from_ordinal, failed)) },
 	postMessage : (data) => { dispatch(postMessage(data)) }
 })
 

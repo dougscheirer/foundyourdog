@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
-import reducerOne, { login, messages, incidents, images } from './app/reducers';
+import { websockets,
+         login,
+         messages,
+         incidents,
+         images } from './app/reducers';
 import { Provider } from 'react-redux'
 import DevTools, { logger, crashReporter } from './app/devtools';
 import thunkMiddleware from 'redux-thunk';
@@ -21,7 +25,7 @@ const enhancer = compose(
 );
 
 const reducers = {
-	reducerOne,
+	websockets: websockets,
 	login: login,
 	messages: messages,
 	images: images,

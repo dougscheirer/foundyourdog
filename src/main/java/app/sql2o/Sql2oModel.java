@@ -415,15 +415,17 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public List<Notification> getConversation(String incident_id, String id1, String id2) {
+	public List<Notification> getConversation(String incident_id, String id1, String id2, int ordinal_start) {
 		try (Connection conn = sql2o.open()) {
 			return conn.createQuery("select * from notifications where incident_id=:incident "
 					+ "AND (receiver_id=:id1 OR sender_id=:id1) "
 					+ "AND (receiver_id=:id2 OR sender_id=:id2) "
+					+ "AND ordinal > :ordinal_start "
 					+ "ORDER BY sent_date DESC")
 					.addParameter("incident", incident_id)
 					.addParameter("id1", id1)
 					.addParameter("id2", id2)
+					.addParameter("ordinal_start", ordinal_start)
 					.executeAndFetch(Notification.class);
 		} catch (Sql2oException e) {
 			logger.severe(e.getLocalizedMessage());

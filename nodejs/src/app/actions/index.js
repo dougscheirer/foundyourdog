@@ -14,7 +14,8 @@ export { showLogin,
 export { getUserNotifications,
 		 sendMessage,
 		 postMessage,
-		 getConversation } from './messages'
+		 getConversation,
+		 newMessage } from './messages'
 
 export { getReportInfo,
 		 showIncidentInfo,
