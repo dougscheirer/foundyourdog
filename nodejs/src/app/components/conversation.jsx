@@ -11,12 +11,8 @@ import { browserHistory } from 'react-router'
 class Conversation extends Component {
 	state = {}
 	componentDidMount() {
-		this.refreshConversation()
-	}
-
-	refreshConversation(from_ordinal = 0) {
 		this.setState({fetch_result: undefined})
-		this.props.getConversation(this.props.params.incident, this.props.params.message_id, from_ordinal, this.loadFailed.bind(this))
+		this.props.getConversation(this.props.params.incident, this.props.params.message_id, 0, this.loadFailed.bind(this))
 	}
 
 	loadFailed(res) {
@@ -49,7 +45,6 @@ class Conversation extends Component {
 		}
 		this.refs.message.value = ""
 		this.props.postMessage(postData)
-		this.refreshConversation()
 	}
 
 	returnToNotifications(e) {

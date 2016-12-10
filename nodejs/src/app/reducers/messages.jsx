@@ -24,8 +24,8 @@ export const messages = (state = initialState, action) => {
 						new_message_data: action.message_data }
 		case 'CONVERSATION': 
 			// action.conversation.messages might be a partial list, so prepend it on the existing one
-			const msgList = (!!state.conversation && !!state.conversation.messages) ?
-				action.conversation.messages.append(state.conversation.messages) :
+			const msgList = (!!state.conversation && !!state.conversation.conversation.messages) ?
+				action.conversation.messages.concat(state.conversation.conversation.messages) :
 				action.conversation.messages
 			return { ...state,
 						conversation: {
