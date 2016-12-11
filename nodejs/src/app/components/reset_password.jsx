@@ -76,7 +76,10 @@ class ResetPassword extends Component {
 	}
 
 	resetSent() {
-		return (<div>Check your email address for instructions on how to complete your password reset</div>)
+		return (
+			<form><label>Check your email for instructions on how to complete your password reset</label>
+			<button className="btn btn-primary" onClick={ this.hideModal.bind(this) }>Done!</button>
+			</form>)
 	}
 
 	render() {
@@ -91,9 +94,8 @@ class ResetPassword extends Component {
 			}
 		}
 
-		if (!!this.state.reset_sent) {
-			return this.resetSent()
-		}
+		const body = (!!this.state.reset_sent) ? this.resetSent() : this.resetForm()
+
 		return (
 			<Modal isOpen={this.props.isOpen} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 				<ModalHeader>
@@ -101,7 +103,7 @@ class ResetPassword extends Component {
 					<ModalTitle>Forgot your password?</ModalTitle>
 				</ModalHeader>
 				<ModalBody>
-				{ this.resetForm() }
+				{ body }
 				</ModalBody>
 				<ModalFooter>
 					{ this.loginFooter() }
