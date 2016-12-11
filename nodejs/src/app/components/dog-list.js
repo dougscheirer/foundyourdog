@@ -154,6 +154,7 @@ class DogViewController extends Component {
     // TODO: the refs thing doesn't work, don't know why
     //       when it does, change the query based on the area of the zoom
     const zoomLevel = map.getZoom();
+    if (zoomLevel === 0) return
     if (zoomLevel !== this.state.zoom) {
       const location = { lat: map.getCenter().lat(), lng: map.getCenter().lng() }
       this.getServerData( location, zoomLevel )
@@ -164,6 +165,7 @@ class DogViewController extends Component {
     if (map != null) {
       const location = { lat: map.getCenter().lat(), lng: map.getCenter().lng() }
       const zoom = this.state.zoom
+      if (zoom === 1) return
 
       this.getServerData( location, zoom );
     }

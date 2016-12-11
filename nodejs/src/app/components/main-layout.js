@@ -10,6 +10,7 @@ import ShowInfoCard from './info-card'
 import SendNotification from './send-notification'
 import toastr from 'toastr'
 import WSComponent from './wscomponent'
+import ResetPassword from './reset_password'
 
 class MainLayout extends Component {
 
@@ -28,6 +29,7 @@ class MainLayout extends Component {
       <div className="app">
         <LoginPopup />
         <Signup />
+        <ResetPassword />
         <DevTools />
         <ShowInfoCard />
         <SendNotification />

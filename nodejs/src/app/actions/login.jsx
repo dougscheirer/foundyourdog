@@ -137,7 +137,7 @@ export const checkLoginStatus = (after) => {
 	}
 }
 
-export const signUp = (form) => {
+export const signUp = (form, ) => {
 	// now do the network call, dispatch the results
 	return auth_post("/api/signup",
 				JSON.stringify(form),
