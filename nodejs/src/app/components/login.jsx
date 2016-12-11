@@ -47,12 +47,12 @@ class LoginBase extends Component {
 		const error_msg = this.state.error_msg;
 
 		return (<div>
-							{ spinnerVis }
-							<div className="login-help">
-								<div className={ "alert alert-danger " + (!!error_msg ? "visible" : "hidden") } role="alert">{ error_msg }</div>
-							</div>
-							<a href="" onClick={ this.signup.bind(this) }>Register</a> - <a href="" onClick={ this.passwordReset.bind(this) }>Forgot Password</a>
-						</div>)
+					{ spinnerVis }
+					<div className="login-help">
+						<div className={ "alert alert-danger " + (!!error_msg ? "visible" : "hidden") } role="alert">{ error_msg }</div>
+					</div>
+					<a href="" onClick={ this.signup.bind(this) }>Register</a> - <a href="" onClick={ this.passwordReset.bind(this) }>Forgot Password</a>
+				</div>)
 	}
 
 	subscribe(data) {
@@ -62,6 +62,8 @@ class LoginBase extends Component {
 
 	login(e) {
 		e.preventDefault();
+
+		// TODO: validate the form
 
 		// first dispatch a spinner
 		this.setState({login_wait: true, error_msg: ''});

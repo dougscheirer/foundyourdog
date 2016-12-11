@@ -37,6 +37,7 @@ import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
 import app.handlers.ResetPasswordHandler;
+import app.handlers.ResetPasswordRequestHandler;
 import app.handlers.UpdateNotificationHandler;
 import app.handlers.WebsocketHandler;
 import app.model.Model;
@@ -130,6 +131,7 @@ public class Main {
 		// basics, login, logout, and an auth check method
 		post("/api/login", new LoginHandler(model));
 		post("/api/logout", new LogoutHandler(model));
+		post("/api/reset_password_request", new ResetPasswordRequestHandler(model));
 		post("/api/reset_password", new ResetPasswordHandler(model));
 
 		get("/api/auth/authenticated", new AuthenticatedHandler(model));
@@ -192,9 +194,28 @@ public class Main {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user));
 			message.setSubject("Password reset request");
 			String resetLink = "http://foundyourdog.com/reset/" + resetToken;
-			message.setText("To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>");
+			message.setContent("To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>", "text/html");
 			Transport.send(message);
-			System.out.println("Sent message successfully....");
+		} catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
+	}
+
+	public static void mailResetComplete(String email) {
+		String from = "fydo-admin@foundyourdog.com";
+		String host = "localhost";
+		Properties properties = System.getProperties();
+		properties.setProperty("mail.smtp.host", host);
+		properties.setProperty("mail.smtp.port", "1025");
+		javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);
+
+		try {
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(from));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+			message.setSubject("Your password was reset");
+			message.setContent("Your password was reset successfully", "text/html");
+			Transport.send(message);
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
 		}

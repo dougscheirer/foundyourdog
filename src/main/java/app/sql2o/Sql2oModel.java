@@ -19,6 +19,7 @@ import app.model.Incident;
 import app.model.IncidentBrief;
 import app.model.Model;
 import app.model.Notification;
+import app.model.ResetPassword;
 import app.model.User;
 import app.model.UserSignup;
 import app.handlers.PublicUser;
@@ -482,6 +483,24 @@ public class Sql2oModel implements Model {
 			logger.severe(e.getLocalizedMessage());
 		}
 		return null;
-		
+	}
+
+	@Override
+	public boolean resetPassword(ResetPassword reset) {
+		// only allow them to be live for 24 hrs
+		try (Connection conn = sql2o.open()) {
+			long now = System.currentTimeMillis();
+			BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+			return (conn.createQuery(
+					"UPDATE users SET password_hash=:password WHERE email=:email AND password_reset_token=:token AND password_reset_time > :timeout")
+					.addParameter("email", reset.getEmail())
+					.addParameter("password", passwordEncryptor.encryptPassword(reset.getPassword()))
+					.addParameter("timeout", new Timestamp(now - 1000*60*24))
+					.addParameter("token", reset.getReset_token())
+					.executeUpdate().getResult() == 1);
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
+		}
+		return false;
 	}
 }

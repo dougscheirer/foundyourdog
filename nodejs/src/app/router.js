@@ -16,6 +16,7 @@ import { EditReport, NewFound, NewLost } from "./components/NewReport";
 import ReportSummary from './components/report_summary'
 import ProfileLayout from './components/profile-layout'
 import Conversation from './components/conversation'
+import ResetPasswordForm from './components/reset_password_form'
 
 export default class Routes extends Component {
   render() {
@@ -23,6 +24,10 @@ export default class Routes extends Component {
   <Router history={browserHistory}>
     <Route component={MainLayout}>
       <Route path="/" component={Home} />
+
+      <Route path="reset">
+        <Route path=":reset_token" component={ResetPasswordForm} />
+      </Route>
 
     { /* not super happy with the routing, but tabs inside of the page make it generally weird */ }
       <Route path="profile" component={ProfileLayout} />

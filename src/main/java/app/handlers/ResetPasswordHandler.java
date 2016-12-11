@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import app.Answer;
 import app.Main;
 import app.model.Model;
+import app.model.ResetPassword;
 import app.model.UserAuth;
 import spark.Request;
 import spark.Response;
@@ -22,31 +23,23 @@ public class ResetPasswordHandler implements Route {
 	@Override
 	public Object handle(Request request, Response response) throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
-		// UserAuth is close enough
-		UserAuth auth = objectMapper.readValue(request.body(), UserAuth.class);
+		ResetPassword reset = objectMapper.readValue(request.body(), ResetPassword.class);
 		
-		if (auth.getUser().isEmpty()) {
+		if (reset.getEmail().isEmpty()) {
 			response.status(500);
 			response.body("Email(user) is required");
 			return response.body();
 		} 
-		
-		Optional<DetailUser> user = model.getDetailUserFromEmail(auth.getUser());
-		if (!user.isPresent()) {
-			// pretend it went fine
-			return Answer.ok("Reset message sent").getBody();
+
+		boolean resetOK = model.resetPassword(reset);
+		if (!resetOK) {
+			response.status(403);
+			response.body("Password reset failed");
+			return response.body();
 		}
 		
-		// create a reset token, write it to the DB
-		String resetToken = model.updatePasswordResetToken(auth.getUser());
-		if (resetToken == null) {
-			response.status(500);
-			response.body("Server error");
-			return response.body();
-		} 
-		
 		// send an email with the information
-		Main.mailResetMessage(auth.getUser(), resetToken);
+		Main.mailResetComplete(reset.getEmail());
 		return Answer.ok("Reset message sent");
 	}
 }

@@ -48,4 +48,6 @@ public interface Model {
 	List<Notification> getConversation(String incident_id, String receiver_id, String sender_id, int ordinal_start);
 	Optional<DetailUser> getDetailUserFromEmail(String email);
 	String updatePasswordResetToken(String email);
+
+	boolean resetPassword(ResetPassword reset);
 }

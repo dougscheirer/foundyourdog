@@ -38,7 +38,7 @@ class ResetPassword extends Component {
 		}
 
 		this.setState({login_wait: true});
-		fetch('/api/reset_password', {
+		fetch('/api/reset_password_request', {
 			method: "POST",
 			body: JSON.stringify({ user: this.refs.email.value }),
 			headers:{ "Content-Type" : "application/json" },
