@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin, resetPassword, signUp } from '../actions';
+import { showLogin, resetPassword, signUp, auth_post } from '../actions';
 import spinner from '../../spinner.svg';
 import toastr from 'toastr';
 
@@ -44,8 +44,24 @@ class Signup extends Component {
 		// first dispatch a spinner
 		this.setState({signup_wait: true, error_msg: ''});
 
-		// now do the network call, dispatch the results
-		this.props.send_signup(form)
+		// TODO: change this to use fetch() in the action folder?
+		fetch("/api/signup", {
+			method: "POST",
+			body: JSON.stringify(form),
+			headers:{ "Content-Type" : "application/json" },
+			credentials: 'include'
+		}).then((res) => {
+			this.setState({signup_wait: false});
+			if (res.ok) {
+				return res.json()
+			} else {
+				res.text().then((text) => this.setState({error_msg: "Status " + res.status + " : " + text}));
+				return undefined
+			}
+		}).then((data) => {
+			if (!!!data) return
+			this.onSignedUp()
+		})
 	}
 
 	validate() {
@@ -82,8 +98,8 @@ class Signup extends Component {
 			    top: 0
 			  }
 			}
-		const buttonClasses = "login-submit btn btn-primary " + ((this.state.login_wait) ? "disabled" : "");
-		const spinnerVis = (this.state.login_wait) ? (<img style={{ float: "left" }} src={spinner} alt="spinner" />) : undefined;
+		const buttonClasses = "login-submit btn btn-primary " + ((this.state.signup_wait) ? "disabled" : "");
+		const spinnerVis = (this.state.signup_wait) ? (<img style={{ float: "left" }} src={spinner} alt="spinner" />) : undefined;
 		const error_msg = this.state.error_msg;
 
 		return (

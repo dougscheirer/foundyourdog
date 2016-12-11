@@ -78,7 +78,7 @@ class LoginBase extends Component {
 			if (res.ok) {
 				return res.json()
 			} else {
-				this.setState({error_msg: "Status " + res.status + " : " + res.statusText});
+				res.text().then((text) => this.setState({error_msg: "Status " + res.status + " : " + (text || res.statusText)}))
 				return undefined
 			}
 		}).then((data) => {

@@ -23,6 +23,10 @@ public class CreateUserHandler extends AbstractRequestHandler<UserSignup> {
 		BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
 		value.setPassword(passwordEncryptor.encryptPassword(value.getPassword()));
 		String  userId = model.signupUser(value);
-		return new Answer(200, "{\"id\":\"" + userId + "\"}");
+		if (userId != null) {
+			return new Answer(200, "{\"id\":\"" + userId + "\"}");
+		}
+			
+		return new Answer(409, "The email or user handle already exists");
 	}
 }

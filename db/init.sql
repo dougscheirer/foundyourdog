@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     handle text unique,
     password_hash text not null,
     confirmation_token text not null,
+    pwd_reset_token text,
     confirmed bool default false,
     signup_date timestamptz,
     confirm_date timestamptz,

@@ -112,7 +112,7 @@ class WSComponent extends Component {
             result.data.incidentID + "/" + result.data.messageID +
             "\">You have a new message from " + result.data.fromHandle + "</a>")
         // refresh conversation?
-        if (this.props.conversation.incident === result.data.incidentID)
+        if (!!this.props.conversation && this.props.conversation.incident === result.data.incidentID)
           this.props.newMessage(result.data, this.props.conversation.conversation.messages[0].ordinal);
         break;
       default:
