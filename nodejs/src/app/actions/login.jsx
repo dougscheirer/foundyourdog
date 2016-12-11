@@ -136,11 +136,3 @@ export const checkLoginStatus = (after) => {
 		});
 	}
 }
-
-export const signUp = (form, ) => {
-	// now do the network call, dispatch the results
-	return auth_post("/api/signup",
-				JSON.stringify(form),
-				(res) => { console.log(res) },
-				(res) => { console.log(res) /* try again? */})
-}

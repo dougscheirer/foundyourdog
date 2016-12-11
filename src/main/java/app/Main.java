@@ -4,27 +4,19 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import javax.mail.*;
+import javax.mail.internet.*;
+
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
-import org.eclipse.jetty.http.HttpCookie;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 import org.sql2o.quirks.PostgresQuirks;
 
 import com.beust.jcommander.JCommander;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
@@ -32,7 +24,6 @@ import app.handlers.CreateNotificationHandler;
 import app.handlers.CreateUserHandler;
 import app.handlers.DeleteNotificationHandler;
 import app.handlers.DetailUser;
-import app.handlers.EmptyPayload;
 import app.handlers.FindUnassignedImageHandler;
 import app.handlers.GetConversationHandler;
 import app.handlers.GetImageHandler;
@@ -45,6 +36,7 @@ import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
+import app.handlers.ResetPasswordHandler;
 import app.handlers.UpdateNotificationHandler;
 import app.handlers.WebsocketHandler;
 import app.model.Model;
@@ -138,6 +130,7 @@ public class Main {
 		// basics, login, logout, and an auth check method
 		post("/api/login", new LoginHandler(model));
 		post("/api/logout", new LogoutHandler(model));
+		post("/api/reset_password", new ResetPasswordHandler(model));
 
 		get("/api/auth/authenticated", new AuthenticatedHandler(model));
 
@@ -183,5 +176,27 @@ public class Main {
 			logger.severe("Exception handling route: " + request.url());
 			logger.severe(exception.getLocalizedMessage());
 		});
+	}
+
+	public static void mailResetMessage(String user, String resetToken) {
+		String from = "fydo-admin@foundyourdog.com";
+		String host = "localhost";
+		Properties properties = System.getProperties();
+		properties.setProperty("mail.smtp.host", host);
+		properties.setProperty("mail.smtp.port", "1025");
+		javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);
+
+		try {
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(from));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user));
+			message.setSubject("Password reset request");
+			String resetLink = "http://foundyourdog.com/reset/" + resetToken;
+			message.setText("To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>");
+			Transport.send(message);
+			System.out.println("Sent message successfully....");
+		} catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
 	}
 }

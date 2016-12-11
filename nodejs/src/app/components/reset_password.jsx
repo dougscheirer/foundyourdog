@@ -10,6 +10,7 @@ import {
 import { showLogin, showSignup, hideLogin } from '../actions'
 import spinner from '../../spinner.svg';
 import { connect } from 'react-redux'
+import fetch from 'isomorphic-fetch'
 
 class ResetPassword extends Component {
 	state = { login_wait: false }
@@ -30,7 +31,26 @@ class ResetPassword extends Component {
 
 	reset(e) {
 		if (!!e) e.preventDefault()
-		// TODO: POST a reset for the email address
+		// must have an email
+		if (!!!this.refs.email.value) {
+			this.setState({error_msg: "You must provide an email address"})
+			return
+		}
+
+		this.setState({login_wait: true});
+		fetch('/api/reset_password', {
+			method: "POST",
+			body: JSON.stringify({ user: this.refs.email.value }),
+			headers:{ "Content-Type" : "application/json" },
+			credentials: 'include'
+		}).then((res) => {
+			this.setState({login_wait: false});
+			if (res.ok) {
+				this.setState({reset_sent: true})
+			} else {
+				this.setState({error_msg: "An error occurred, please try again later"})
+			}
+		})
 	}
 
 	loginFooter() {
@@ -55,6 +75,10 @@ class ResetPassword extends Component {
 		</form>)
 	}
 
+	resetSent() {
+		return (<div>Check your email address for instructions on how to complete your password reset</div>)
+	}
+
 	render() {
 		const dialogStyles = {
 			base: {
@@ -67,6 +91,9 @@ class ResetPassword extends Component {
 			}
 		}
 
+		if (!!this.state.reset_sent) {
+			return this.resetSent()
+		}
 		return (
 			<Modal isOpen={this.props.isOpen} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
 				<ModalHeader>

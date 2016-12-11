@@ -3,7 +3,6 @@ package app;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import app.handlers.AbstractRequestHandler;
 import lombok.Data;
 
 @Data

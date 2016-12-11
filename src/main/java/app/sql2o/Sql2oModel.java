@@ -1,5 +1,6 @@
 package app.sql2o;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -443,5 +444,44 @@ public class Sql2oModel implements Model {
 			logger.severe(e.getLocalizedMessage());
 		}
 		return null;
+	}
+
+	@Override
+	public Optional<DetailUser> getDetailUserFromEmail(String email) {
+		try (Connection conn = sql2o.open()) {
+			List<DetailUser> users = conn
+					.createQuery(
+							"select uuid, email, handle, confirmed, signup_date, confirm_date, deactivate_date, phone1, phone2, inapp_notifications, admin from users where email=:email")
+					.addParameter("email", email)
+					.executeAndFetch(DetailUser.class);
+			if (users.size() != 1) {
+				return Optional.empty();
+			} else {
+				return Optional.of(users.get(0));
+			}
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public String updatePasswordResetToken(String email) {
+		// only allow them to be live for 24 hrs
+		try (Connection conn = sql2o.open()) {
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			String resetToken = UUID.randomUUID().toString();
+			conn.createQuery(
+					"UPDATE users SET password_reset_token=:token, password_reset_time=:time WHERE email=:email")
+					.addParameter("token", resetToken)
+					.addParameter("email", email)
+					.addParameter("time", now)
+					.executeUpdate();
+			return resetToken;
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
+		}
+		return null;
+		
 	}
 }

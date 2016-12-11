@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,6 +63,7 @@ public class WebsocketHandler {
 	public void sendMessage(SocketMessage.TYPE type, String message) {
 		SocketUserMessage umsg = new SocketUserMessage(message, 5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, true);
 		SocketMessage msg = new SocketMessage(type, umsg.toJson());
+		broadcastMessage(msg);
 	}
 
 	// send something to an endpoint

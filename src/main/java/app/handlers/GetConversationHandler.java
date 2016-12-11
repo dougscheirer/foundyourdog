@@ -9,8 +9,6 @@ import app.Main;
 import app.model.Model;
 import app.model.Notification;
 import spark.Request;
-import spark.Response;
-import spark.Route;
 
 public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload> {
 
