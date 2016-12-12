@@ -36,6 +36,7 @@ import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
 import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
+import app.handlers.MarkConversationHandler;
 import app.handlers.ResetPasswordHandler;
 import app.handlers.ResetPasswordRequestHandler;
 import app.handlers.UpdateMessageHandler;
@@ -161,6 +162,7 @@ public class Main {
 		delete("/api/auth/message/:id", new DeleteMessageHandler(model));
 
 		get("/api/auth/conversation", new GetConversationHandler(model));
+		post("/api/auth/mark", new MarkConversationHandler(model));
 
 		// what is java bad about? serving static image files, so change this
 		// when really using it

@@ -31,7 +31,7 @@ export const postMessage = (data) => {
 }
 
 export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
-	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal, 
+	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
 		(res) => {
 			return {
 				type: 'CONVERSATION',
@@ -40,6 +40,23 @@ export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
 				conversation: res
 			}
 		}, err_fn)
+}
+
+export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
+	return auth_post('/api/auth/mark?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal + "&read="+read, undefined,
+		(res) => {
+			return {
+				type: 'UNREAD_MESSAGES',
+				unread: res.unread
+			}
+		},
+		(res) => {
+			console.log(res)
+			return {
+				type: 'UNREAD_MESSAGES',
+				unread: -1
+			}
+		})
 }
 
 export const newMessage = (msg_data, ordinal_start) => {

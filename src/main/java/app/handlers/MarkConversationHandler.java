@@ -10,9 +10,9 @@ import app.model.Model;
 import app.model.Message;
 import spark.Request;
 
-public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload> {
+public class MarkConversationHandler extends AbstractRequestHandler<EmptyPayload> {
 
-	public GetConversationHandler(Model model) {
+	public MarkConversationHandler(Model model) {
 		super(EmptyPayload.class, model);
 	}
 
@@ -30,7 +30,7 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		} catch (NumberFormatException e) {
 			// 0 is a fine start
 		}
-
+		boolean markRead = Boolean.parseBoolean(request.queryParams("mark"));
 		if (incident_id == null || message_id == null)
 			return new Answer(404);
 
@@ -52,9 +52,10 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 			return new Answer(404);
 
 		// get the conversation
-		List<Message> data = model.getConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), ordinal_start);
-		
-		return new Answer(200, dataToJson(new Conversation(data, partner.get())));
+		if (model.markConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), ordinal_start, markRead))
+			return new Answer(200, "{\"unread\":\"" + model.getUnreadMessages(u.getUuid()) + "\"}");
+		else
+			return new Answer(500, "Failed to update conversation");
 	}
 
 }

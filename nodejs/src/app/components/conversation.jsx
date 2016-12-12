@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { postMessage, getConversation } from '../actions'
+import { postMessage, getConversation, markConversation } from '../actions'
 import { connect } from 'react-redux'
 import './chat.css'
 import loading from './loading.svg'
@@ -13,6 +13,17 @@ class Conversation extends Component {
 	componentDidMount() {
 		this.setState({fetch_result: undefined})
 		this.props.getConversation(this.props.params.incident, this.props.params.message_id, 0, this.loadFailed.bind(this))
+		this.markAsRead()
+	}
+
+	markAsRead() {
+		if (!!!this.props.conversation) {
+			this.setState({read_timer: setTimeout(this.markAsRead.bind(this), 5000)})
+		} else {
+			if (!!this.state.read_timer)
+				clearTimeout(this.state.read_timer)
+			this.props.markConversation(this.props.params.incident, this.props.params.message_id, 0, true)
+		}
 	}
 
 	loadFailed(res) {
@@ -161,6 +172,7 @@ const mapStateToProps = (state, myprops) => ({
 
 const mapDispatchToProps = (dispatch, props) => ({
 	getConversation : (incident_id, msg_id, from_ordinal, failed) => { dispatch(getConversation(incident_id, msg_id, from_ordinal, failed)) },
+	markConversation : (incident_id, msg_id, from_ordinal, read) => { dispatch(markConversation(incident_id, msg_id, from_ordinal, read)) },
 	postMessage : (data) => { dispatch(postMessage(data)) }
 })
 
