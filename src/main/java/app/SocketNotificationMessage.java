@@ -11,7 +11,7 @@ public class SocketNotificationMessage {
 	private String incidentID;
 	private String receiverID;
 	private String fromHandle;
-	
+
 	public SocketNotificationMessage(String receiverID, String incidentID, String messageID, String fromHandle) {
 		 this.messageID = messageID;
 		 this.incidentID = incidentID;

@@ -1,14 +1,11 @@
 package app.handlers;
 
-import java.util.Optional;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.Answer;
 import app.Main;
 import app.model.Model;
 import app.model.ResetPassword;
-import app.model.UserAuth;
 import spark.Request;
 import spark.Response;
 import spark.Route;

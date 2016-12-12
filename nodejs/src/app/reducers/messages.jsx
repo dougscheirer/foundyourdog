@@ -6,10 +6,10 @@ export const messages = (state = initialState, action) => {
 		case 'USER_MESSAGES':
 			if (action.filter === 'read') {
 				return { ...state,
-					myReadNotifications: action.notifications	}
+					myReadMessages: action.messages	}
 			} else {
 				return { ...state,
-					myUnreadNotifications: action.notifications	}
+					myUnreadMessages: action.messages	}
 			}
 		case 'SEND_MESSAGE':
 			const value = (action.notification_data && action.notification_data.incident && action.notification_data.target_user) ?

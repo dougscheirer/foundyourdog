@@ -7,7 +7,7 @@ import java.util.Optional;
 import app.Answer;
 import app.Main;
 import app.model.Model;
-import app.model.Notification;
+import app.model.Message;
 import spark.Request;
 
 public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload> {
@@ -26,33 +26,33 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		String ordinal = request.queryParams("ordinal");
 		int ordinal_start = 0;
 		try {
-			ordinal_start = Integer.parseInt(ordinal); 
+			ordinal_start = Integer.parseInt(ordinal);
 		} catch (NumberFormatException e) {
 			// 0 is a fine start
 		}
-		
+
 		if (incident_id == null || message_id == null)
 			return new Answer(404);
-		
-		Optional<Notification> notification = model.getNotification(message_id);
-		if (!notification.isPresent())
+
+		Optional<Message> message = model.getMessage(message_id);
+		if (!message.isPresent())
 			return new Answer(404);
-		
+
 		// validate that the logged in user is the sender or receiver (or an admin)
 		DetailUser u = Main.getCurrentUser(request);
-		if (!notification.get().getReceiver_id().equals(u.getUuid()) && 
-			!notification.get().getSender_id().equals(u.getUuid())) 
+		if (!message.get().getReceiver_id().equals(u.getUuid()) &&
+			!message.get().getSender_id().equals(u.getUuid()))
 			return new Answer(401);
-		
+
 		// get the other user in the conversation
-		Optional<DetailUser> partner = model.getDetailUser((notification.get().getReceiver_id().equals(u.getUuid()) ?
-				notification.get().getSender_id() :
-				notification.get().getReceiver_id()));
+		Optional<DetailUser> partner = model.getDetailUser((message.get().getReceiver_id().equals(u.getUuid()) ?
+				message.get().getSender_id() :
+				message.get().getReceiver_id()));
 		if (!partner.isPresent())
 			return new Answer(404);
-		
+
 		// get the conversation
-		List<Notification> data = model.getConversation(incident_id, notification.get().getReceiver_id(), notification.get().getSender_id(), ordinal_start);
+		List<Message> data = model.getConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), ordinal_start);
 		return new Answer(200, dataToJson(new Conversation(data, partner.get())));
 	}
 

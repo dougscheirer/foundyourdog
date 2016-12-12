@@ -6,7 +6,7 @@ import app.Validatable;
 import lombok.Data;
 
 @Data
-public class Notification implements Validatable {
+public class Message implements Validatable {
     private String uuid;
     private int ordinal;
     private String incident_id;

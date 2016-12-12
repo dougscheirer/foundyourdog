@@ -8,18 +8,18 @@ import app.Answer;
 import app.Main;
 import app.model.Incident;
 import app.model.Model;
-import app.model.Notification;
+import app.model.Message;
 
 import spark.Request;
 
-public class CreateNotificationHandler extends AbstractRequestHandler<Notification> {
+public class CreateMessageHandler extends AbstractRequestHandler<Message> {
 
-	public CreateNotificationHandler(Model model) {
-		super(Notification.class, model);
+	public CreateMessageHandler(Model model) {
+		super(Message.class, model);
 	}
 
 	@Override
-	protected Answer processImpl(Notification value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
+	protected Answer processImpl(Message value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		DetailUser u = Main.getCurrentUser(request);
 		if (u == null) {
 			return new Answer(401);
@@ -34,8 +34,8 @@ public class CreateNotificationHandler extends AbstractRequestHandler<Notificati
 		if (!i.isPresent() || (!i.get().getReporter_id().equals(u.getUuid()) && !i.get().getReporter_id().equals(value.getReceiver_id()))) {
 			// TODO: audit log, this look like an attempt to hack into our message sending system
 			return new Answer(500);
-		}	
-		String messageId = model.createNotification(value);
+		}
+		String messageId = model.createMessage(value);
 		if (messageId == null) {
 			return new Answer(500);
 		}

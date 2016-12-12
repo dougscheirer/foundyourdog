@@ -1,13 +1,13 @@
 import { auth_fetch, auth_post } from './login'
 import toastr from 'toastr'
 
-export const getUserNotifications = (type) => {
+export const getUserMessages = (type) => {
 	return auth_fetch('/api/auth/messages?type=' + type + '&user=current',
 			(res) => {
 					return {
 						type: 'USER_MESSAGES',
 						filter: type,
-						notifications: res
+						messages: res
 					}
 				})
 }
@@ -15,7 +15,7 @@ export const getUserNotifications = (type) => {
 export const sendMessage = (userid, incident, reply_to) => {
 	return {
 		type: 'SEND_MESSAGE',
-		notification_data: { target_user: userid, incident: incident, reply_to: reply_to }
+		message_data: { target_user: userid, incident: incident, reply_to: reply_to }
 	}
 }
 

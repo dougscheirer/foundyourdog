@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Notifications, Reports, Dogs, Settings } from "./profile"
+import { Messages, Reports, Dogs, Settings } from "./profile"
 import './home.css'
 import { TabContainer, Tab } from './tabs'
 import { connect } from 'react-redux'
@@ -16,7 +16,7 @@ class ProfileLayout extends Component {
 		for (let last = parts.length -1; last >= 0; last--) {
 			if (parts[last] !== '') {
 				if (parts[last].toLowerCase() === "profile")
-					return 'notifications';
+					return 'messages';
 				else
 					return parts[last];
 			}
@@ -38,8 +38,8 @@ class ProfileLayout extends Component {
 		const active = this.activePath(this.props.location.pathname)
 
 		return (<TabContainer activeTab={ active } >
-					<Tab tabId="notifications" name="My notifications" link="/profile/notifications">
-						<Notifications />
+					<Tab tabId="messages" name="My messages" link="/profile/messages">
+						<Messages />
 					</Tab>
 					<Tab tabId="reports" name="My reports" link="/profile/reports">
 						<Reports />

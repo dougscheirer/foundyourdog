@@ -13,7 +13,7 @@ export { showLogin,
 		 showSignup,
 		 signUp } from './login'
 
-export { getUserNotifications,
+export { getUserMessages,
 		 sendMessage,
 		 postMessage,
 		 getConversation,

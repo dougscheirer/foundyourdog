@@ -11,7 +11,7 @@ import {
 import { connect } from 'react-redux'
 import { humanTimestamp } from './helpers'
 
-class SendNotification extends Component {
+class SendMessage extends Component {
 	state = {
 		submit: false,
 		submitting: false
@@ -29,7 +29,7 @@ class SendNotification extends Component {
 		e.preventDefault();
 		// send it
 		this.setState({submitting: true})
-		const incident = this.props.notification_data.incident
+		const incident = this.props.message_data.incident
 		const postData = {
 		    receiver_id : incident.reporter_id,
     		message : this.refs.message_input.value,
@@ -52,15 +52,15 @@ class SendNotification extends Component {
 				right: 0
 			}
 		}
-		const notification_data = this.props.notification_data;
+		const message_data = this.props.message_data;
 
-		if (!!!notification_data) {
+		if (!!!message_data) {
 			return (<div></div>)
 		}
 
 		const dog_name = "(name or unknown)"
-		const state = notification_data.incident.state;
-		const incident_date = humanTimestamp(notification_data.incident.incident_date)
+		const state = message_data.incident.state;
+		const incident_date = humanTimestamp(message_data.incident.incident_date)
 
 		const btnClassNames = "button btn btn-primary " + (!!!this.state.submit && !!!this.state.submitting ? "disabled" : "")
 		let editClassStyles = { width: "100%", resize: "vertical" }
@@ -93,7 +93,7 @@ class SendNotification extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	notification_data: state.messages.notification_data
+	message_data: state.messages.message_data
 })
 
 const mapDispatchToProps = (dispatch, props) => ({
@@ -101,4 +101,4 @@ const mapDispatchToProps = (dispatch, props) => ({
 	postMessage : (postData) => { dispatch(postMessage(postData)) }
 });
 
-export default SendNotification = connect(mapStateToProps, mapDispatchToProps)(SendNotification)
+export default SendMessage = connect(mapStateToProps, mapDispatchToProps)(SendMessage)

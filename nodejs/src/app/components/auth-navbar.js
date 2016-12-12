@@ -25,16 +25,16 @@ class AuthNavbar extends Component {
       this.props.onSignup();
     }
 
-    getNotificationCount() {
-      // TODO: display the notification count that the server returns
-      return (!!!this.props.notifications) ? undefined :
+    getMessageCount() {
+      // TODO: display the message count that the server returns
+      return (!!!this.props.messages) ? undefined :
         (<div className="numberCircle">
-          <Link to="/profile/notifications">{ this.props.notifications }</Link>
+          <Link to="/profile/messages">{ this.props.messages }</Link>
         </div>);
     }
 
     signedInRows() {
-    	return [ (<li key="myprofile"><Link to="/profile">{ this.props.userInfo.handle }&rsquo;s profile{ this.getNotificationCount() }<span className="sr-only"></span></Link></li>),
+    	return [ (<li key="myprofile"><Link to="/profile">{ this.props.userInfo.handle }&rsquo;s profile{ this.getMessageCount() }<span className="sr-only"></span></Link></li>),
               (<li key="signout"><a href="" onClick={ this.handleSignout.bind(this) }>Sign out<span className="sr-only"></span></a></li>) ];
     }
 

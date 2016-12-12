@@ -18,12 +18,12 @@ import app.model.Image;
 import app.model.Incident;
 import app.model.IncidentBrief;
 import app.model.Model;
-import app.model.Notification;
+import app.model.Message;
 import app.model.ResetPassword;
 import app.model.User;
 import app.model.UserSignup;
 import app.handlers.PublicUser;
-import app.handlers.DetailNotification;
+import app.handlers.DetailMessage;
 import app.handlers.DetailUser;
 
 public class Sql2oModel implements Model {
@@ -378,18 +378,18 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public List<DetailNotification> getUserNotifications(String userId, String type) {
+	public List<DetailMessage> getUserMessages(String userId, String type) {
 		try (Connection conn = sql2o.open()) {
 			return conn
 					.createQuery("SELECT "
-							+ "N.uuid, N.incident_id, N.receiver_id, N.sent_date, N.sender_id, N.sender_read, N.sender_delete, N.message, N.sender_flagged, N.responding_to, "
-							+ "from_users.handle as sender_handle, to_users.handle AS receiver_handle FROM notifications N "
-							+ "JOIN users AS from_users on N.sender_id = from_users.uuid "
-							+ "JOIN users AS to_users on N.receiver_id = to_users.uuid "
+							+ "M.uuid, M.incident_id, M.receiver_id, M.sent_date, M.sender_id, M.sender_read, M.sender_delete, M.message, M.sender_flagged, M.responding_to, "
+							+ "from_users.handle as sender_handle, to_users.handle AS receiver_handle FROM messages M "
+							+ "JOIN users AS from_users on M.sender_id = from_users.uuid "
+							+ "JOIN users AS to_users on M.receiver_id = to_users.uuid "
 							+ "WHERE (receiver_id=:userid OR sender_id=:userid) AND sender_read=:read AND sender_delete=false "
 							+ "ORDER BY sent_date DESC")
 					.addParameter("userid", userId).addParameter("read", type.equals("read"))
-					.executeAndFetch(DetailNotification.class);
+					.executeAndFetch(DetailMessage.class);
 		} catch (Sql2oException e) {
 			logger.severe(e.getLocalizedMessage());
 		}
@@ -397,11 +397,11 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public String createNotification(Notification n) {
+	public String createMessage(Message n) {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into notifications(uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) "
+					"insert into messages(uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) "
 							+ "values (:uuid, :incident_id, :receiver_id, :sent_date, :sender_id, false, false, :message, false, :responding_to);")
 					.addParameter("uuid", uuid).addParameter("incident_id", n.getIncident_id())
 					.addParameter("receiver_id", n.getReceiver_id()).addParameter("sent_date", n.getSent_date())
@@ -415,9 +415,9 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public Optional<Notification> getNotification(String incident_id) {
+	public Optional<Message> getMessage(String incident_id) {
 		try (Connection conn = sql2o.open()) {
-			List<Notification> list = conn.createQuery("select * from notifications where uuid=:uuid").addParameter("uuid", incident_id).executeAndFetch(Notification.class);
+			List<Message> list = conn.createQuery("select * from messages where uuid=:uuid").addParameter("uuid", incident_id).executeAndFetch(Message.class);
 			if (list.isEmpty() || list.size() != 1)
 				return Optional.empty();
 			else
@@ -429,9 +429,9 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public List<Notification> getConversation(String incident_id, String id1, String id2, int ordinal_start) {
+	public List<Message> getConversation(String incident_id, String id1, String id2, int ordinal_start) {
 		try (Connection conn = sql2o.open()) {
-			return conn.createQuery("select * from notifications where incident_id=:incident "
+			return conn.createQuery("select * from messages where incident_id=:incident "
 					+ "AND (receiver_id=:id1 OR sender_id=:id1) "
 					+ "AND (receiver_id=:id2 OR sender_id=:id2) "
 					+ "AND ordinal > :ordinal_start "
@@ -440,7 +440,7 @@ public class Sql2oModel implements Model {
 					.addParameter("id1", id1)
 					.addParameter("id2", id2)
 					.addParameter("ordinal_start", ordinal_start)
-					.executeAndFetch(Notification.class);
+					.executeAndFetch(Message.class);
 		} catch (Sql2oException e) {
 			logger.severe(e.getLocalizedMessage());
 		}

@@ -47,18 +47,18 @@ class Conversation extends Component {
 		this.props.postMessage(postData)
 	}
 
-	returnToNotifications(e) {
+	returnToMessages(e) {
 		e.preventDefault();
-		browserHistory.push("/profile/notifications")
+		browserHistory.push("/profile/messages")
 	}
 
-	backToNotifications() {
+	backToMessages() {
 		return (<div className="row">
 				<div className="col-sm-3"></div>
 				<div className="col-sm-6">
-					<a href="#" onClick={ this.returnToNotifications.bind(this) }>
-						<span className="glyphicon glyphicon-chevron-left back-to-notifications" />
-						<span>Back to notifications</span>
+					<a href="#" onClick={ this.returnToMessages.bind(this) }>
+						<span className="glyphicon glyphicon-chevron-left back-to-messages" />
+						<span>Back to messages</span>
 					</a>
 				</div>
 			</div>)
@@ -79,7 +79,7 @@ class Conversation extends Component {
 		if (!!this.state.fetch_result) {
 			return (<div>
 			<div className="container">
-			{ this.backToNotifications() }
+			{ this.backToMessages() }
 			</div>
 			<div className="container">
 			<div className="row">
@@ -116,7 +116,7 @@ class Conversation extends Component {
 
 		return (<div>
 			<div className="container">
-			{ this.backToNotifications() }
+			{ this.backToMessages() }
 			</div>
 			<div className="container">
 			<div className="row">

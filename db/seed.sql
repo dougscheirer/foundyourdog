@@ -45,15 +45,15 @@ insert into images (uuid, user_id, image_location, upload_date, tags, dog_id) va
 insert into images (uuid, user_id, image_location, upload_date, tags, dog_id) values
 				 ('5', '5', 'http://foundyourdog.com/images/5', '09/30/2016', null, '5');
 
-insert into notifications (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
+insert into messages (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
 				 ('1', '1', '1', '11/22/2016', '2', 'false', 'false', 'I think I found your dog', 'false', null);
-insert into notifications (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
+insert into messages (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
 				 ('2', '1', '2', '11/23/2016', '1', 'false', 'false', 'I think I found your dog', 'false', null);
-insert into notifications (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
+insert into messages (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
 				 ('3', '2', '1', '11/24/2016', '2', 'false', 'false', 'I think I found your dog', 'false', null);
-insert into notifications (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
+insert into messages (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
 				 ('4', '3', '2', '11/25/2016', '2', 'false', 'false', 'I think I found your dog', 'false', null);
-insert into notifications (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
+insert into messages (uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) values
 				 ('5', '1', '3', '11/26/2016', '2', 'false', 'false', 'I think I found your dog', 'false', null);
 
 /* TODO: include resolutions */

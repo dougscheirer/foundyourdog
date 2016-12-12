@@ -7,7 +7,7 @@ import Signup from './signup';
 import { connect } from 'react-redux';
 import DevTools from '../devtools';
 import ShowInfoCard from './info-card'
-import SendNotification from './send-notification'
+import SendMessage from './send-message'
 import toastr from 'toastr'
 import WSComponent from './wscomponent'
 import ResetPassword from './reset_password'
@@ -32,7 +32,7 @@ class MainLayout extends Component {
         <ResetPassword />
         <DevTools />
         <ShowInfoCard />
-        <SendNotification />
+        <SendMessage />
         <WSComponent />
         <nav className="navbar navbar-default">
           <div className="container-fluid">

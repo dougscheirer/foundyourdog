@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 @Data
-public class DetailNotification {
+public class DetailMessage {
     private String uuid;
     private String incident_id;
     private String receiver_id;

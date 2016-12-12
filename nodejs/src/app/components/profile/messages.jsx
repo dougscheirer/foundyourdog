@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import { connect } from 'react-redux'
-import { getUserNotifications } from '../../actions'
+import { getUserMessages } from '../../actions'
 import { auth_user, logged_in, humanTimestamp } from '../helpers'
 import { browserHistory } from 'react-router'
 
-class NotificationPanel extends Component {
+class MessagePanel extends Component {
 	render() {
 		const expanded = this.props.expanded(this.props.panelid);
 		const chevronClasses = (!expanded) ? "glyphicon-chevron-down" : "glyphicon-chevron-right"
@@ -30,7 +30,7 @@ class NotificationPanel extends Component {
 	}
 }
 
-class NotificationTable extends Component {
+class MessageTable extends Component {
 	onMessageClick(e, message) {
 		e.preventDefault()
 		browserHistory.push('/conversation/' + message.incident_id + "/" + message.uuid)
@@ -42,7 +42,7 @@ class NotificationTable extends Component {
 
 	render() {
 		if (!!!this.props.dataSource || !!!this.props.dataSource.length) {
-			return (<div>No notifications found</div>)
+			return (<div>No messages found</div>)
 		}
 		const rows = this.props.dataSource
 		const columns = [
@@ -61,7 +61,7 @@ class NotificationTable extends Component {
 	}
 }
 
-class Notifications extends Component {
+class Messages extends Component {
 	onTogglePanel(e, panel) {
 		e.preventDefault()
 		const panelStates = this.state.panel || {}
@@ -80,8 +80,8 @@ class Notifications extends Component {
 	}
 
 	componentDidMount() {
-		this.props.getNotificationsList('unread')
-		this.props.getNotificationsList('read')
+		this.props.getMessagesList('unread')
+		this.props.getMessagesList('read')
 	}
 
 	render() {
@@ -99,13 +99,13 @@ class Notifications extends Component {
 				</div>
 			</div>
 			<div>
-		{ /* <NotificationPanel panelid="search" title="Search results"/ > */ }
-				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ this.props.unreadNotifications } filter="read" currentUser={ this.props.login_data } />
-				</NotificationPanel>
-				<NotificationPanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Older" expanded={ this.stateToPanelStatus.bind(this) } >
-					<NotificationTable dataSource={ this.props.readNotifications } filter="unread" currentUser={ this.props.login_data } />
-				</NotificationPanel>
+		{ /* <MessagePanel panelid="search" title="Search results"/ > */ }
+				<MessagePanel onToggle={ this.onTogglePanel.bind(this) } panelid="new" title="New" expanded={ this.stateToPanelStatus.bind(this) } >
+					<MessageTable dataSource={ this.props.unreadMessages } filter="read" currentUser={ this.props.login_data } />
+				</MessagePanel>
+				<MessagePanel onToggle={ this.onTogglePanel.bind(this) } panelid="old" title="Older" expanded={ this.stateToPanelStatus.bind(this) } >
+					<MessageTable dataSource={ this.props.readMessages } filter="unread" currentUser={ this.props.login_data } />
+				</MessagePanel>
 			</div>
 		</div>)
 	}
@@ -114,13 +114,12 @@ class Notifications extends Component {
 const mapStateToProps = (state, myprops) => ({
 	logged_in : logged_in(state),
 	login_data : auth_user(state),
-	unreadNotifications : state.messages.myUnreadNotifications,
-	readNotifications : state.messages.myReadNotifications
+	unreadMessages : state.messages.myUnreadMessages,
+	readMessages : state.messages.myReadMessages
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
-	getNotificationsList : (type) => { dispatch(getUserNotifications(type)); }
-	// showNotificationInfo: (notification) => { dispatch(getNotificationInfo(incident.uuid)) }
+	getMessagesList : (type) => { dispatch(getUserMessages(type)); }
 });
 
-export default Notifications = connect(mapStateToProps, mapDispatchToProps)(Notifications)
+export default Messages = connect(mapStateToProps, mapDispatchToProps)(Messages)

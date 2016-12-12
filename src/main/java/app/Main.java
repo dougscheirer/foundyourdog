@@ -20,9 +20,9 @@ import com.beust.jcommander.JCommander;
 
 import app.handlers.AuthenticatedHandler;
 import app.handlers.CreateIncidentReportHandler;
-import app.handlers.CreateNotificationHandler;
+import app.handlers.CreateMessageHandler;
 import app.handlers.CreateUserHandler;
-import app.handlers.DeleteNotificationHandler;
+import app.handlers.DeleteMessageHandler;
 import app.handlers.DetailUser;
 import app.handlers.FindUnassignedImageHandler;
 import app.handlers.GetConversationHandler;
@@ -30,7 +30,7 @@ import app.handlers.GetImageHandler;
 import app.handlers.GetIncidentDetailHandler;
 import app.handlers.GetIncidentsHandler;
 import app.handlers.GetUserIncidents;
-import app.handlers.GetUserNotifications;
+import app.handlers.GetUserMessages;
 import app.handlers.GetUsersIndexHandler;
 import app.handlers.ImageDeleteHandler;
 import app.handlers.ImageUploadHandler;
@@ -38,7 +38,7 @@ import app.handlers.LoginHandler;
 import app.handlers.LogoutHandler;
 import app.handlers.ResetPasswordHandler;
 import app.handlers.ResetPasswordRequestHandler;
-import app.handlers.UpdateNotificationHandler;
+import app.handlers.UpdateMessageHandler;
 import app.handlers.WebsocketHandler;
 import app.model.Model;
 import app.sql2o.Sql2oModel;
@@ -155,10 +155,10 @@ public class Main {
 		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
 
-		get("/api/auth/messages", new GetUserNotifications(model));
-		post("/api/auth/message", new CreateNotificationHandler(model));
-		put("/api/auth/message/:id", new UpdateNotificationHandler(model));
-		delete("/api/auth/message/:id", new DeleteNotificationHandler(model));
+		get("/api/auth/messages", new GetUserMessages(model));
+		post("/api/auth/message", new CreateMessageHandler(model));
+		put("/api/auth/message/:id", new UpdateMessageHandler(model));
+		delete("/api/auth/message/:id", new DeleteMessageHandler(model));
 
 		get("/api/auth/conversation", new GetConversationHandler(model));
 
@@ -169,10 +169,10 @@ public class Main {
 		// a little api for retreiving the websocket addr
 		get("/api/wsaddr", (req, res) -> {
 			return "{\"address\":\""
-					+ "ws://" + req.queryParams("host") + ":" + servicePort + "/ws" 
+					+ "ws://" + req.queryParams("host") + ":" + servicePort + "/ws"
 					+ "\"}";
 		});
-		
+
 		exception(Exception.class, (exception, request, response) -> {
 			// Handle the exception here
 			logger.severe("Exception handling route: " + request.url());

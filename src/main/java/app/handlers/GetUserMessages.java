@@ -9,9 +9,9 @@ import app.model.Model;
 
 import spark.Request;
 
-public class GetUserNotifications extends AbstractRequestHandler<EmptyPayload> {
+public class GetUserMessages extends AbstractRequestHandler<EmptyPayload> {
 
-	public GetUserNotifications(Model model) {
+	public GetUserMessages(Model model) {
 		super(EmptyPayload.class, model);
 	}
 
@@ -21,7 +21,7 @@ public class GetUserNotifications extends AbstractRequestHandler<EmptyPayload> {
 		if (u == null) {
 			return new Answer(401);
 		}
-		List<DetailNotification> notifications = model.getUserNotifications(u.getUuid(), request.queryParams("type").toString());
-		return Answer.ok(dataToJson(notifications));
+		List<DetailMessage> message = model.getUserMessages(u.getUuid(), request.queryParams("type").toString());
+		return Answer.ok(dataToJson(message));
 	}
 }
