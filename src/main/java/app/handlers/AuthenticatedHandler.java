@@ -9,7 +9,10 @@ import spark.Response;
 import spark.Route;
 
 public class AuthenticatedHandler implements Route {
+	private Model model;
+	
 	public AuthenticatedHandler(Model model) {
+		this.model = model;
 	}
 
 	@Override
@@ -25,6 +28,7 @@ public class AuthenticatedHandler implements Route {
 			response.type("application/json");
 			response.body(answer.getBody());
 			WebsocketHandler.updateWebsocketMap(request.cookie("ws"), user);
+			WebsocketHandler.sendUnreadMessages(user.getUuid(), model.getUnreadMessages(user.getUuid()));
 			return answer.getBody();
 		}
 	}

@@ -27,9 +27,9 @@ class AuthNavbar extends Component {
 
     getMessageCount() {
       // TODO: display the message count that the server returns
-      return (!!!this.props.messages) ? undefined :
+      return (!!!this.props.unread && this.props.unread <= 0) ? undefined :
         (<div className="numberCircle">
-          <Link to="/profile/messages">{ this.props.messages }</Link>
+          { this.props.unread }
         </div>);
     }
 
@@ -56,7 +56,8 @@ class AuthNavbar extends Component {
 
 const mapStateToProps = (state, myprops) => ({
   authenticated: logged_in(state),
-  userInfo : auth_user(state)
+  userInfo : auth_user(state),
+  unread: state.messages.unread
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({

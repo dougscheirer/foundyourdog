@@ -11,22 +11,25 @@ public class SocketNotificationMessage {
 	private String incidentID;
 	private String receiverID;
 	private String fromHandle;
+	private int unreadMessages;
 
-	public SocketNotificationMessage(String receiverID, String incidentID, String messageID, String fromHandle) {
+	public SocketNotificationMessage(String receiverID, String incidentID, String messageID, String fromHandle, int unreadMessages) {
 		 this.messageID = messageID;
 		 this.incidentID = incidentID;
 		 this.fromHandle = fromHandle;
 		 this.receiverID = receiverID;
+		 this.unreadMessages = unreadMessages;
 	}
 
 	public ObjectNode toJson() {
 		JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
 		ObjectNode node = nodeFactory.objectNode();
-		node.put("messageID", messageID);
-		node.put("incidentID", incidentID);
+		if (messageID != null) node.put("messageID", messageID);
+		if (incidentID != null) node.put("incidentID", incidentID);
 		node.put("receiverID", receiverID);
-		node.put("fromHandle", fromHandle);
+		if (fromHandle != null) node.put("fromHandle", fromHandle);
+		node.put("unread", unreadMessages);
 		return node;
 	}
 }

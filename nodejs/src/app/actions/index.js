@@ -17,6 +17,7 @@ export { getUserMessages,
 		 sendMessage,
 		 postMessage,
 		 getConversation,
+		 setUnreadMessages,
 		 newMessage } from './messages'
 
 export { getReportInfo,

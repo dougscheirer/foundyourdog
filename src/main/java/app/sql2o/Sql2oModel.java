@@ -503,4 +503,16 @@ public class Sql2oModel implements Model {
 		}
 		return false;
 	}
+
+	@Override
+	public int getUnreadMessages(String receiver_id) {
+		try (Connection conn = sql2o.open()) {
+			return conn.createQuery("SELECT COUNT(uuid) FROM messages WHERE receiver_id=:id AND sender_read=false")
+				.addParameter("id", receiver_id)
+				.executeScalar(Integer.class);
+		} catch (Sql2oException e) {
+			logger.severe(e.getLocalizedMessage());
+		}
+		return -1;
+	}
 }

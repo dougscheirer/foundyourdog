@@ -12,13 +12,16 @@ export const messages = (state = initialState, action) => {
 					myUnreadMessages: action.messages	}
 			}
 		case 'SEND_MESSAGE':
-			const value = (action.notification_data && action.notification_data.incident && action.notification_data.target_user) ?
-							action.notification_data : undefined
+			const value = (action.message_data && action.message_data.incident && action.message_data.target_user) ?
+							action.message_data : undefined
 			return { ...state,
-						notification_data: value }
+						message_data: value }
 		case 'MESSAGE_SENT':
 			return { ...state,
-						notification_data: undefined }
+						message_data: undefined }
+		case 'UNREAD_MESSAGES':
+			return { ...state,
+						unread: action.unread }
 		case 'NEW_MESSAGE':
 			return { ...state,
 						new_message_data: action.message_data }

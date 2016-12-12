@@ -45,3 +45,10 @@ export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
 export const newMessage = (msg_data, ordinal_start) => {
 	return getConversation(msg_data.incidentID, msg_data.messageID, ordinal_start)
 }
+
+export const setUnreadMessages = (unread) => {
+	return {
+		type: 'UNREAD_MESSAGES',
+		unread: unread
+	}
+}

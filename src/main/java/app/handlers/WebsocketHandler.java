@@ -170,8 +170,14 @@ public class WebsocketHandler {
 		}
 	}
 
-	public static void notifyNewMessage(String receiverId, String incidentId, String messageId, String fromHandle) {
-		SocketNotificationMessage nmsg = new SocketNotificationMessage(receiverId, incidentId, messageId, fromHandle);
+	public static void notifyNewMessage(String receiverId, String incidentId, String messageId, String fromHandle, int unread) {
+		SocketNotificationMessage nmsg = new SocketNotificationMessage(receiverId, incidentId, messageId, fromHandle, unread);
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.NEW_MESSAGE, nmsg.toJson());
+		sendMessage(receiverId, msg);
+	}
+
+	public static void sendUnreadMessages(String receiverId, int unreadMessages) {
+		SocketNotificationMessage nmsg = new SocketNotificationMessage(receiverId, null, null, null, unreadMessages);
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.NEW_MESSAGE, nmsg.toJson());
 		sendMessage(receiverId, msg);
 	}

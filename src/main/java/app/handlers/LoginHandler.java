@@ -34,6 +34,7 @@ public class LoginHandler implements Route {
 			Answer answer = Answer.ok(AbstractRequestHandler.dataToJson(user.get()));
 			request.session().attribute(Main.SESSION_USERID, user.get());
 			WebsocketHandler.updateWebsocketMap(request.cookie("ws"), user.get());
+			WebsocketHandler.sendUnreadMessages(user.get().getUuid(), model.getUnreadMessages(user.get().getUuid()));
 			response.status(answer.getCode());
 			response.type("application/json");
 			response.body(answer.getBody());

@@ -44,8 +44,8 @@ public class CreateMessageHandler extends AbstractRequestHandler<Message> {
 			return new Answer(500);
 		}
 		// send a websocket message to the target and the source
-		WebsocketHandler.notifyNewMessage(value.getSender_id(), i.get().getUuid(), messageId, from.get().getHandle());
-		WebsocketHandler.notifyNewMessage(value.getReceiver_id(), i.get().getUuid(), messageId, from.get().getHandle());
+		WebsocketHandler.notifyNewMessage(value.getSender_id(), i.get().getUuid(), messageId, from.get().getHandle(), -1);
+		WebsocketHandler.notifyNewMessage(value.getReceiver_id(), i.get().getUuid(), messageId, from.get().getHandle(), model.getUnreadMessages(value.getReceiver_id()));
 		// TODO: um, make an object?
 		return new Answer(200, "{\"id\":\"" + messageId + "\"}");
 	}

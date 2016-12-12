@@ -4,6 +4,7 @@ import { newMessage,
          setWebsocket,
          registerSocket,
          checkLoginStatus,
+         setUnreadMessages,
          clearPostLoginActions } from '../actions'
 import cookie from 'react-cookie'
 import Websocket from './websocket';
@@ -114,6 +115,10 @@ class WSComponent extends Component {
         // refresh conversation?
         if (!!this.props.conversation && this.props.conversation.incident === result.data.incidentID)
           this.props.newMessage(result.data, this.props.conversation.conversation.messages[0].ordinal);
+        // refresh unread count?
+        if (result.data.unread >= 0) {
+          this.props.setUnreadMessages(result.data.unread)
+        }
         break;
       default:
         console.log(result.message)
@@ -156,7 +161,8 @@ const mapDispatchToProps = (dispatch, myprops) => ({
   getWebSocketAddr : () => { dispatch(getWebSocketAddr()) },
   registerSocket: (sockid) => { dispatch(registerSocket(sockid)) },
   newMessage: (message_data, ordinal) => { dispatch(newMessage(message_data, ordinal)); },
-  clearPostLoginActions: () => { dispatch(clearPostLoginActions()) }
+  clearPostLoginActions: () => { dispatch(clearPostLoginActions()) },
+  setUnreadMessages: (unread) => dispatch(setUnreadMessages(unread))
 });
 
 export default WSComponent = connect(mapStateToProps, mapDispatchToProps)(WSComponent)

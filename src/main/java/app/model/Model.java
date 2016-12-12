@@ -50,4 +50,6 @@ public interface Model {
 	String updatePasswordResetToken(String email);
 
 	boolean resetPassword(ResetPassword reset);
+
+	int getUnreadMessages(String receiver_id);
 }
