@@ -96,6 +96,15 @@ class ResetPasswordForm extends Component {
 	}
 
 	render() {
+		if (this.state.password_reset)
+			return (
+				<div className="homemain">
+					<div>Your password was reset successfully, you may now log in</div>
+					<div className="footer">
+						<a href="" onClick={ this.login.bind(this) }>Login</a>
+					</div>
+				</div>)
+
 		return (<div className="homemain">
 			<label>Reset your password</label>
 			{ this.resetForm() }

@@ -492,7 +492,7 @@ public class Sql2oModel implements Model {
 			long now = System.currentTimeMillis();
 			BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
 			return (conn.createQuery(
-					"UPDATE users SET password_hash=:password WHERE email=:email AND password_reset_token=:token AND password_reset_time > :timeout")
+					"UPDATE users SET password_hash=:password, password_reset_token=null, password_reset_time=null WHERE email=:email AND password_reset_token=:token AND password_reset_time > :timeout")
 					.addParameter("email", reset.getEmail())
 					.addParameter("password", passwordEncryptor.encryptPassword(reset.getPassword()))
 					.addParameter("timeout", new Timestamp(now - 1000*60*24))

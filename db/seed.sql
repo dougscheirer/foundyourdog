@@ -1,15 +1,15 @@
 \connect foundyourdog_$ENV$
 
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications, admin) values
-				  ('1', 'doug@dscheirer.com', 'doug', '12345678', '12345678', true, '09/26/2016', '09/26/2016', '925.228.4321', true, true);
+				  ('1', 'doug@dscheirer.com', 'doug', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/26/2016', '09/26/2016', '925.228.4321', true, true);
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications) values
-				  ('2', 'doug+2@dscheirer.com', 'doug2', '12345678', '12345678', true, '09/27/2016', '09/27/2016', '925.228.4322', true);
+				  ('2', 'doug+2@dscheirer.com', 'doug2', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/27/2016', '09/27/2016', '925.228.4322', true);
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications) values
-				  ('3', 'doug+3@dscheirer.com', 'doug3', '12345678', '12345678', true, '09/28/2016', '09/28/2016', '925.228.4323', true);
+				  ('3', 'doug+3@dscheirer.com', 'doug3', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/28/2016', '09/28/2016', '925.228.4323', true);
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications) values
-				  ('4', 'doug+4@dscheirer.com', 'doug4', '12345678', '12345678', true, '09/29/2016', '09/29/2016', '925.228.4324', true);
+				  ('4', 'doug+4@dscheirer.com', 'doug4', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/29/2016', '09/29/2016', '925.228.4324', true);
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications) values
-				  ('5', 'doug+5@dscheirer.com', 'doug5', '12345678', '12345678', true, '09/30/2016', '09/30/2016', '925.228.4325', true);
+				  ('5', 'doug+5@dscheirer.com', 'doug5', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/30/2016', '09/30/2016', '925.228.4325', true);
 
 insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
 				      ('1', '1', 37.9688918, -122.1025406, '1', '09/26/2016', 'lost', null);
