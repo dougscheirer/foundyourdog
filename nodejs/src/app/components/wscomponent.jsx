@@ -11,6 +11,7 @@ import Websocket from './websocket';
 import toastr from 'toastr'
 import { auth_user, processPostLoginActions } from './helpers'
 import { connect } from 'react-redux'
+import { browserHistory } from 'react-router'
 
 class WSComponent extends Component {
   state = { }
@@ -108,10 +109,13 @@ class WSComponent extends Component {
         break;
       case "NEW_MESSAGE":
         // display a toast if the meesage fromHandle is not you
-        if (!!this.props.login_data && this.props.login_data.handle !== result.data.fromHandle)
-          toastr.info("<a href=\"/conversation/" +
-            result.data.incidentID + "/" + result.data.messageID +
-            "\">You have a new message from " + result.data.fromHandle + "</a>")
+        if (!!this.props.login_data && !!result.data.fromHandle && this.props.login_data.handle !== result.data.fromHandle) {
+          const options = { onclick: () => {
+            console.log("clicked a toast link")
+            browserHistory.push("/conversation/" + result.data.incidentID + "/" + result.data.messageID) }
+          } 
+          toastr.info("You have a new message from " + result.data.fromHandle, undefined, options)
+        }
         // refresh conversation?
         if (!!this.props.conversation && this.props.conversation.incident === result.data.incidentID)
           this.props.newMessage(result.data, this.props.conversation.conversation.messages[0].ordinal);

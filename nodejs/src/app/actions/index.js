@@ -17,6 +17,7 @@ export { getUserMessages,
 		 sendMessage,
 		 postMessage,
 		 getConversation,
+		 clearConversation,
 		 markConversation,
 		 setUnreadMessages,
 		 newMessage } from './messages'

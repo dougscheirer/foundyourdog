@@ -25,6 +25,9 @@ export const messages = (state = initialState, action) => {
 		case 'NEW_MESSAGE':
 			return { ...state,
 						new_message_data: action.message_data }
+		case 'CLEAR_CONVERSATION':
+			return { ...state,
+						conversation: undefined }
 		case 'CONVERSATION': 
 			// action.conversation.messages might be a partial list, so prepend it on the existing one
 			const msgList = (!!state.conversation && !!state.conversation.conversation.messages) ?

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { postMessage, getConversation, markConversation } from '../actions'
+import { postMessage, getConversation, markConversation, clearConversation } from '../actions'
 import { connect } from 'react-redux'
 import './chat.css'
 import loading from './loading.svg'
@@ -12,14 +12,25 @@ class Conversation extends Component {
 	state = {}
 	componentDidMount() {
 		this.setState({fetch_result: undefined})
+		this.props.clearConversation()
 		this.props.getConversation(this.props.params.incident, this.props.params.message_id, 0, this.loadFailed.bind(this))
 		this.markAsRead()
+	}
+
+	componentWillUnmount() {
+		this.props.clearConversation()
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		this.markAsRead()
+		return true
 	}
 
 	markAsRead() {
 		if (!!!this.props.conversation) {
 			this.setState({read_timer: setTimeout(this.markAsRead.bind(this), 5000)})
 		} else {
+			console.log("MARK AS READ")
 			if (!!this.state.read_timer)
 				clearTimeout(this.state.read_timer)
 			this.props.markConversation(this.props.params.incident, this.props.params.message_id, 0, true)
@@ -53,6 +64,7 @@ class Conversation extends Component {
 		    receiver_id : this.props.conversation.conversation.partner_id,
     		message : message,
     		incident_id : this.props.params.incident,
+    		responding_to: this.props.conversation.conversation.messages[0].uuid
 		}
 		this.refs.message.value = ""
 		this.props.postMessage(postData)
@@ -172,6 +184,7 @@ const mapStateToProps = (state, myprops) => ({
 
 const mapDispatchToProps = (dispatch, props) => ({
 	getConversation : (incident_id, msg_id, from_ordinal, failed) => { dispatch(getConversation(incident_id, msg_id, from_ordinal, failed)) },
+	clearConversation : () => dispatch(clearConversation()),
 	markConversation : (incident_id, msg_id, from_ordinal, read) => { dispatch(markConversation(incident_id, msg_id, from_ordinal, read)) },
 	postMessage : (data) => { dispatch(postMessage(data)) }
 })

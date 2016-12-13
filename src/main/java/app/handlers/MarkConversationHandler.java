@@ -30,7 +30,7 @@ public class MarkConversationHandler extends AbstractRequestHandler<EmptyPayload
 		} catch (NumberFormatException e) {
 			// 0 is a fine start
 		}
-		boolean markRead = Boolean.parseBoolean(request.queryParams("mark"));
+		boolean markRead = Boolean.parseBoolean(request.queryParams("read"));
 		if (incident_id == null || message_id == null)
 			return new Answer(404);
 

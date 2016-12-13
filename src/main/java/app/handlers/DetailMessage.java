@@ -13,9 +13,9 @@ public class DetailMessage {
     private Timestamp sent_date;
     private String sender_id;
     private String sender_handle;
-    private boolean sender_read;
-    private boolean sender_delete;
+    private boolean receiver_read;
+    private boolean receiver_delete;
     private String message;
-    private String sender_flagged;
+    private String receiver_flagged;
     private String responding_to;
 }

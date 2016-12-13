@@ -30,16 +30,10 @@ export const postMessage = (data) => {
 			})
 }
 
-export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
-	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
-		(res) => {
-			return {
-				type: 'CONVERSATION',
-				incident: incident_id,
-				message: msg_id,
-				conversation: res
-			}
-		}, err_fn)
+export const clearConversation = () => {
+	return {
+		type: "CLEAR_CONVERSATION"
+	}
 }
 
 export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
@@ -51,12 +45,27 @@ export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
 			}
 		},
 		(res) => {
-			console.log(res)
 			return {
 				type: 'UNREAD_MESSAGES',
 				unread: -1
 			}
 		})
+}
+
+export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
+	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
+		(res) => {
+			// TODO: move this?  it seems weird to have it here
+			setTimeout(() => {
+				markConversation(incident_id, msg_id, from_ordinal, true)
+			}, 5000)
+			return {
+				type: 'CONVERSATION',
+				incident: incident_id,
+				message: msg_id,
+				conversation: res
+			}
+		}, err_fn)
 }
 
 export const newMessage = (msg_data, ordinal_start) => {

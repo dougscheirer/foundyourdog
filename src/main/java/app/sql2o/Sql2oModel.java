@@ -382,11 +382,11 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			return conn
 					.createQuery("SELECT "
-							+ "M.uuid, M.incident_id, M.receiver_id, M.sent_date, M.sender_id, M.sender_read, M.sender_delete, M.message, M.sender_flagged, M.responding_to, "
+							+ "M.uuid, M.incident_id, M.receiver_id, M.sent_date, M.sender_id, M.receiver_read, M.receiver_delete, M.message, M.receiver_flagged, M.responding_to, "
 							+ "from_users.handle as sender_handle, to_users.handle AS receiver_handle FROM messages M "
 							+ "JOIN users AS from_users on M.sender_id = from_users.uuid "
 							+ "JOIN users AS to_users on M.receiver_id = to_users.uuid "
-							+ "WHERE (receiver_id=:userid OR sender_id=:userid) AND sender_read=:read AND sender_delete=false "
+							+ "WHERE (receiver_id=:userid OR sender_id=:userid) AND receiver_read=:read AND receiver_delete=false "
 							+ "ORDER BY sent_date DESC")
 					.addParameter("userid", userId).addParameter("read", type.equals("read"))
 					.executeAndFetch(DetailMessage.class);
@@ -401,8 +401,8 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			String uuid = UUID.randomUUID().toString();
 			conn.createQuery(
-					"insert into messages(uuid, incident_id, receiver_id, sent_date, sender_id, sender_read, sender_delete, message, sender_flagged, responding_to) "
-							+ "values (:uuid, :incident_id, :receiver_id, :sent_date, :sender_id, false, false, :message, false, :responding_to);")
+					"insert into messages(uuid, incident_id, receiver_id, sent_date, sender_id, message, responding_to) "
+							+ "values (:uuid, :incident_id, :receiver_id, :sent_date, :sender_id, :message, :responding_to);")
 					.addParameter("uuid", uuid).addParameter("incident_id", n.getIncident_id())
 					.addParameter("receiver_id", n.getReceiver_id()).addParameter("sent_date", n.getSent_date())
 					.addParameter("sender_id", n.getSender_id()).addParameter("message", n.getMessage())
@@ -450,7 +450,7 @@ public class Sql2oModel implements Model {
 	@Override
 	public boolean markConversation(String incident_id, String id1, String id2, int ordinal_start, boolean read) {
 		try (Connection conn = sql2o.open()) {
-			conn.createQuery("update messages set sender_read=:read where incident_id=:incident "
+			conn.createQuery("update messages set receiver_read=:read where incident_id=:incident "
 					+ "AND (receiver_id=:id1 OR sender_id=:id1) "
 					+ "AND (receiver_id=:id2 OR sender_id=:id2) "
 					+ "AND ordinal > :ordinal_start")
@@ -527,7 +527,7 @@ public class Sql2oModel implements Model {
 	@Override
 	public int getUnreadMessages(String receiver_id) {
 		try (Connection conn = sql2o.open()) {
-			return conn.createQuery("SELECT COUNT(uuid) FROM messages WHERE receiver_id=:id AND sender_read=false")
+			return conn.createQuery("SELECT COUNT(uuid) FROM messages WHERE receiver_id=:id AND receiver_read=false")
 				.addParameter("id", receiver_id)
 				.executeScalar(Integer.class);
 		} catch (Sql2oException e) {

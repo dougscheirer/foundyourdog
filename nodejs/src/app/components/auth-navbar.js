@@ -27,7 +27,7 @@ class AuthNavbar extends Component {
 
     getMessageCount() {
       // TODO: display the message count that the server returns
-      return (!!!this.props.unread && this.props.unread <= 0) ? undefined :
+      return (!!!this.props.unread || this.props.unread <= 0) ? undefined :
         (<div className="numberCircle">
           { this.props.unread }
         </div>);

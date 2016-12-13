@@ -75,10 +75,10 @@ CREATE TABLE IF NOT EXISTS messages (
     receiver_id text not null,
     sent_date timestamptz not null,
     sender_id text not null,
-    sender_read boolean default false,
-    sender_delete boolean default false,
+    receiver_read boolean default false,
+    receiver_delete boolean default false,
     message text not null,
-    sender_flagged bool default false,
+    receiver_flagged bool default false,
     responding_to text
 );
 
