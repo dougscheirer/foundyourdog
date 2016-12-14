@@ -38,10 +38,9 @@ public class MarkConversationHandler extends AbstractRequestHandler<EmptyPayload
 		if (!message.isPresent())
 			return new Answer(404);
 
-		// validate that the logged in user is the sender or receiver (or an admin)
+		// validate that the logged in user is the receiver (or an admin)
 		DetailUser u = Main.getCurrentUser(request);
-		if (!message.get().getReceiver_id().equals(u.getUuid()) &&
-			!message.get().getSender_id().equals(u.getUuid()))
+		if (!message.get().getReceiver_id().equals(u.getUuid()) || u.isAdmin())
 			return new Answer(401);
 
 		// get the other user in the conversation

@@ -67,13 +67,24 @@ class ShowInfoCard extends Component {
 		return (this.props.login_status && this.props.login_data.uuid === id)
 	}
 
-	getContactControl(incident) {
-		const classes="btn btn-default " + (this.isLoggedInUser(incident.reporter_id) ? "disabled" : "")
-		const clickHandler = (this.isLoggedInUser(incident.reporter_id) ? undefined : this.onContact.bind(this))
+	onResolve(e) {
+		if (!!e) e.preventDefault()
+	}
 
-		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ clickHandler }>
-							{ "Contact " + (incident.state === 'found' ? "finder" : "owner") }
-						</button>)
+	getContactControl(incident) {
+		const classes="btn btn-default "
+		let clickHandler = {}
+		let text = ""
+		if (this.isLoggedInUser(incident.reporter_id)) {
+			// provide the 'resolve report' button
+			clickHandler = this.onResolve.bind(this)
+			text = "Resolve incident"
+		} else {
+			clickHandler = this.onContact.bind(this)
+			text = "Contact finder"
+		}
+
+		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ clickHandler }>{ text }</button>)
 	}
 
 	render() {
