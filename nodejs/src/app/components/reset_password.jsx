@@ -17,6 +17,7 @@ class ResetPassword extends Component {
 
 	hideModal() {
 		this.props.hideModal();
+		this.setState({login_wait: false, error_msg: ''})
 	}
 
 	login(e) {
@@ -44,9 +45,9 @@ class ResetPassword extends Component {
 			headers:{ "Content-Type" : "application/json" },
 			credentials: 'include'
 		}).then((res) => {
-			this.setState({login_wait: false});
+			this.setState({login_wait: false, error_msg: ''});
 			if (res.ok) {
-				this.setState({reset_sent: true})
+				this.setState({reset_sent: true, error_msg: ''})
 			} else {
 				this.setState({error_msg: "An error occurred, please try again later"})
 			}

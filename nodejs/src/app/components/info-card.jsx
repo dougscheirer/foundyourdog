@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { sendMessage, showIncidentInfo } from '../actions';
+import { loginRequired, sendMessage, showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
 import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } from './helpers'
 
@@ -152,7 +152,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
 	hide : () => { dispatch(showIncidentInfo(undefined)); },
-	sendMessage : (incident) => { dispatch(sendMessage(incident.reporter_id, incident))}
+	sendMessage : (incident) => { dispatch(loginRequired(() => dispatch(sendMessage(incident.reporter_id, incident))))}
 });
 
 export default ShowInfoCard=connect(mapStateToProps, mapDispatchToProps)(ShowInfoCard);

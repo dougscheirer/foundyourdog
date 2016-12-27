@@ -41,7 +41,7 @@ public class MarkConversationHandler extends AbstractRequestHandler<EmptyPayload
 		// validate that the logged in user is the receiver (or an admin)
 		DetailUser u = Main.getCurrentUser(request);
 		if (!message.get().getReceiver_id().equals(u.getUuid()) || u.isAdmin())
-			return new Answer(401);
+			return new Answer(403);
 
 		// get the other user in the conversation
 		Optional<DetailUser> partner = model.getDetailUser((message.get().getReceiver_id().equals(u.getUuid()) ?

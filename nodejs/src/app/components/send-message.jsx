@@ -9,7 +9,8 @@ import {
 	ModalFooter
 } from 'react-modal-bootstrap';
 import { connect } from 'react-redux'
-import { humanTimestamp } from './helpers'
+import { humanTimestamp, logged_in } from './helpers'
+import { LoginPopup } from './login'
 
 class SendMessage extends Component {
 	state = {
@@ -93,7 +94,8 @@ class SendMessage extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	message_data: state.messages.message_data
+	message_data: state.messages.message_data,
+	logged_in: logged_in(state)
 })
 
 const mapDispatchToProps = (dispatch, props) => ({
