@@ -52,13 +52,10 @@ export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
 		})
 }
 
-export const getConversation = (incident_id, msg_id, from_ordinal, err_fn) => {
+export const getConversation = (incident_id, msg_id, from_ordinal, success, err_fn) => {
 	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
 		(res) => {
-			// TODO: move this?  it seems weird to have it here
-			setTimeout(() => {
-				markConversation(incident_id, msg_id, from_ordinal, true)
-			}, 5000)
+			success(res)
 			return {
 				type: 'CONVERSATION',
 				incident: incident_id,

@@ -53,5 +53,5 @@ public interface Model {
 
 	int getUnreadMessages(String receiver_id);
 
-	boolean markConversation(String incident_id, String id1, String id2, int ordinal_start, boolean read);
+	boolean markConversation(String incident_id, String id1, String id2, String curUserId, int ordinal_start, boolean read);
 }

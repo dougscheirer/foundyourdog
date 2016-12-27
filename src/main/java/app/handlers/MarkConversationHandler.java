@@ -40,18 +40,21 @@ public class MarkConversationHandler extends AbstractRequestHandler<EmptyPayload
 
 		// validate that the logged in user is the receiver (or an admin)
 		DetailUser u = Main.getCurrentUser(request);
-		if (!message.get().getReceiver_id().equals(u.getUuid()) || u.isAdmin())
-			return new Answer(401);
+		if (!(message.get().getReceiver_id().equals(u.getUuid()) ||
+				message.get().getSender_id().equals(u.getUuid()) ||
+				u.isAdmin()))
+			return new Answer(403);
 
-		// get the other user in the conversation
+		// we mark things read for the current user as the receiver, but the logical "conversation"
+		// is where the incident, sender, and receiver all match
 		Optional<DetailUser> partner = model.getDetailUser((message.get().getReceiver_id().equals(u.getUuid()) ?
 				message.get().getSender_id() :
 				message.get().getReceiver_id()));
 		if (!partner.isPresent())
 			return new Answer(404);
 
-		// get the conversation
-		if (model.markConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), ordinal_start, markRead))
+		// mark the conversation "read" for user 'u'
+		if (model.markConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), u.getUuid(), ordinal_start, markRead))
 			return new Answer(200, "{\"unread\":\"" + model.getUnreadMessages(u.getUuid()) + "\"}");
 		else
 			return new Answer(500, "Failed to update conversation");

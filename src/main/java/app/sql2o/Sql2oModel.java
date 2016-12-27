@@ -448,15 +448,17 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public boolean markConversation(String incident_id, String id1, String id2, int ordinal_start, boolean read) {
+	public boolean markConversation(String incident_id, String id1, String id2, String curUserId, int ordinal_start, boolean read) {
 		try (Connection conn = sql2o.open()) {
 			conn.createQuery("update messages set receiver_read=:read where incident_id=:incident "
 					+ "AND (receiver_id=:id1 OR sender_id=:id1) "
 					+ "AND (receiver_id=:id2 OR sender_id=:id2) "
+					+ "AND receiver_id=:curUserId "
 					+ "AND ordinal > :ordinal_start")
 					.addParameter("incident", incident_id)
 					.addParameter("id1", id1)
 					.addParameter("id2", id2)
+					.addParameter("curUserId", curUserId)
 					.addParameter("ordinal_start", ordinal_start)
 					.addParameter("read", read)
 					.executeUpdate();
