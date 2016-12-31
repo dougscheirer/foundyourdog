@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.password.BasicPasswordEncryptor;
@@ -27,7 +28,7 @@ import com.foundyourdog.app.handlers.DetailMessage;
 import com.foundyourdog.app.handlers.DetailUser;
 
 public class Sql2oModel implements Model {
-	final static Logger logger = Logger.getLogger(Sql2oModel.class.getCanonicalName());
+	final static Logger logger = LoggerFactory.getLogger(Sql2oModel.class);
 	private Sql2o sql2o;
 
 	public Sql2oModel(Sql2o sql2o) {
@@ -43,7 +44,7 @@ public class Sql2oModel implements Model {
 					.executeAndFetch(PublicUser.class);
 			return users;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -61,7 +62,7 @@ public class Sql2oModel implements Model {
 				return Optional.of(users.get(0));
 			}
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -81,7 +82,7 @@ public class Sql2oModel implements Model {
 					.executeUpdate();
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -117,7 +118,7 @@ public class Sql2oModel implements Model {
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -132,7 +133,7 @@ public class Sql2oModel implements Model {
 			}
 			return Optional.of(dogs.get(0));
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -156,7 +157,7 @@ public class Sql2oModel implements Model {
 
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -189,7 +190,7 @@ public class Sql2oModel implements Model {
 			}
 			return Optional.of(incidents.get(0));
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -209,7 +210,7 @@ public class Sql2oModel implements Model {
 
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -242,7 +243,7 @@ public class Sql2oModel implements Model {
 			}
 			return Optional.of(images.get(0));
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -261,7 +262,7 @@ public class Sql2oModel implements Model {
 					.addParameter("tags", i.getTags()).addParameter("status", i.getStatus()).executeUpdate();
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -278,7 +279,7 @@ public class Sql2oModel implements Model {
 			conn.createQuery("delete from images where uuid=:id").addParameter("id", id).executeUpdate();
 			return true;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -303,7 +304,7 @@ public class Sql2oModel implements Model {
 			
 			return Optional.empty();
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -322,7 +323,7 @@ public class Sql2oModel implements Model {
 					.addParameter("confirmation_token", confirmationToken).executeUpdate();
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -335,7 +336,7 @@ public class Sql2oModel implements Model {
 					.executeUpdate();
 			return imageID;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -352,7 +353,7 @@ public class Sql2oModel implements Model {
 			}
 			return Optional.of(images.get(0));
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -372,7 +373,7 @@ public class Sql2oModel implements Model {
 					.addParameter("userId", userId).executeAndFetch(IncidentBrief.class);
 			return incidents;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -391,7 +392,7 @@ public class Sql2oModel implements Model {
 					.addParameter("userid", userId).addParameter("read", type.equals("read"))
 					.executeAndFetch(DetailMessage.class);
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -409,7 +410,7 @@ public class Sql2oModel implements Model {
 					.addParameter("responding_to", n.getResponding_to()).executeUpdate();
 			return uuid;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -423,7 +424,7 @@ public class Sql2oModel implements Model {
 			else
 				return Optional.of(list.get(0));
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -442,7 +443,7 @@ public class Sql2oModel implements Model {
 					.addParameter("ordinal_start", ordinal_start)
 					.executeAndFetch(Message.class);
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -464,7 +465,7 @@ public class Sql2oModel implements Model {
 					.executeUpdate();
 			return true;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -483,7 +484,7 @@ public class Sql2oModel implements Model {
 				return Optional.of(users.get(0));
 			}
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -502,7 +503,7 @@ public class Sql2oModel implements Model {
 					.executeUpdate();
 			return resetToken;
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -521,7 +522,7 @@ public class Sql2oModel implements Model {
 					.addParameter("token", reset.getReset_token())
 					.executeUpdate().getResult() == 1);
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -533,7 +534,7 @@ public class Sql2oModel implements Model {
 				.addParameter("id", receiver_id)
 				.executeScalar(Integer.class);
 		} catch (Sql2oException e) {
-			logger.severe(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 		}
 		return -1;
 	}

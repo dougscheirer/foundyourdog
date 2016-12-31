@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
@@ -28,8 +29,8 @@ import com.foundyourdog.app.WSSessionData;
 public class WebsocketHandler {
 
 	private static Map<Session, WSSessionData> websocketMap = new ConcurrentHashMap<>();
-	private static Logger logger = Logger.getLogger(WebsocketHandler.class.getCanonicalName());
-	
+	private static Logger logger = LoggerFactory.getLogger(WebsocketHandler.class);
+
 	public WebsocketHandler() {
 		// TODO Auto-generated constructor stub
 	}
@@ -38,7 +39,7 @@ public class WebsocketHandler {
 	public void onConnect(Session user) throws Exception {
     	// generate a UUID for this session, the client will use it in other auth attempts
 		String uuid = UUID.randomUUID().toString();
-    	logger.severe("Connection for " + uuid);
+    	logger.error("Connection for " + uuid);
 		websocketMap.put(user, new WSSessionData(uuid));
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.REGISTER, "id", uuid);
 		sendMessage(user.getRemote(), msg);
@@ -77,7 +78,7 @@ public class WebsocketHandler {
 
 	// send something to a user
 	public static void sendMessage(String receiver_id, String message) {
-		SocketUserMessage umsg = new SocketUserMessage(message, 5000, 
+		SocketUserMessage umsg = new SocketUserMessage(message, 5000,
 				SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
 		websocketMap.entrySet().stream().filter(map -> map.getKey().isOpen())
@@ -109,14 +110,14 @@ public class WebsocketHandler {
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
 		Stream<Entry<Session, WSSessionData>> entries = websocketMap.entrySet().stream()
 				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().sessionID.equals(cookie));
-		logger.severe("request modified entry for " + cookie + "/" + user.getHandle());
+		logger.error("request modified entry for " + cookie + "/" + user.getHandle());
 		try {
 			entries.forEach(entry -> {
 				WSSessionData s = entry.getValue();
 				s.userID = user.getUuid();
 				entry.setValue(s);
 				sendMessage(entry.getKey().getRemote(), msg);
-				logger.severe("modified entry for " + cookie + "/" + user.getHandle()); 
+				logger.error("modified entry for " + cookie + "/" + user.getHandle());
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,12 +141,12 @@ public class WebsocketHandler {
 				broadcastMessage(msg);
 				break;
 			default:
-				logger.severe("Received unhandled message type:");
-				logger.severe(message);
+				logger.error("Received unhandled message type:");
+				logger.error(message);
 				break;
 			}
 		} catch (IOException e) {
-			logger.severe(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -163,7 +164,7 @@ public class WebsocketHandler {
 					s.userID = null;
 					entry.setValue(s);
 					sendMessage(entry.getKey().getRemote(), msg);
-					logger.severe("removed entry for " + s.sessionID + "/" + u.getHandle()); 
+					logger.error("removed entry for " + s.sessionID + "/" + u.getHandle());
 			});
 		} catch (Exception e) {
 			e.printStackTrace();

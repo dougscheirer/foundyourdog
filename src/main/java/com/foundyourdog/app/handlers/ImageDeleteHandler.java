@@ -5,7 +5,8 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.foundyourdog.app.Answer;
 import com.foundyourdog.app.Main;
@@ -17,8 +18,8 @@ import spark.Route;
 
 public class ImageDeleteHandler implements Route {
 	private Model model;
-	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
-	
+	final static Logger logger = LoggerFactory.getLogger(Main.class);
+
 	public ImageDeleteHandler(Model model) {
 		this.model = model;
 	}
@@ -29,7 +30,7 @@ public class ImageDeleteHandler implements Route {
 		if (u == null) {
 			return new Answer(401);
 		}
-		
+
 		String imageID = request.params(":id");
 		Optional<Image> image = model.getImage(imageID);
 		// make sure they are authorized to delete it
@@ -39,13 +40,13 @@ public class ImageDeleteHandler implements Route {
 		if (!image.get().getUser_id().equals(u.getUuid()) && !u.isAdmin()) {
 			return new Answer(403); // you are forbidden
 		}
-		
+
 		// delete the image file
 		Path path = Paths.get(image.get().getImage_location() + "/" + imageID);
 		try {
 			Files.delete(path);
 		} catch (NoSuchFileException e) {
-			logger.warning(e.getMessage());
+			logger.info(e.getMessage());
 		}
 		// clean up the DB
 		model.deleteImage(imageID);

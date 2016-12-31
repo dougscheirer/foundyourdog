@@ -13,7 +13,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -51,7 +52,7 @@ import spark.Spark;
 import spark.utils.IOUtils;
 
 public class Main {
-	final static Logger logger = Logger.getLogger(Main.class.getCanonicalName());
+	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	// TODO: move this to where constants live
 	public static final String SESSION_USERID = "userid";
@@ -83,10 +84,10 @@ public class Main {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
 
-		logger.finest("Options.debug = " + options.debug);
+		logger.debug("Options.debug = " + options.debug);
 		int servicePort = getPortByEnv(options.servicePort);
-		logger.finest("servicePort = " + servicePort);
-		logger.finest("image location = " + options.imageLocation);
+		logger.debug("servicePort = " + servicePort);
+		logger.debug("image location = " + options.imageLocation);
 
 		port(servicePort);
 
@@ -99,14 +100,14 @@ public class Main {
 						}
 					});
 		} catch (URISyntaxException e1) {
-			logger.log(Level.SEVERE, e1.getMessage());
+			logger.error(e1.getMessage());
 		}
 
 		// do a basic DB connection test on the users table, quit if it fails
 		try (Connection conn = sql2o.open()) {
 			conn.createQuery("select * from users limit 1").executeAndFetchTable();
 		} catch (Sql2oException e) {
-			logger.log(Level.SEVERE, e.toString(), e);
+			logger.error(e.toString(), e);
 			return;
 		}
 
@@ -202,24 +203,24 @@ public class Main {
 
 		exception(NotConsumedException.class, (e, req, res) -> {
 			// keep going?
-			logger.severe("Not consumed, try other things: " + req.pathInfo());
+			logger.error("Not consumed, try other things: " + req.pathInfo());
 		});
 
 		exception(NotFoundException.class, (e, req, res) -> {
 			try {
-				logger.severe("returning default index.html for " + req.pathInfo());
+				logger.error("returning default index.html for " + req.pathInfo());
 				res.status(200);
 				InputStream is = Main.class.getResourceAsStream("/public/index.html");
 				res.body(new String(IOUtils.toByteArray(is), "UTF-8"));
 			} catch (Exception e2) {
-				logger.severe(e2.getMessage());
+				logger.error(e2.getMessage());
 			}
 		});
 
 		exception(Exception.class, (exception, request, response) -> {
 			// Handle the exception here
-			logger.severe("Exception handling route: " + request.url());
-			logger.severe(exception.getMessage());
+			logger.error("Exception handling route: " + request.url());
+			logger.error(exception.getMessage());
 		});
 	}
 
