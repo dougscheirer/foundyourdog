@@ -19,7 +19,7 @@ class WSComponent extends Component {
   componentDidMount() {
     this.getWebSocketAddr()
     this.props.setWebsocket(this)
-    this.state = { pingpong : setInterval(this.pingpong.bind(this), 60000) }
+    this.state = { pingpong : setInterval(this.pingpong.bind(this), 10000) }
   }
 
   componentWillUnmount() {
@@ -115,7 +115,7 @@ class WSComponent extends Component {
           const options = { onclick: () => {
             console.log("clicked a toast link")
             browserHistory.push("/conversation/" + result.data.incidentID + "/" + result.data.messageID) }
-          } 
+          }
           toastr.info("You have a new message from " + result.data.fromHandle, undefined, options)
         }
         // refresh conversation?
