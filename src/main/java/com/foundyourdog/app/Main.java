@@ -99,11 +99,15 @@ public class Main {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
 
+		// some things from command line options
 		logger.debug("Options.debug = " + options.debug);
 		int servicePort = getPortByEnv(options.servicePort);
 		logger.debug("servicePort = " + servicePort);
 		logger.debug("image location = " + options.imageLocation);
+
+		// some things from the environment (DB params are elsewhere)
 		String basicAuth = System.getenv("BASIC_AUTH");
+		boolean wsDevMode = Boolean.valueOf(System.getenv("WS_DEV_MODE"));
 
 		port(servicePort);
 
@@ -197,9 +201,12 @@ public class Main {
 
 		// a little api for retreiving the websocket addr
 		get("/api/wsaddr", (req, res) -> {
-
+			// in production the ws port is default (proxies handle the switchover)
+			// in development, the react-script components do not proxy websockets
+			//   so we have to go against the java server port directly
+			String portString = (wsDevMode) ? ":" + servicePort : "";
 			String wsScheme = (Boolean.valueOf(req.queryParams("ssl")) ? "wss://" : "ws://");
-			return "{\"address\":\"" + wsScheme + req.queryParams("host") + ":" + servicePort + "/ws" + "\"}";
+			return "{\"address\":\"" + wsScheme + req.queryParams("host") + portString + "/ws\"}";
 		});
 
 		// the last thing is the anything -> 404 override, return the index page
