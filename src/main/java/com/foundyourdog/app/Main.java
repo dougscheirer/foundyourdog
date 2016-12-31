@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Properties;
-import java.util.logging.Level;
+import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +80,21 @@ public class Main {
 			halt(401);
 	}
 
+	private static boolean checkBasicAuth(Request req, Response res, String authCred) {
+		Boolean authenticated = false;
+		String auth = req.headers("Authorization");
+		if (auth != null && auth.startsWith("Basic")) {
+			String b64Credentials = auth.substring("Basic".length()).trim();
+			String credentials = new String(Base64.getDecoder().decode(b64Credentials));
+			if (credentials.equals(authCred))
+				return true;
+		}
+
+		res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+		res.status(401);
+		return false;
+	}
+
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
@@ -88,6 +103,7 @@ public class Main {
 		int servicePort = getPortByEnv(options.servicePort);
 		logger.debug("servicePort = " + servicePort);
 		logger.debug("image location = " + options.imageLocation);
+		String basicAuth = System.getenv("BASIC_AUTH");
 
 		port(servicePort);
 
@@ -118,13 +134,19 @@ public class Main {
 		// websockets: we got em
 		webSocket("/ws", WebsocketHandler.class);
 
-		// authentication filter
+		// authentication filters
 		/*
 		 * the pattern here is: /api/auth : requires authenticated user session
 		 * /api/admin: requires authenticated admin session (anything else): no
 		 * auth required
 		 */
 		before((request, response) -> {
+			// dev mode on heroku, require basic auth
+			if (!basicAuth.isEmpty()) {
+				if (!checkBasicAuth(request, response, basicAuth))
+					return;
+			}
+
 			if (request.pathInfo().startsWith("/api/auth/")) {
 				checkAuthentication(request, response);
 			} else if (request.pathInfo().startsWith("/api/admin/")) {
@@ -132,13 +154,6 @@ public class Main {
 			} else {
 				// it's legit
 			}
-		});
-
-		// in spark 2.5 you can just say redirect.get(path1, path2)
-		// also in spark 2.5, svg image transfer is broken
-		get("/", (req, res) -> {
-			res.redirect("/index.html");
-			return res.body();
 		});
 
 		// basics, login, logout, and an auth check method
@@ -182,7 +197,8 @@ public class Main {
 
 		// a little api for retreiving the websocket addr
 		get("/api/wsaddr", (req, res) -> {
-			String wsScheme = (req.scheme().equals("https") ? "wss:" : "ws:");
+
+			String wsScheme = (Boolean.valueOf(req.queryParams("ssl")) ? "wss://" : "ws://");
 			return "{\"address\":\"" + wsScheme + req.queryParams("host") + ":" + servicePort + "/ws" + "\"}";
 		});
 
@@ -190,7 +206,7 @@ public class Main {
 		// instead
 		get("/*", (req, res) -> {
 			// if it's a /ws request, throw a NotConsumedException
-			if (req.pathInfo().equals("/ws") || 
+			if (req.pathInfo().equals("/ws") ||
 				req.pathInfo().equals("/favicon.ico") ||
 				req.pathInfo().startsWith("/img/") ||
 				req.pathInfo().startsWith("/static/")) {

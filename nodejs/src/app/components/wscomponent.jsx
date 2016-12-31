@@ -30,7 +30,9 @@ class WSComponent extends Component {
   getWebSocketAddr() {
     try {
       // TODO: either make dev mode forward websockets, or switch to pusher
-      fetch("/api/wsaddr?host=" + window.location.hostname).then((res) => {
+      const useSSL = window.location.protocol === "https:"
+      fetch("/api/wsaddr?ssl=" + useSSL + "&host=" + window.location.hostname,
+        { credentials: 'include' }).then((res) => {
         if (!res.ok) {
           this.setState({wsaddr_timer: setTimeout(() => { this.getWebSocketAddr() }, 5000)})
           toastr.error("Error connecting to server, retrying", undefined, { preventDuplicates : true, timeout: 0 })
