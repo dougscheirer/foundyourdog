@@ -86,10 +86,14 @@ public class Main {
 		if (auth != null && auth.startsWith("Basic")) {
 			String b64Credentials = auth.substring("Basic".length()).trim();
 			String credentials = new String(Base64.getDecoder().decode(b64Credentials));
-			if (credentials.equals(authCred))
+			if (credentials.equals(authCred)) {
+				logger.error("Auth PROVIDED for " + req.pathInfo());
 				return true;
+			}
+			logger.error("Auth INCORRECT for " + req.pathInfo());
 		}
 
+		logger.error("Auth NOT PROVIDED for " + req.pathInfo());
 		res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
 		res.status(401);
 		return false;
