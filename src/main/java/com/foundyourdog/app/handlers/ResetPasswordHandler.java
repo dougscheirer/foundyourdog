@@ -37,7 +37,7 @@ public class ResetPasswordHandler implements Route {
 		}
 		
 		// send an email with the information
-		String url = request.scheme() + "://" + request.host() + "/";
+		String url = Main.assumeHTTPS(request) + "://" + request.host() + "/";
 		if (!Mailer.sendMail("Your password was reset", reset.getEmail(), "Your password was reset.<br><a href=\"" + url + "\">" + url + "</a>")) {
 			response.status(500);
 			response.body("Sever error");

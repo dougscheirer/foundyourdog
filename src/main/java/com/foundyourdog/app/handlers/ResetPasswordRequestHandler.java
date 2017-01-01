@@ -47,7 +47,7 @@ public class ResetPasswordRequestHandler implements Route {
 		} 
 		
 		// send an email with the information
-		String resetLink = request.scheme() + "://" + request.host() + "/reset/" + resetToken;
+		String resetLink = Main.assumeHTTPS(request) + "://" + request.host() + "/reset/" + resetToken;
 		if (!Mailer.sendMail("Password reset request", 
 				auth.getUser(), 
 				"To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>")) {

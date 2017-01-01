@@ -106,6 +106,10 @@ public class Main {
 				path.startsWith("/static/");
 	}
 
+	public static String assumeHTTPS(Request req) {
+		return (Boolean.valueOf(System.getenv("ASSUME_HTTPS"))) ? "https" : req.scheme(); 
+	}
+	
 	public static void main(String[] args) {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
