@@ -79,6 +79,12 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.9.6</version>
 		</dependency>
+    <!-- sendgrid integration -->
+    <dependency>
+      <groupId>com.sendgrid</groupId>
+      <artifactId>sendgrid-java</artifactId>
+      <version>3.1.0</version>
+    </dependency>
 		<!-- heroku deployment app -->
     <dependency>
       <groupId>com.heroku.sdk</groupId>
@@ -151,12 +157,13 @@
                               <filtering>true</filtering>
                           </resource>
                       </resources>
-		      <nonFilteredFileExtensions>
-	              	<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-              		<nonFilteredFileExtension>woff</nonFilteredFileExtension>
-            		<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-            		<nonFilteredFileExtension>eot</nonFilteredFileExtension>
-          	      </nonFilteredFileExtensions>
+		                  <nonFilteredFileExtensions>
+      	              	<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                    		<nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                    		<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                    		<nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+              	      </nonFilteredFileExtensions>
                   </configuration>
               </execution>
           </executions>

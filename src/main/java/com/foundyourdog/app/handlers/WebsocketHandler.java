@@ -39,7 +39,7 @@ public class WebsocketHandler {
 	public void onConnect(Session user) throws Exception {
     	// generate a UUID for this session, the client will use it in other auth attempts
 		String uuid = UUID.randomUUID().toString();
-    	logger.error("Connection for " + uuid);
+   	logger.debug("Connection for " + uuid);
 		websocketMap.put(user, new WSSessionData(uuid));
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.REGISTER, "id", uuid);
 		sendMessage(user.getRemote(), msg);
@@ -110,14 +110,14 @@ public class WebsocketHandler {
 		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
 		Stream<Entry<Session, WSSessionData>> entries = websocketMap.entrySet().stream()
 				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().sessionID.equals(cookie));
-		logger.error("request modified entry for " + cookie + "/" + user.getHandle());
+		logger.debug("request modified entry for " + cookie + "/" + user.getHandle());
 		try {
 			entries.forEach(entry -> {
 				WSSessionData s = entry.getValue();
 				s.userID = user.getUuid();
 				entry.setValue(s);
 				sendMessage(entry.getKey().getRemote(), msg);
-				logger.error("modified entry for " + cookie + "/" + user.getHandle());
+				logger.debug("modified entry for " + cookie + "/" + user.getHandle());
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,8 +141,7 @@ public class WebsocketHandler {
 				broadcastMessage(msg);
 				break;
 			default:
-				logger.error("Received unhandled message type:");
-				logger.error(message);
+				logger.error("Received unhandled message type:" + message);
 				break;
 			}
 		} catch (IOException e) {
@@ -164,7 +163,7 @@ public class WebsocketHandler {
 					s.userID = null;
 					entry.setValue(s);
 					sendMessage(entry.getKey().getRemote(), msg);
-					logger.error("removed entry for " + s.sessionID + "/" + u.getHandle());
+					logger.debug("removed entry for " + s.sessionID + "/" + u.getHandle());
 			});
 		} catch (Exception e) {
 			e.printStackTrace();

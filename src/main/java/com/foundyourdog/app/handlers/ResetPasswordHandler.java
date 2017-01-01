@@ -3,6 +3,7 @@ package com.foundyourdog.app.handlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.foundyourdog.app.Answer;
+import com.foundyourdog.app.Mailer;
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.model.ResetPassword;
@@ -36,7 +37,13 @@ public class ResetPasswordHandler implements Route {
 		}
 		
 		// send an email with the information
-		Main.mailResetComplete(reset.getEmail());
+		String url = request.scheme() + "://" + request.host() + "/";
+		if (!Mailer.sendMail("Your password was reset", reset.getEmail(), "Your password was reset.<br><a href=\"" + url + "\">" + url + "</a>")) {
+			response.status(500);
+			response.body("Sever error");
+			return response.body();
+		}
+		
 		return Answer.ok("Reset message sent");
 	}
 }

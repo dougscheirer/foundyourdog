@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.foundyourdog.app.Answer;
+import com.foundyourdog.app.Mailer;
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.model.UserAuth;
@@ -46,7 +47,15 @@ public class ResetPasswordRequestHandler implements Route {
 		} 
 		
 		// send an email with the information
-		Main.mailResetMessage(auth.getUser(), resetToken);
+		String resetLink = request.scheme() + "://" + request.host() + "/reset/" + resetToken;
+		if (!Mailer.sendMail("Password reset request", 
+				auth.getUser(), 
+				"To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>")) {
+			response.status(500);;
+			response.body("Server error");
+			return response.body();
+		}
+
 		return Answer.ok("Reset message sent");
 	}
 }

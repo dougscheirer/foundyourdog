@@ -81,20 +81,20 @@ public class Main {
 	}
 
 	private static boolean checkBasicAuth(Request req, Response res, String authCred) {
-		Boolean authenticated = false;
 		String auth = req.headers("Authorization");
 		if (auth != null && auth.startsWith("Basic")) {
 			String b64Credentials = auth.substring("Basic".length()).trim();
 			String credentials = new String(Base64.getDecoder().decode(b64Credentials));
 			if (credentials.equals(authCred)) {
-				logger.error("Auth PROVIDED for " + req.pathInfo());
+				logger.debug("Auth PROVIDED for " + req.pathInfo());
 				return true;
 			}
-			logger.error("Auth INCORRECT for " + req.pathInfo());
+			logger.debug("Auth INCORRECT for " + req.pathInfo());
 		}
 
-		logger.error("Auth NOT PROVIDE Dfor " + req.pathInfo());
+		logger.debug("Auth NOT PROVIDED for " + req.pathInfo());
 		res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+		res.body("Authentication required");
 		res.status(401);
 		return false;
 	}
@@ -156,12 +156,6 @@ public class Main {
 		 * auth required
 		 */
 		before((request, response) -> {
-			// dev mode on heroku, require basic auth for most paths
-			if (!basicAuth.isEmpty() && !isOtherHandler(request.pathInfo())) {
-				if (!checkBasicAuth(request, response, basicAuth))
-					return;
-			}
-
 			if (request.pathInfo().startsWith("/api/auth/")) {
 				checkAuthentication(request, response);
 			} else if (request.pathInfo().startsWith("/api/admin/")) {
@@ -234,12 +228,18 @@ public class Main {
 
 		exception(NotConsumedException.class, (e, req, res) -> {
 			// keep going?
-			logger.error("Not consumed, try other things: " + req.pathInfo());
+			logger.debug("Not consumed, try other things: " + req.pathInfo());
 		});
 
 		exception(NotFoundException.class, (e, req, res) -> {
 			try {
-				logger.error("returning default index.html for " + req.pathInfo());
+				// dev mode on heroku, require "special" auth for anything that returns index.html
+				if (!basicAuth.isEmpty()) {
+					if (!checkBasicAuth(req, res, basicAuth))
+						return;
+				}
+
+				logger.info("returning default index.html for " + req.pathInfo());
 				res.status(200);
 				InputStream is = Main.class.getResourceAsStream("/public/index.html");
 				res.body(new String(IOUtils.toByteArray(is), "UTF-8"));
@@ -253,48 +253,5 @@ public class Main {
 			logger.error("Exception handling route: " + request.url());
 			logger.error(exception.getMessage());
 		});
-	}
-
-	public static void mailResetMessage(String user, String resetToken) {
-		String from = "fydo-admin@foundyourdog.com";
-		String host = "localhost";
-		Properties properties = System.getProperties();
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.smtp.port", "1025");
-		javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);
-
-		try {
-			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user));
-			message.setSubject("Password reset request");
-			String resetLink = "http://foundyourdog.com/reset/" + resetToken;
-			message.setContent(
-					"To reset your password, follow this link: <a href=\"" + resetLink + "\">" + resetLink + "</a>",
-					"text/html");
-			Transport.send(message);
-		} catch (MessagingException mex) {
-			mex.printStackTrace();
-		}
-	}
-
-	public static void mailResetComplete(String email) {
-		String from = "fydo-admin@foundyourdog.com";
-		String host = "localhost";
-		Properties properties = System.getProperties();
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.smtp.port", "1025");
-		javax.mail.Session session = javax.mail.Session.getDefaultInstance(properties);
-
-		try {
-			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(from));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-			message.setSubject("Your password was reset");
-			message.setContent("Your password was reset successfully", "text/html");
-			Transport.send(message);
-		} catch (MessagingException mex) {
-			mex.printStackTrace();
-		}
 	}
 }
