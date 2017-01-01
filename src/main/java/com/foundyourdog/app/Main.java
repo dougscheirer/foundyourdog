@@ -93,10 +93,17 @@ public class Main {
 			logger.error("Auth INCORRECT for " + req.pathInfo());
 		}
 
-		logger.error("Auth NOT PROVIDED for " + req.pathInfo());
+		logger.error("Auth NOT PROVIDE Dfor " + req.pathInfo());
 		res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
 		res.status(401);
 		return false;
+	}
+
+	private static boolean isOtherHandler(String path) {
+		return path.equals("/ws") ||
+				path.equals("/favicon.ico") ||
+				path.startsWith("/img/") ||
+				path.startsWith("/static/");
 	}
 
 	public static void main(String[] args) {
@@ -149,8 +156,8 @@ public class Main {
 		 * auth required
 		 */
 		before((request, response) -> {
-			// dev mode on heroku, require basic auth
-			if (!basicAuth.isEmpty()) {
+			// dev mode on heroku, require basic auth for most paths
+			if (!basicAuth.isEmpty() && !isOtherHandler(request.pathInfo())) {
 				if (!checkBasicAuth(request, response, basicAuth))
 					return;
 			}
@@ -217,10 +224,7 @@ public class Main {
 		// instead
 		get("/*", (req, res) -> {
 			// if it's a /ws request, throw a NotConsumedException
-			if (req.pathInfo().equals("/ws") ||
-				req.pathInfo().equals("/favicon.ico") ||
-				req.pathInfo().startsWith("/img/") ||
-				req.pathInfo().startsWith("/static/")) {
+			if (isOtherHandler(req.pathInfo())) {
 				// let someone else do this
 				throw new NotConsumedException();
 			}
