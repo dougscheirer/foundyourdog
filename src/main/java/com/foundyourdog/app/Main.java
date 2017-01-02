@@ -38,7 +38,9 @@ import com.foundyourdog.app.handlers.GetUserIncidents;
 import com.foundyourdog.app.handlers.GetUserMessages;
 import com.foundyourdog.app.handlers.GetUsersIndexHandler;
 import com.foundyourdog.app.handlers.ImageDeleteHandler;
+import com.foundyourdog.app.handlers.ImageUploadFileHandler;
 import com.foundyourdog.app.handlers.ImageUploadHandler;
+import com.foundyourdog.app.handlers.ImageUploadUpdateHandler;
 import com.foundyourdog.app.handlers.LoginHandler;
 import com.foundyourdog.app.handlers.LogoutHandler;
 import com.foundyourdog.app.handlers.MarkConversationHandler;
@@ -61,12 +63,27 @@ public class Main {
 		return request.session().attribute(SESSION_USERID);
 	}
 
-	static int getPortByEnv(int optionsPort) {
+	private static int getPortByEnv(int optionsPort) {
 		String port = System.getenv("PORT");
 		if (port != null) {
 			return Integer.parseInt(port);
 		}
 		return optionsPort;
+	}
+
+	private static String cloudinarySecret() {
+		String cs = System.getenv("CLOUDINARY_API_SECRET");
+		return (cs != null) ? cs : ""; 
+	}
+
+	private static String cloudinaryUrl() {
+		String cs = System.getenv("CLOUDINARY_URL");
+		return (cs != null) ? cs : ""; 
+	}
+
+	private static String cloudinaryApiKey() {
+		String cs = System.getenv("CLOUDINARY_API_KEY");
+		return (cs != null) ? cs : ""; 
 	}
 
 	private static void checkAuthentication(Request request, Response res) {
@@ -192,7 +209,14 @@ public class Main {
 		post("/api/auth/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		get("/api/reports/:id", new GetIncidentDetailHandler(model));
 
-		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation));
+		// complicated, but here goes:
+		// "new" - start the process, create the DB entry, return enough info to xfer the file in the next step
+		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation, cloudinarySecret(), cloudinaryUrl(), cloudinaryApiKey()));
+		// "upload" - actually xfer the file (dev only, prod goes to cloudinary)
+		post("/api/auth/report/images/upload/:id", new ImageUploadFileHandler(model, options.imageLocation));
+		// ":id" - update the DB record to show the file is in cloudinary now, that we have the data for it, etc.
+		put("/api/auth/report/images/:id", new ImageUploadUpdateHandler(model));
+		
 		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
 
