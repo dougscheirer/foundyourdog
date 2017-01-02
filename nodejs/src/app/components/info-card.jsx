@@ -51,7 +51,7 @@ class ShowInfoCard extends Component {
 
 	urlFromImageID(incident) {
 		if (!!this.state.image_source) return this.state.image_source
-		if (!!incident.image && !!incident.image.uuid)	return "/api/images/" + incident.image.uuid
+		if (!!incident.image)	return incident.image.imageUrl
 		return no_image
 	}
 

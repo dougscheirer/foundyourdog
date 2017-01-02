@@ -1,4 +1,4 @@
-import { auth_fetch, auth_post } from './login'
+import { auth_fetch, auth_post, auth_put } from './login'
 import cloudinary from 'cloudinary-core'
 
 export const uploadReportImage = (image_info) => {
@@ -25,25 +25,30 @@ export const getUnassignedImages = () => {
 // 1) upload to cloudindary or us (dev mode) (and get URL info back)
 // 2) send our server the URL info for the upload
 export const uploadImage = (imageForm) => {
-	return auth_post('/api/auth/report/images/new', imageForm, (res) => {
-		const imageObj = res;
-		let form = new FormData();
-		form.append('file', imageForm.get('file'));
-		form.append('signature', imageObj.uploadSignature);
-		form.append('api_key', imageObj.apiKey)
-		form.append('timestamp', imageObj.upload_date)
+	return dispatch => {
+		dispatch(auth_post('/api/auth/report/images/new', imageForm, (res) => {
+			const imageObj = res;
+			let form = new FormData();
+			form.append('file', imageForm.get('file'));
+			form.append('signature', imageObj.uploadSignature);
+			form.append('api_key', imageObj.apiKey)
+			form.append('timestamp', imageObj.upload_date)
 
-		return fetch(imageObj.uploadUrl,
-				{ method: "POST",
-					body: form
-				}).then((res) => {
-							if (res.ok) {
-								return res.json()
-							}
-						}).then((res) => {
-							auth_post('/api/auth/report/images/' + res.uuid, { ...imageObj, location: res.secure_url }), (res) => {
+			return dispatch =>
+				fetch(imageObj.uploadUrl,
+					{ method: "POST",
+						body: form
+					})
+				.then((res) => {
+					if (res.ok)	return res.json()
+				})
+				.then((res) => {
+					if (!!res)
+						dispatch(auth_put('/api/auth/report/images/' + imageObj.uuid,
+							JSON.stringify({ ...imageObj, imageLocation: res.secure_url }), (res) => {
 								return getUnassignedImages()
-							}
-						})
-	})
+					}))
+				})
+		}))
+	}
 }

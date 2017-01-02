@@ -82,8 +82,8 @@ class ReportSummary extends Component {
 				position: { lat: center.lat, lng: center.lng }
 			}];
 
-			const imageSource = (!!report.image && !!report.image.uuid) ?
-														"/api/images/" + report.image.uuid :
+			const imageSource = (!!report.image && !!report.image.imageUrl) ?
+														report.image.imageUrl :
 														no_image;
 
 			return (

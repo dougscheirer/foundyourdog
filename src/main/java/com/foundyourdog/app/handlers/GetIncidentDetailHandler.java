@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.foundyourdog.app.Answer;
 import com.foundyourdog.app.model.Dog;
 import com.foundyourdog.app.model.Image;
+import com.foundyourdog.app.model.ImageDetailResponse;
 import com.foundyourdog.app.model.Incident;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.model.ReportDetail;
@@ -41,7 +42,7 @@ public class GetIncidentDetailHandler extends AbstractRequestHandler<EmptyPayloa
 		details.setIncident(i.get());
 		details.setDog(d.get());
 		if (img.isPresent()) {
-			details.setImage(img.get());
+			details.setImage(new ImageDetailResponse(img.get()));
 		}
 		return new Answer(200, dataToJson(details));
 	}

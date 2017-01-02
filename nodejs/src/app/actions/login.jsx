@@ -102,7 +102,12 @@ export const auth_method = (url, method, fn_complete, fn_err, body) => {
 			dispatch,
 			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: headers})},
 			(res) => { return fn_complete(res) },
-			(res) => { fn_err(res) } )
+			(res) => {
+				if (!!!fn_err)
+					res.text().then((res) => console.log("auth_method error: " + res))
+				else
+					fn_err(res)
+			})
 		}
 }
 
@@ -112,6 +117,10 @@ export const auth_fetch = (url, fn_complete, fn_err) => {
 
 export const auth_post = (url, data, fn_complete, fn_err) => {
 	return auth_method(url, "POST", fn_complete, fn_err, data)
+}
+
+export const auth_put = (url, data, fn_complete, fn_err) => {
+	return auth_method(url, "PUT", fn_complete, fn_err, data)
 }
 
 export const auth_delete = (url, fn_complete, fn_err) => {

@@ -268,9 +268,19 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public String updateImage(Image i) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean updateImage(Image i) {
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery(
+					"UPDATE IMAGES SET user_id=:user_id, image_location=:image_location, upload_date=:upload_date, tags=:tags, dog_id=:dog_id, status=:status WHERE uuid=:uuid")
+					.addParameter("uuid", i.getUuid()).addParameter("user_id", i.getUser_id())
+					.addParameter("image_location", i.getImage_location())
+					.addParameter("upload_date", i.getUpload_date()).addParameter("dog_id", i.getDog_id())
+					.addParameter("tags", i.getTags()).addParameter("status", i.getStatus()).executeUpdate();
+			return true;
+		} catch (Sql2oException e) {
+			logger.error(e.getLocalizedMessage());
+		}
+		return false;
 	}
 
 	@Override
