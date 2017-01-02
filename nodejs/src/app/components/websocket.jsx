@@ -22,7 +22,7 @@ class Websocket extends React.Component {
     }
 
     setupWebsocket() {
-        let websocket = new WebSocket(this.props.url, this.props.protocol)
+        let websocket = new WebSocket(this.props.url, (!!this.props.protocol ? this.props.protocol : []))
         this.setState({ws: websocket});
 
         websocket.onopen = () => {
