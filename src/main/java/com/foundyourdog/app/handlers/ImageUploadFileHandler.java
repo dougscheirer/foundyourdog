@@ -13,7 +13,10 @@ import javax.servlet.http.Part;
 
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Image;
+import com.foundyourdog.app.model.ImageDetail;
 import com.foundyourdog.app.model.Model;
+import com.foundyourdog.app.model.UploadResponse;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -46,13 +49,13 @@ public class ImageUploadFileHandler implements Route {
 			return response.body();
 		}
 		
-		dbImage.get().setImage_location(this.imageLocation);
 		// direct file upload to the app server (dev mode)
 	    MultipartConfigElement multipartConfigElement = new MultipartConfigElement("/tmp");
 	    request.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
-	    Part file = request.raw().getPart("file"); //file is name of the upload form
-	    InputStream is = (InputStream) file.getInputStream();
-	    FileOutputStream os = new FileOutputStream(new File(this.imageLocation, dbImage.get().getUuid()));
+	    Part mimefile = request.raw().getPart("file"); // file is name of the upload form
+	    InputStream is = (InputStream) mimefile.getInputStream();
+	    File file = new File(this.imageLocation, dbImage.get().getUuid());
+	    FileOutputStream os = new FileOutputStream(file);
 	    
 	    int read = 0;
 		byte[] bytes = new byte[1024];
@@ -64,10 +67,15 @@ public class ImageUploadFileHandler implements Route {
 		is.close();
 	
 		// update the DB record
+		dbImage.get().setImage_location(file.getPath());
 		model.updateImage(dbImage.get());
 		
+		// prepare the response
+		UploadResponse ur = new UploadResponse();
+		ur.setSecure_url("/" + dbImage.get().getUuid()); // location is /:id, makes it easy to generate a URL
+		
 		response.status(200);
-		response.body(AbstractRequestHandler.dataToJson(dbImage));
+		response.body(AbstractRequestHandler.dataToJson(ur));
 
 		return response.body(); 
 	}

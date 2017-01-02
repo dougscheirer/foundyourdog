@@ -146,7 +146,7 @@ class NewFormBase extends Component {
 		const uploaded = this.state.uploaded_image;
 
 		if (!!uploaded) {
-			const image_src = "/api/images/" + this.state.uploaded_image.uuid;
+			const image_src = this.state.uploaded_image.imageUrl;
 	    return (
 	    	<div>
 	    		<div>

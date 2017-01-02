@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Image;
+import com.foundyourdog.app.model.ImageDetailResponse;
 import com.foundyourdog.app.model.Model;
 import spark.Request;
 import spark.Response;
@@ -34,7 +35,9 @@ public class FindUnassignedImageHandler implements Route {
 		}
 		
 		response.status(200);
-		response.body(AbstractRequestHandler.dataToJson(image.get()));
+		ImageDetailResponse idr = new ImageDetailResponse(image.get());
+		idr.setImageUrl(image.get().getImage_location());
+		response.body(AbstractRequestHandler.dataToJson(idr));
 		return response.body();
 	}
 }
