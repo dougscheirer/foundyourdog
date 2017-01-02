@@ -119,3 +119,7 @@ a:hover {
 
 .message-text {
 }
+
+.jumbotron p {
+  margin-top: 15px;
+}
