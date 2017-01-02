@@ -14,6 +14,10 @@ public class Image implements Validatable {
 	private String tags;
 	private String dog_id;
 	private String status;
+	// TODO: refactor this, the Image in the DB vs the Image client/server data
+	private String uploadSignature;
+	private String uploadUrl;
+	private String apiKey;
 	
 	@Override
 	public boolean isValid() {
