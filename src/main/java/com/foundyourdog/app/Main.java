@@ -71,29 +71,6 @@ public class Main {
 		return optionsPort;
 	}
 
-	private static String cloudinarySecret() {
-		String cs = System.getenv("CLOUDINARY_API_SECRET");
-		return (cs != null) ? cs : ""; 
-	}
-
-	private static String cloudinaryCloudName() {
-		String cs = System.getenv("CLOUDINARY_NAME");
-		return (cs != null) ? cs : ""; 
-	}
-
-	private static String cloudinaryUrl() {
-		String cname =	cloudinaryCloudName();
-		if (cname.isEmpty())
-			return cname;
-		// might as well generate it from the cloud name
-		return "https://api.cloudinary.com/v1_1/" + cname + "/upload";
-	}
-
-	private static String cloudinaryApiKey() {
-		String cs = System.getenv("CLOUDINARY_API_KEY");
-		return (cs != null) ? cs : ""; 
-	}
-
 	private static void checkAuthentication(Request request, Response res) {
 		if (getCurrentUser(request) == null)
 			halt(401);
@@ -219,11 +196,12 @@ public class Main {
 
 		// complicated, but here goes:
 		// "new" - start the process, create the DB entry, return enough info to xfer the file in the next step
-		post("/api/auth/report/images/new", new ImageUploadHandler(model, options.imageLocation, cloudinarySecret(), cloudinaryUrl(), cloudinaryApiKey()));
+		CloudinaryOpts opts = new CloudinaryOpts();
+		post("/api/auth/report/images/new", new ImageUploadHandler(model, opts));
 		// "upload" - actually xfer the file (dev only, prod goes to cloudinary)
 		post("/api/auth/report/images/upload/:id", new ImageUploadFileHandler(model, options.imageLocation));
 		// ":id" - update the DB record to show the file is in cloudinary now, that we have the data for it, etc.
-		put("/api/auth/report/images/:id", new ImageUploadUpdateHandler(model, cloudinaryCloudName()));
+		put("/api/auth/report/images/:id", new ImageUploadUpdateHandler(model, opts));
 		
 		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));

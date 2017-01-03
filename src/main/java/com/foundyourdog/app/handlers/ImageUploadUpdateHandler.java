@@ -12,6 +12,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 
 import com.foundyourdog.app.Answer;
+import com.foundyourdog.app.CloudinaryOpts;
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Image;
 import com.foundyourdog.app.model.ImageDetail;
@@ -22,13 +23,13 @@ import spark.Response;
 import spark.Route;
 
 public class ImageUploadUpdateHandler extends AbstractRequestHandler<ImageDetail> {
-	private String cloudinaryCloudID;
-	
-	public ImageUploadUpdateHandler(Model model, String cloudinaryCloudID) {
+	private CloudinaryOpts cloudinaryOpts;
+
+	public ImageUploadUpdateHandler(Model model, CloudinaryOpts opts) {
 		super(ImageDetail.class, model);
-		this.cloudinaryCloudID = cloudinaryCloudID;
+		this.cloudinaryOpts = opts;
 	}
-	
+
 	@Override
 	protected Answer processImpl(ImageDetail value, Map<String, String> urlParams, boolean shouldReturnHtml,
 			Request request) {
@@ -39,25 +40,27 @@ public class ImageUploadUpdateHandler extends AbstractRequestHandler<ImageDetail
 		if (dbImage.get() == null) {
 			return new Answer(400); // bad request
 		}
-		
+
 		// validate that the current user is the owner of the db object
 		if (!Main.getCurrentUser(request).getUuid().equals(dbImage.get().getUser_id())) {
 			return new Answer(401); // forbidden
 		}
-		
+
 		// validate that the location is either a local path or cloudinary
 		// location should be either /:id or start with https://res.cloudinary.com/:cloud_id/image/upload/...
-		if (!value.getImageLocation().startsWith("/") && 
-			!value.getImageLocation().startsWith("https://res.cloudinary.com/" + cloudinaryCloudID + "/image/upload/")) {
+		if (!value.getUpload_location_response().startsWith("/") &&
+			!value.getUpload_location_response().startsWith("https://res.cloudinary.com/" + cloudinaryOpts.getCloudName() + "/image/upload/")) {
 			return new Answer(400);
 		}
 
-		dbImage.get().setImage_location(value.getImageLocation());
-		if (!model.updateImage(dbImage.get())) {
-			return new Answer(500);
+		// if it's a local path, this step is not required
+		if (!value.getUpload_location_response().startsWith("/")) {
+			dbImage.get().setImage_location(value.getUpload_location_response());
+			if (!model.updateImage(dbImage.get())) {
+				return new Answer(500);
+			}
 		}
-
+		
 		return Answer.ok(dataToJson(new ImageDetailResponse(dbImage.get())));
 	}
-
 }

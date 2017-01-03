@@ -12,6 +12,7 @@ import javax.servlet.http.Part;
 
 import com.cloudinary.Cloudinary;
 import com.foundyourdog.app.Answer;
+import com.foundyourdog.app.CloudinaryOpts;
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.model.Image;
 import com.foundyourdog.app.model.ImageDetail;
@@ -22,22 +23,15 @@ import spark.Response;
 import spark.Route;
 
 public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
+	private CloudinaryOpts cloudinaryOpts;
 	
-	private Model model;
-	private String cloudinarySecret;
-	private String cloudinaryUrl;
-	private String cloudinaryApiKey;
-	
-	public ImageUploadHandler(Model model, String imageLocation, String cloudinarySecret, String cloudinaryUrl, String cloudinaryApiKey) {
+	public ImageUploadHandler(Model model, CloudinaryOpts opts) {
 		super(EmptyPayload.class, model);
-		this.model = model;
-		this.cloudinarySecret = cloudinarySecret;
-		this.cloudinaryUrl = cloudinaryUrl;
-		this.cloudinaryApiKey = cloudinaryApiKey;
+		this.cloudinaryOpts = opts;
 	}
 	
 	private boolean usingCloudinary() {
-		return !this.cloudinarySecret.isEmpty();
+		return !this.cloudinaryOpts.getApiKey().isEmpty();
 	}
 	
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml,
@@ -65,15 +59,15 @@ public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 			map.put("timestamp", newImage.getUpload_date().getTime());
 			map.put("public_id", newImage.getUuid());
 			// sign them
-			String signature = cloudinary.apiSignRequest(map, this.cloudinarySecret);
+			String signature = cloudinary.apiSignRequest(map, this.cloudinaryOpts.getApiSecret());
 			// return the data for the browser to do the work
 			retVal.setUploadSignature(signature);
-			retVal.setUploadUrl(this.cloudinaryUrl);
-			retVal.setApiKey(this.cloudinaryApiKey);
+			retVal.setUploadUrl(this.cloudinaryOpts.getUploadUrl());
+			retVal.setApiKey(this.cloudinaryOpts.getApiKey());
 		} else {
 			retVal.setUploadSignature(dbImage.getUuid());
 			// TODO: make this a little less static definition
-			retVal.setUploadUrl(request.scheme() + "//" + request.host() + "/api/auth/report/images/upload/" + dbImage.getUuid());
+			retVal.setUploadUrl(request.scheme() + "://" + "localhost:3000" + "/api/auth/report/images/upload/" + dbImage.getUuid());
 		}			
 		
 		return new Answer(200, AbstractRequestHandler.dataToJson(retVal));

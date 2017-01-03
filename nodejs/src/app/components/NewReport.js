@@ -39,7 +39,7 @@ class NewFormBase extends Component {
 		const data = new FormData()
 		data.append('file', file)
 
-		this.props.uploadImage(data)
+		this.props.uploadImage(data, file)
 	}
 
 	uploadImage(e) {
@@ -372,7 +372,7 @@ const mapDispatchToProps = (dispatch, myprops) => ({
 	onLoginRequired : () => { dispatch(showLogin()); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
 	getUnassignedImages: () => { dispatch(getUnassignedImages()); },
-	uploadImage : (imageForm) => { dispatch(uploadImage(imageForm)) },
+	uploadImage : (imageForm, file) => { dispatch(uploadImage(imageForm, file)) },
 	submitReportForm : (url, data, post) => { dispatch(submitReportForm(url, data, post)) }
 });
 

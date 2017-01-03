@@ -43,7 +43,7 @@ public class ImageUploadFileHandler implements Route {
 		}
 		
 		// validate that the current user is the owner of the db object
-		if (Main.getCurrentUser(request).getUuid() != dbImage.get().getUser_id()) {
+		if (!Main.getCurrentUser(request).getUuid().equals(dbImage.get().getUser_id())) {
 			response.status(401);
 			response.body("Forbidden");
 			return response.body();
@@ -66,13 +66,13 @@ public class ImageUploadFileHandler implements Route {
 		os.close();
 		is.close();
 	
-		// update the DB record
-		dbImage.get().setImage_location(file.getPath());
+		// update the DB record (the '/' is helpful for telling local from remote paths)
+		dbImage.get().setImage_location("/" + this.imageLocation);
 		model.updateImage(dbImage.get());
 		
 		// prepare the response
 		UploadResponse ur = new UploadResponse();
-		ur.setSecure_url("/" + dbImage.get().getUuid()); // location is /:id, makes it easy to generate a URL
+		ur.setSecure_url("/" + dbImage.get().getUuid()); // we just need something that starts with a '/' here
 		
 		response.status(200);
 		response.body(AbstractRequestHandler.dataToJson(ur));

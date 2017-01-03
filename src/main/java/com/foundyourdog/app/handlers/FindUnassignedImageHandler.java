@@ -36,7 +36,7 @@ public class FindUnassignedImageHandler implements Route {
 		
 		response.status(200);
 		ImageDetailResponse idr = new ImageDetailResponse(image.get());
-		idr.setImageUrl(image.get().getImage_location());
+		idr.setImageUrl(request, image.get().getImage_location());
 		response.body(AbstractRequestHandler.dataToJson(idr));
 		return response.body();
 	}
