@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS images (
   upload_date timestamptz,
   tags text,
   dog_id text,
-    status text
+  status text
 );
 
 CREATE TABLE IF NOT EXISTS messages (

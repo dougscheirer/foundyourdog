@@ -29,7 +29,7 @@ public class GetImageHandler implements Route {
 			return response.body();
 		}
 
-		Path path = Paths.get(img.get().getImage_location() + "/" + img.get().getUuid());
+		Path path = Paths.get("." + img.get().getImage_location() + "/" + img.get().getUuid());
 		byte[] data = null;
 		try {
 			data = Files.readAllBytes(path);
