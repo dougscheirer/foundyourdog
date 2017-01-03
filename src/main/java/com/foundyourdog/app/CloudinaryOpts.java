@@ -20,9 +20,10 @@ public class CloudinaryOpts {
 	}
 	
 	public CloudinaryOpts() {
-		this.apiSecret = System.getenv("CLOUDINARY_API_SECRET");
-		this.cloudName = System.getenv("CLOUDINARY_NAME");
-		this.apiKey = System.getenv("CLOUDINARY_API_KEY");
+		this.apiSecret = ConfigConsts.getCloudinaryApiSecret();
+		this.cloudName = ConfigConsts.getCloudinaryName();
+		this.apiKey = ConfigConsts.getCloudinaryApiKey();
+		
 		this.uploadUrl = "https://api.cloudinary.com/v1_1/" + cloudName + "/upload";
 		
 		// if any of these are missing, things will fail

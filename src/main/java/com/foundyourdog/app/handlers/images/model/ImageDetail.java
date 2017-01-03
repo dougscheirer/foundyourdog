@@ -1,13 +1,12 @@
 package com.foundyourdog.app.handlers.images.model;
 
-import java.sql.Timestamp;
-
 import com.foundyourdog.app.handlers.Validatable;
 
 import lombok.Data;
-import spark.Request;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ImageDetail extends ImageDetailResponse implements Validatable {
 	public ImageDetail() {
 	}

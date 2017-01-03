@@ -3,9 +3,6 @@ package com.foundyourdog.app.handlers.images;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.MultipartConfigElement;

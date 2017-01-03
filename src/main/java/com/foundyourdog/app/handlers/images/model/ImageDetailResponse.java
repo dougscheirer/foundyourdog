@@ -2,7 +2,6 @@ package com.foundyourdog.app.handlers.images.model;
 
 import java.sql.Timestamp;
 
-import com.foundyourdog.app.handlers.Validatable;
 import com.foundyourdog.app.model.Image;
 
 import lombok.Data;

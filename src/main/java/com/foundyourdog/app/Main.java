@@ -4,14 +4,8 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.Properties;
 import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +60,8 @@ public class Main {
 	}
 
 	private static int getPortByEnv(int optionsPort) {
-		String port = System.getenv("PORT");
-		if (port != null) {
+		String port = ConfigConsts.getPort();
+		if (!port.isEmpty()) {
 			return Integer.parseInt(port);
 		}
 		return optionsPort;
@@ -111,7 +105,7 @@ public class Main {
 	}
 
 	public static String assumeHTTPS(Request req) {
-		return (Boolean.valueOf(System.getenv("ASSUME_HTTPS"))) ? "https" : req.scheme(); 
+		return (ConfigConsts.getAssumeHTTPS()) ? "https" : req.scheme(); 
 	}
 	
 	public static void main(String[] args) {
@@ -125,8 +119,8 @@ public class Main {
 		logger.debug("image location = " + options.imageLocation);
 
 		// some things from the environment (DB params are elsewhere)
-		String basicAuth = System.getenv("BASIC_AUTH");
-		boolean wsDevMode = Boolean.valueOf(System.getenv("WS_DEV_MODE"));
+		String basicAuth = ConfigConsts.getBasicAuth();
+		boolean wsDevMode = ConfigConsts.getWSDevMode();
 
 		port(servicePort);
 

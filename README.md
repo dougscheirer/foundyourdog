@@ -27,5 +27,5 @@ Handy configurables (.env):
 		For production or heroku, the Cloudinary info for image management.  Default is local storage in uploads/images
 	ASSUME_HTTPS
 		For link generation, ignore the actual scheme used and assume it should be HTTPS (e.g. proxying on heroku)
-	admin_email
+	ADMIN_EMAIL
 		For email from addressing, the system email (default is fydo-admin@foundyourdog.com)

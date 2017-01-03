@@ -6,7 +6,6 @@ import java.util.Map;
 import com.foundyourdog.app.Main;
 import com.foundyourdog.app.handlers.AbstractRequestHandler;
 import com.foundyourdog.app.handlers.Answer;
-import com.foundyourdog.app.handlers.incidents.GetIncidentsHandler.IncidentType;
 import com.foundyourdog.app.handlers.incidents.model.IncidentForm;
 import com.foundyourdog.app.model.Dog;
 import com.foundyourdog.app.model.Incident;

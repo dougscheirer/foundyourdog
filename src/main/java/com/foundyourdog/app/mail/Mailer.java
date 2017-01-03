@@ -12,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.foundyourdog.app.ConfigConsts;
 import com.sendgrid.*;
 
 public class Mailer {
@@ -24,16 +25,16 @@ public class Mailer {
 	}
 	
 	public static boolean sendMail(String subject, String toAddr, String message) {
-		String sendgridKey = System.getenv("SENDGRID_API_KEY");
-		if (sendgridKey == null || sendgridKey.isEmpty())
+		String sendgridKey = ConfigConsts.getSendgridAPIKey();
+		if (sendgridKey.isEmpty())
 			return sendLocalMail(subject, toAddr, message);
 	
-		Email from = new Email(getEnv("admin_email", "fydo-admin@foundyourdog.com"));
+		Email from = new Email(ConfigConsts.getAdminEmail());
 	    Email to = new Email(toAddr);
 	    Content content = new Content("text/html", message);
 	    Mail mail = new Mail(from, subject, to, content);
 
-	    SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+	    SendGrid sg = new SendGrid(sendgridKey);
 	    Request request = new Request();
 	    try {
 	      request.method = Method.POST;
