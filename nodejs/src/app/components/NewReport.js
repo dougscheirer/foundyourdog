@@ -37,7 +37,6 @@ class NewFormBase extends Component {
 
 	uploadImageFile(file) {
 		const data = new FormData()
-		data.append('file', file)
 
 		this.props.uploadImage(data, file)
 	}
