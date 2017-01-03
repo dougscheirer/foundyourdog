@@ -42,7 +42,9 @@ public class GetIncidentDetailHandler extends AbstractRequestHandler<EmptyPayloa
 		details.setIncident(i.get());
 		details.setDog(d.get());
 		if (img.isPresent()) {
-			details.setImage(new ImageDetailResponse(img.get()));
+			ImageDetailResponse idr = new ImageDetailResponse(img.get());
+			idr.setImageUrl(request, img.get().getImage_location());
+			details.setImage(idr);
 		}
 		return new Answer(200, dataToJson(details));
 	}
