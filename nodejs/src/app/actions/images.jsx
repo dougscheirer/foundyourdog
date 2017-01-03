@@ -37,8 +37,8 @@ export const uploadImage = (imageForm, file) => {
 			return dispatch =>
 				fetch(imageObj.uploadUrl,
 					{ method: "POST",
-						body: form,
-						credentials: 'include'
+						body: form // ,
+						// credentials: 'include'
 					})
 				.then((res) => {
 					if (res.ok)	return res.json()
