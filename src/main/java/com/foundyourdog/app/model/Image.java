@@ -2,8 +2,9 @@ package com.foundyourdog.app.model;
 
 import java.sql.Timestamp;
 
+import com.foundyourdog.app.handlers.Validatable;
+
 import lombok.Data;
-import com.foundyourdog.app.Validatable;
 
 @Data
 public class Image implements Validatable {

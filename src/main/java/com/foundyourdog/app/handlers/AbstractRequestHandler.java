@@ -12,10 +12,6 @@ import spark.Route;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import com.foundyourdog.app.Answer;
-import com.foundyourdog.app.RequestHandler;
-import com.foundyourdog.app.Validatable;
 import com.foundyourdog.app.model.Model;
 
 public abstract class AbstractRequestHandler<V extends Validatable> implements RequestHandler<V>, Route {

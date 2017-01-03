@@ -14,18 +14,18 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 
+import com.foundyourdog.app.handlers.incidents.model.IncidentBrief;
+import com.foundyourdog.app.handlers.messages.model.DetailMessage;
+import com.foundyourdog.app.handlers.users.ResetPassword;
+import com.foundyourdog.app.handlers.users.model.DetailUser;
+import com.foundyourdog.app.handlers.users.model.PublicUser;
+import com.foundyourdog.app.handlers.users.model.UserSignup;
 import com.foundyourdog.app.model.Dog;
 import com.foundyourdog.app.model.Image;
 import com.foundyourdog.app.model.Incident;
-import com.foundyourdog.app.model.IncidentBrief;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.model.Message;
-import com.foundyourdog.app.model.ResetPassword;
 import com.foundyourdog.app.model.User;
-import com.foundyourdog.app.model.UserSignup;
-import com.foundyourdog.app.handlers.PublicUser;
-import com.foundyourdog.app.handlers.DetailMessage;
-import com.foundyourdog.app.handlers.DetailUser;
 
 public class Sql2oModel implements Model {
 	final static Logger logger = LoggerFactory.getLogger(Sql2oModel.class);

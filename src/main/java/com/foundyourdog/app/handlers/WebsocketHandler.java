@@ -19,11 +19,11 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.foundyourdog.app.SocketMessage;
-import com.foundyourdog.app.SocketNotificationMessage;
-import com.foundyourdog.app.SocketUserMessage;
-import com.foundyourdog.app.WSSessionData;
+import com.foundyourdog.app.handlers.users.model.DetailUser;
+import com.foundyourdog.app.websockets.SocketMessage;
+import com.foundyourdog.app.websockets.SocketNotificationMessage;
+import com.foundyourdog.app.websockets.SocketUserMessage;
+import com.foundyourdog.app.websockets.WSSessionData;
 
 @WebSocket
 public class WebsocketHandler {
