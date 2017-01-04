@@ -1,6 +1,7 @@
 package com.foundyourdog.app.handlers.images;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,16 +52,23 @@ public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("timestamp", newImage.getUpload_date().getTime());
 			map.put("public_id", newImage.getUuid());
+			ArrayList<String> tags = new ArrayList();
+			tags.add("imageID:" + uuid);
+			tags.add("userID:" + newImage.getUser_id());
+			map.put("tags", tags);
 			// sign them
 			String signature = cloudinary.apiSignRequest(map, this.cloudinaryOpts.getApiSecret());
 			// return the data for the browser to do the work
 			retVal.setUploadSignature(signature);
 			retVal.setUploadUrl(this.cloudinaryOpts.getUploadUrl());
 			retVal.setApiKey(this.cloudinaryOpts.getApiKey());
+			retVal.setCloudTags(tags);
+			retVal.setUseCredentials(false);
 		} else {
 			retVal.setUploadSignature(dbImage.getUuid());
 			// TODO: make this a little less static definition
 			retVal.setUploadUrl(request.scheme() + "://" + "localhost:3000" + "/api/auth/report/images/upload/" + dbImage.getUuid());
+			retVal.setUseCredentials(true);
 		}			
 		
 		return new Answer(200, AbstractRequestHandler.dataToJson(retVal));

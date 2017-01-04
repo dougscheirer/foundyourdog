@@ -33,12 +33,12 @@ export const uploadImage = (imageForm, file) => {
 			form.append('signature', imageObj.uploadSignature);
 			form.append('api_key', imageObj.apiKey)
 			form.append('timestamp', imageObj.upload_date)
-
+			form.append('tags', imageObj.cloudTags)
 			return dispatch =>
 				fetch(imageObj.uploadUrl,
 					{ method: "POST",
 						body: form,
-						credentials: 'include'
+						credentials: (imageObj.useCredentials ? 'include' : undefined) // we need credentials for dev, not for cloudinary
 					})
 				.then((res) => {
 					if (res.ok)	return res.json()

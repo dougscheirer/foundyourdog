@@ -199,7 +199,7 @@ public class Main {
 		// ":id" - update the DB record to show the file is in cloudinary now, that we have the data for it, etc.
 		put("/api/auth/report/images/:id", new ImageUploadUpdateHandler(model, opts));
 		
-		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
+		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model, opts));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
 
 		get("/api/auth/messages", new GetUserMessagesHandler(model));
@@ -261,7 +261,7 @@ public class Main {
 		exception(Exception.class, (exception, request, response) -> {
 			// Handle the exception here
 			logger.error("Exception handling route: " + request.url());
-			logger.error(exception.getMessage());
+			logger.error(exception.toString());
 		});
 	}
 }

@@ -12,7 +12,8 @@ public class CloudinaryOpts {
 	private String apiKey;
 	private String cloudName;
 	private String uploadUrl;
-
+	private String apiUrl;
+	
 	final static Logger logger = LoggerFactory.getLogger(CloudinaryOpts.class);
 
 	private boolean isMissing(String s) {
@@ -25,11 +26,12 @@ public class CloudinaryOpts {
 		this.apiKey = ConfigConsts.getCloudinaryApiKey();
 		
 		this.uploadUrl = "https://api.cloudinary.com/v1_1/" + cloudName + "/upload";
+		this.apiUrl = "https://api.cloudinary.com/v1_1/" + cloudName + "/";
 		
 		// if any of these are missing, things will fail
 		if (isMissing(apiSecret) || isMissing(cloudName) || isMissing(apiKey)) {
 			logger.info("Cloudinary is disabled, missing configuration options");
-			this.apiSecret = this.cloudName = this.apiKey = this.uploadUrl = "";
+			this.apiSecret = this.cloudName = this.apiKey = this.uploadUrl = this.apiUrl = "";
 		}
 	}
 }
