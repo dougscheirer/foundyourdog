@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -64,14 +65,21 @@ public class ImageDeleteHandler extends AbstractRequestHandler<EmptyPayload> {
 			}
 		} else {
 			// cloudinary, attempt the admin delete api
-			String deleteUrl = this.opts.getApiUrl() + "/resources/image/tags/imageID:" + imageID;
+			String deleteUrl = this.opts.getApiUrl() + "resources/image/tags/imageID:" + imageID;
 			try {
 				URL url = new URL(deleteUrl);
 				HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-				// httpCon.setDoOutput(true);
-				// httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
 				httpCon.setRequestMethod("DELETE");
+				// basic auth encode the api key:api secret
+				String preAuth = opts.getApiKey() + ":" + opts.getApiSecret();
+				String auth = Base64.getEncoder().encodeToString(preAuth.getBytes()); 
+				httpCon.setRequestProperty("Authorization", auth);
 				httpCon.connect();
+				if (httpCon.getResponseCode() != 200) {
+					logger.error("Error deleting " + imageID + ": (" + httpCon.getResponseCode() + ") " + httpCon.getResponseMessage());
+				} else {
+					logger.debug("Deleted " + imageID + " OK: " + httpCon.getResponseMessage());
+				}
 			} catch (ProtocolException e) {
 				logger.error(e.getMessage());
 			} catch (IOException e) {
