@@ -7,7 +7,6 @@ import SimpleMap from "./simple_map"
 import Dropzone from "react-dropzone"
 import { connect } from "react-redux"
 import { showLogin, uploadImage, uploadReportImage, getUnassignedImages, submitReportForm } from "../actions"
-import FormData from 'form-data'
 import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
 import dogTypes from './common_dogs.json'
@@ -36,9 +35,8 @@ class NewFormBase extends Component {
 	}
 
 	uploadImageFile(file) {
-		const data = new FormData()
-
-		this.props.uploadImage(data, file)
+		this.setState({uploading: true})
+		this.props.uploadImage(file)
 	}
 
 	uploadImage(e) {
@@ -61,6 +59,7 @@ class NewFormBase extends Component {
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.existing_image !== this.props.existing_image) {
 			this.setState({uploaded_image: nextProps.existing_image});
+			this.setState({uploading: false})
 		}
 	}
 
@@ -127,8 +126,14 @@ class NewFormBase extends Component {
 
 	resetServerImage(e) {
 		e.preventDefault();
+		this.setState({resetting: true})
 		fetch('/api/auth/report/images/' + this.state.uploaded_image.uuid, { method: "DELETE", credentials: "include" }).then((res) => {
-			this.setState({image_preview: undefined, uploaded_image: undefined});
+			this.setState({resetting: false});
+			if (res.ok) {
+				this.setState({image_preview: undefined, uploaded_image: undefined});
+			} else {
+				toastr.error("Unknown error resetting image, try again later")
+			}
 		});
 	}
 
@@ -143,6 +148,7 @@ class NewFormBase extends Component {
 		// 2) image, not uploaded (show preview, upload and reset button)
 		// 3) no image (show dropzone)
 		const uploaded = this.state.uploaded_image;
+		const resetDisabled = (!!this.state.resetting) ? "disabled" : ""
 
 		if (!!uploaded) {
 			const image_src = this.state.uploaded_image.imageUrl;
@@ -152,16 +158,19 @@ class NewFormBase extends Component {
 	       		<button className="btn btn-secondary disabled upload-image" onClick={ (e) => this.doNothing(e) } >
 	       			<img src={ checkbox } width="20px" alt="checked" /> Uploaded
 	       		</button>
-	       		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetServerImage(e) }>Reset</button>
+	       		<button className={ "btn btn-secondary reset-image " + resetDisabled } onClick={ (e) => this.resetServerImage(e) }>Reset</button>
 	   	    </div>
 	     		<img style={{width: "200px"}} alt="current report" src={ image_src } />
 	     	</div>)
 		} else if (!!this.state.image_preview) {
+			const uploadingDisabled = (!!this.state.uploading) ? "disabled" : ""
+			const uploadBtnText = (!!this.state.uploading) ? "Uploading..." : "Upload"
+
 			return (
 				<div>
 	       	<div>
-	       		<button className="btn btn-secondary upload-image" onClick={ this.uploadImage }>Upload</button>
-	       		<button className="btn btn-secondary reset-image" onClick={ (e) => this.resetLocalImage(e) }>Reset</button>
+	       		<button className={ "btn btn-secondary upload-image " + uploadingDisabled } onClick={ this.uploadImage }> { uploadBtnText } </button>
+	       		<button className={ "btn btn-secondary reset-image " + uploadingDisabled + " " + resetDisabled } onClick={ (e) => this.resetLocalImage(e) }>Reset</button>
 	       	</div>
 	       	<img style={{width: "200px"}} alt="current report" src={this.state.image_preview.preview} />
 		    </div>)
@@ -371,7 +380,7 @@ const mapDispatchToProps = (dispatch, myprops) => ({
 	onLoginRequired : () => { dispatch(showLogin()); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
 	getUnassignedImages: () => { dispatch(getUnassignedImages()); },
-	uploadImage : (imageForm, file) => { dispatch(uploadImage(imageForm, file)) },
+	uploadImage : (file) => { dispatch(uploadImage(file)) },
 	submitReportForm : (url, data, post) => { dispatch(submitReportForm(url, data, post)) }
 });
 

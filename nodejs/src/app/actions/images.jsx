@@ -1,5 +1,4 @@
 import { auth_fetch, auth_post, auth_put } from './login'
-import cloudinary from 'cloudinary-core'
 
 export const uploadReportImage = (image_info) => {
 	return {
@@ -24,11 +23,12 @@ export const getUnassignedImages = () => {
 // 0) ask the server for some auth stuff
 // 1) upload to cloudindary or us (dev mode) (and get URL info back)
 // 2) send our server the URL info for the upload
-export const uploadImage = (imageForm, file) => {
+export const uploadImage = (file) => {
 	return dispatch => {
-		dispatch(auth_post('/api/auth/report/images/new', imageForm, (res) => {
+		dispatch(auth_post('/api/auth/report/images/new', undefined, (res) => {
 			const imageObj = res;
 			let form = new FormData();
+			// append all of the things that we want for the uploader
 			form.append('file', file);
 			form.append('signature', imageObj.uploadSignature);
 			form.append('api_key', imageObj.apiKey)

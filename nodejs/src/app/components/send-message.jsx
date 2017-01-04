@@ -10,7 +10,6 @@ import {
 } from 'react-modal-bootstrap';
 import { connect } from 'react-redux'
 import { humanTimestamp, logged_in } from './helpers'
-import { LoginPopup } from './login'
 
 class SendMessage extends Component {
 	state = {
