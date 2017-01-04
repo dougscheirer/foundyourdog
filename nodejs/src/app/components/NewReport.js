@@ -6,7 +6,7 @@ import 'react-date-picker/index.css'
 import SimpleMap from "./simple_map"
 import Dropzone from "react-dropzone"
 import { connect } from "react-redux"
-import { showLogin, uploadImage, uploadReportImage, getUnassignedImages, submitReportForm } from "../actions"
+import { loginRequired, showLogin, uploadImage, uploadReportImage, getUnassignedImages, submitReportForm } from "../actions"
 import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
 import dogTypes from './common_dogs.json'
@@ -30,8 +30,10 @@ class NewFormBase extends Component {
 	}
 
 	previewImage(files) {
-		this.setState({image_preview: files[0]});
-		this.uploadImageFile(files[0])
+		this.props.loginRequired(() => {
+			this.setState({image_preview: files[0]});
+			this.uploadImageFile(files[0])
+		})
 	}
 
 	uploadImageFile(file) {
@@ -377,6 +379,7 @@ const mapEditStateToProps = (state, myprops) => ({
 });
 
 const mapDispatchToProps = (dispatch, myprops) => ({
+	loginRequired : (after) => { dispatch(loginRequired(after)) },
 	onLoginRequired : () => { dispatch(showLogin()); },
 	onUploadComplete: (res) => { dispatch(uploadReportImage(res)); },
 	getUnassignedImages: () => { dispatch(getUnassignedImages()); },
