@@ -4,14 +4,8 @@ import static spark.Spark.*;
 import spark.Request;
 import spark.Response;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.Properties;
 import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,31 +17,33 @@ import org.sql2o.quirks.PostgresQuirks;
 
 import com.beust.jcommander.JCommander;
 import com.foundyourdog.app.db.DBConnection;
-import com.foundyourdog.app.handlers.AuthenticatedHandler;
-import com.foundyourdog.app.handlers.CreateIncidentReportHandler;
-import com.foundyourdog.app.handlers.CreateMessageHandler;
-import com.foundyourdog.app.handlers.CreateUserHandler;
-import com.foundyourdog.app.handlers.DeleteMessageHandler;
-import com.foundyourdog.app.handlers.DetailUser;
-import com.foundyourdog.app.handlers.FindUnassignedImageHandler;
-import com.foundyourdog.app.handlers.GetConversationHandler;
-import com.foundyourdog.app.handlers.GetImageHandler;
-import com.foundyourdog.app.handlers.GetIncidentDetailHandler;
-import com.foundyourdog.app.handlers.GetIncidentsHandler;
-import com.foundyourdog.app.handlers.GetUserIncidents;
-import com.foundyourdog.app.handlers.GetUserMessages;
-import com.foundyourdog.app.handlers.GetUsersIndexHandler;
-import com.foundyourdog.app.handlers.ImageDeleteHandler;
-import com.foundyourdog.app.handlers.ImageUploadFileHandler;
-import com.foundyourdog.app.handlers.ImageUploadHandler;
-import com.foundyourdog.app.handlers.ImageUploadUpdateHandler;
-import com.foundyourdog.app.handlers.LoginHandler;
-import com.foundyourdog.app.handlers.LogoutHandler;
-import com.foundyourdog.app.handlers.MarkConversationHandler;
-import com.foundyourdog.app.handlers.ResetPasswordHandler;
-import com.foundyourdog.app.handlers.ResetPasswordRequestHandler;
-import com.foundyourdog.app.handlers.UpdateMessageHandler;
+import com.foundyourdog.app.exceptions.NotConsumedException;
+import com.foundyourdog.app.exceptions.NotFoundException;
 import com.foundyourdog.app.handlers.WebsocketHandler;
+import com.foundyourdog.app.handlers.auth.AuthenticatedHandler;
+import com.foundyourdog.app.handlers.auth.LoginHandler;
+import com.foundyourdog.app.handlers.auth.LogoutHandler;
+import com.foundyourdog.app.handlers.images.FindUnassignedImageHandler;
+import com.foundyourdog.app.handlers.images.GetImageHandler;
+import com.foundyourdog.app.handlers.images.ImageDeleteHandler;
+import com.foundyourdog.app.handlers.images.ImageUploadFileHandler;
+import com.foundyourdog.app.handlers.images.ImageUploadHandler;
+import com.foundyourdog.app.handlers.images.ImageUploadUpdateHandler;
+import com.foundyourdog.app.handlers.incidents.CreateIncidentReportHandler;
+import com.foundyourdog.app.handlers.incidents.GetIncidentDetailHandler;
+import com.foundyourdog.app.handlers.incidents.GetIncidentsHandler;
+import com.foundyourdog.app.handlers.incidents.GetUserIncidents;
+import com.foundyourdog.app.handlers.messages.CreateMessageHandler;
+import com.foundyourdog.app.handlers.messages.DeleteMessageHandler;
+import com.foundyourdog.app.handlers.messages.GetConversationHandler;
+import com.foundyourdog.app.handlers.messages.GetUserMessagesHandler;
+import com.foundyourdog.app.handlers.messages.MarkConversationHandler;
+import com.foundyourdog.app.handlers.messages.UpdateMessageHandler;
+import com.foundyourdog.app.handlers.users.CreateUserHandler;
+import com.foundyourdog.app.handlers.users.GetUsersIndexHandler;
+import com.foundyourdog.app.handlers.users.ResetPasswordHandler;
+import com.foundyourdog.app.handlers.users.ResetPasswordRequestHandler;
+import com.foundyourdog.app.handlers.users.model.DetailUser;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.sql2o.Sql2oModel;
 import spark.Spark;
@@ -64,8 +60,8 @@ public class Main {
 	}
 
 	private static int getPortByEnv(int optionsPort) {
-		String port = System.getenv("PORT");
-		if (port != null) {
+		String port = ConfigConsts.getPort();
+		if (!port.isEmpty()) {
 			return Integer.parseInt(port);
 		}
 		return optionsPort;
@@ -109,7 +105,7 @@ public class Main {
 	}
 
 	public static String assumeHTTPS(Request req) {
-		return (Boolean.valueOf(System.getenv("ASSUME_HTTPS"))) ? "https" : req.scheme(); 
+		return (ConfigConsts.getAssumeHTTPS()) ? "https" : req.scheme(); 
 	}
 	
 	public static void main(String[] args) {
@@ -123,8 +119,8 @@ public class Main {
 		logger.debug("image location = " + options.imageLocation);
 
 		// some things from the environment (DB params are elsewhere)
-		String basicAuth = System.getenv("BASIC_AUTH");
-		boolean wsDevMode = Boolean.valueOf(System.getenv("WS_DEV_MODE"));
+		String basicAuth = ConfigConsts.getBasicAuth();
+		boolean wsDevMode = ConfigConsts.getWSDevMode();
 
 		port(servicePort);
 
@@ -203,10 +199,10 @@ public class Main {
 		// ":id" - update the DB record to show the file is in cloudinary now, that we have the data for it, etc.
 		put("/api/auth/report/images/:id", new ImageUploadUpdateHandler(model, opts));
 		
-		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model));
+		delete("/api/auth/report/images/:id", new ImageDeleteHandler(model, opts));
 		get("/api/auth/reports/images/unassigned", new FindUnassignedImageHandler(model));
 
-		get("/api/auth/messages", new GetUserMessages(model));
+		get("/api/auth/messages", new GetUserMessagesHandler(model));
 		post("/api/auth/message", new CreateMessageHandler(model));
 		put("/api/auth/message/:id", new UpdateMessageHandler(model));
 		delete("/api/auth/message/:id", new DeleteMessageHandler(model));
@@ -265,7 +261,7 @@ public class Main {
 		exception(Exception.class, (exception, request, response) -> {
 			// Handle the exception here
 			logger.error("Exception handling route: " + request.url());
-			logger.error(exception.getMessage());
+			logger.error(exception.toString());
 		});
 	}
 }

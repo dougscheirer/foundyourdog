@@ -2,7 +2,8 @@ package com.foundyourdog.app.model;
 
 import java.sql.Timestamp;
 
-import com.foundyourdog.app.Validatable;
+import com.foundyourdog.app.handlers.Validatable;
+
 import lombok.Data;
 
 @Data
