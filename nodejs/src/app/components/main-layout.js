@@ -22,15 +22,19 @@ class MainLayout extends Component {
   componentWillUnmount() {
   }
 
+  devTools() {
+    return (process.env.NODE_ENV === 'development') ? <DevTools /> : <div></div>
+  }
+
   render() {
     toastr.options = { "positionClass": "toast-top-left", "timeOut": "5000" }
 
     return (
       <div className="app">
+        { this.devTools() }
         <LoginPopup />
         <Signup />
         <ResetPassword />
-        <DevTools />
         <ShowInfoCard />
         <SendMessage />
         <WSComponent />

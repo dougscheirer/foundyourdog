@@ -8,6 +8,7 @@ import java.util.Map;
 import com.cloudinary.Cloudinary;
 import com.foundyourdog.app.CloudinaryOpts;
 import com.foundyourdog.app.Main;
+import com.foundyourdog.app.ConfigConsts;
 import com.foundyourdog.app.handlers.AbstractRequestHandler;
 import com.foundyourdog.app.handlers.Answer;
 import com.foundyourdog.app.handlers.EmptyPayload;
@@ -18,16 +19,16 @@ import spark.Request;
 
 public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 	private CloudinaryOpts cloudinaryOpts;
-	
+
 	public ImageUploadHandler(Model model, CloudinaryOpts opts) {
 		super(EmptyPayload.class, model);
 		this.cloudinaryOpts = opts;
 	}
-	
+
 	private boolean usingCloudinary() {
 		return !this.cloudinaryOpts.getApiKey().isEmpty();
 	}
-	
+
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml,
 			Request request) {
 		// first create the DB entry, then save the file
@@ -41,11 +42,11 @@ public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 		if (uuid == null) {
 			return new Answer(500);
 		}
-		
+
 		Image dbImage = model.getImage(uuid).get();
 		// we return a hybrid of generated and DB data
 		ImageDetailResponse retVal = new ImageDetailResponse(dbImage);
-		
+
 		if (usingCloudinary()) {
 			Cloudinary cloudinary = new Cloudinary();
 			// create a list of options for the upload
@@ -65,12 +66,12 @@ public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 			retVal.setCloudTags(tags);
 			retVal.setUseCredentials(false);
 		} else {
+			// this is development, so...who cares
 			retVal.setUploadSignature(dbImage.getUuid());
-			// TODO: make this a little less static definition
-			retVal.setUploadUrl(request.scheme() + "://" + "localhost:3000" + "/api/auth/report/images/upload/" + dbImage.getUuid());
+			retVal.setUploadUrl(request.scheme() + "://" + ConfigConsts.getHost() + "/api/auth/report/images/upload/" + dbImage.getUuid());
 			retVal.setUseCredentials(true);
-		}			
-		
+		}
+
 		return new Answer(200, AbstractRequestHandler.dataToJson(retVal));
 	}
 }
