@@ -11,7 +11,7 @@ import { browserHistory } from 'react-router';
 import checkbox from "../../checkbox.svg"
 import dogTypes from './common_dogs.json'
 import coatTypes from './coats.json'
-import { logged_in } from './helpers'
+import { waiting_login, logged_in } from './helpers'
 
 class NewFormBase extends Component {
 	state = {
@@ -47,7 +47,7 @@ class NewFormBase extends Component {
 	}
 
 	requireLoginCheck() {
-		if (!!!this.props.logged_in) {
+		if (!!!this.props.waiting_login && !!!this.props.logged_in) {
 			this.props.onLoginRequired();
 			return true;
 		}
@@ -356,6 +356,7 @@ class NewFormBase extends Component {
 
 const mapFoundStateToProps = (state, myprops) => ({
 	logged_in: logged_in(state),
+	waiting_login: waiting_login(state),
 	nameRequired : false,
 	submitUrl : "/api/auth/found/new",
 	title : "I found a dog",
@@ -364,6 +365,7 @@ const mapFoundStateToProps = (state, myprops) => ({
 
 const mapLostStateToProps = (state, myprops) => ({
 	logged_in: logged_in(state),
+	waiting_login: waiting_login(state),
 	nameRequired : true,
 	submitUrl : "/api/auth/lost/new",
 	title : "I lost a dog",
@@ -372,6 +374,7 @@ const mapLostStateToProps = (state, myprops) => ({
 
 const mapEditStateToProps = (state, myprops) => ({
 	logged_in: logged_in(state),
+	waiting_login: waiting_login(state),
 	edit: true,
 	submitUrl : "/api/auth/report/edit",
 	title : "Edit exisitng report (put something here)",
