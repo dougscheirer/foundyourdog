@@ -2,7 +2,7 @@ import { auth_post, auth_fetch } from './login'
 
 export const getReportInfo = (id) => {
 	return auth_fetch(
-			'/api/reports/' + id,
+			'/api/reports/' + id + "?host=" + window.location.host,
 			(res) => {
 				return {
 					type: 'REPORT_FETCHED',
@@ -19,7 +19,7 @@ export const showIncidentInfo = (incident) => {
 }
 
 export const getIncidentInfo = (id) => {
-	return auth_fetch('/api/reports/' + id,
+	return auth_fetch('/api/reports/' + id + "?host=" + window.location.host,
 			(res) => showIncidentInfo(res))
 }
 

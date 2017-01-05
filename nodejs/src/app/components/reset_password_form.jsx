@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import loading from './loading.svg'
 import { browserHistory } from 'react-router'
 import spinner from '../../spinner.svg';
 import fetch from 'isomorphic-fetch'
@@ -55,6 +54,7 @@ class ResetPasswordForm extends Component {
 		if (!!!form)
 			return
 
+		this.setState({reset_wait: true})
 		// TODO: put this in the actions?
 		fetch("/api/reset_password", {
 			method: "POST",
@@ -62,6 +62,7 @@ class ResetPasswordForm extends Component {
 			headers:{ "Content-Type" : "application/json" },
 			credentials: 'include' })
 		.then((res) => {
+			this.setState({reset_wait: false})
 			if (res.ok) {
 				this.setState({password_reset: true})
 			} else {
@@ -71,7 +72,7 @@ class ResetPasswordForm extends Component {
 	}
 
 	resetForm() {
-			const buttonClasses = "login-submit btn btn-primary " + ((this.state.login_wait) ? "disabled" : "");
+			const buttonClasses = "login-submit btn btn-primary " + ((this.state.reset_wait) ? "disabled" : "");
 
 			return (<form onSubmit={ this.reset_password.bind(this) }>
 				<input type="text" className="form-control login-field" name="email" ref="email" placeholder="Email" autoFocus="true" />
@@ -82,7 +83,7 @@ class ResetPasswordForm extends Component {
 	}
 
 	resetFooter() {
-		const spinnerVis = (this.state.login_wait) ? (<img style={{ float: "left" }} src={spinner} alt="spinner" />) : undefined;
+		const spinnerVis = (this.state.reset_wait) ? (<img style={{ float: "left" }} src={spinner} alt="spinner" />) : undefined;
 		const error_msg = this.state.error_msg;
 
 		return (<div>{ spinnerVis }

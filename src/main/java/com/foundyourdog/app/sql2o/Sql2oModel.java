@@ -14,18 +14,18 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 
+import com.foundyourdog.app.handlers.incidents.model.IncidentBrief;
+import com.foundyourdog.app.handlers.messages.model.DetailMessage;
+import com.foundyourdog.app.handlers.users.ResetPassword;
+import com.foundyourdog.app.handlers.users.model.DetailUser;
+import com.foundyourdog.app.handlers.users.model.PublicUser;
+import com.foundyourdog.app.handlers.users.model.UserSignup;
 import com.foundyourdog.app.model.Dog;
 import com.foundyourdog.app.model.Image;
 import com.foundyourdog.app.model.Incident;
-import com.foundyourdog.app.model.IncidentBrief;
 import com.foundyourdog.app.model.Model;
 import com.foundyourdog.app.model.Message;
-import com.foundyourdog.app.model.ResetPassword;
 import com.foundyourdog.app.model.User;
-import com.foundyourdog.app.model.UserSignup;
-import com.foundyourdog.app.handlers.PublicUser;
-import com.foundyourdog.app.handlers.DetailMessage;
-import com.foundyourdog.app.handlers.DetailUser;
 
 public class Sql2oModel implements Model {
 	final static Logger logger = LoggerFactory.getLogger(Sql2oModel.class);
@@ -268,9 +268,19 @@ public class Sql2oModel implements Model {
 	}
 
 	@Override
-	public String updateImage(Image i) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean updateImage(Image i) {
+		try (Connection conn = sql2o.open()) {
+			conn.createQuery(
+					"UPDATE IMAGES SET user_id=:user_id, image_location=:image_location, upload_date=:upload_date, tags=:tags, dog_id=:dog_id, status=:status WHERE uuid=:uuid")
+					.addParameter("uuid", i.getUuid()).addParameter("user_id", i.getUser_id())
+					.addParameter("image_location", i.getImage_location())
+					.addParameter("upload_date", i.getUpload_date()).addParameter("dog_id", i.getDog_id())
+					.addParameter("tags", i.getTags()).addParameter("status", i.getStatus()).executeUpdate();
+			return true;
+		} catch (Sql2oException e) {
+			logger.error(e.getLocalizedMessage());
+		}
+		return false;
 	}
 
 	@Override

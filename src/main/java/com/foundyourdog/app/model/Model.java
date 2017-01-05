@@ -3,9 +3,12 @@ package com.foundyourdog.app.model;
 import java.util.List;
 import java.util.Optional;
 
-import com.foundyourdog.app.handlers.PublicUser;
-import com.foundyourdog.app.handlers.DetailMessage;
-import com.foundyourdog.app.handlers.DetailUser;
+import com.foundyourdog.app.handlers.incidents.model.IncidentBrief;
+import com.foundyourdog.app.handlers.messages.model.DetailMessage;
+import com.foundyourdog.app.handlers.users.ResetPassword;
+import com.foundyourdog.app.handlers.users.model.DetailUser;
+import com.foundyourdog.app.handlers.users.model.PublicUser;
+import com.foundyourdog.app.handlers.users.model.UserSignup;
 
 public interface Model {
 	List<PublicUser> getAllPublicUsers();
@@ -34,7 +37,7 @@ public interface Model {
 	List<Image> getAllImages();
 	Optional<Image> getImage(String id);
 	String createImage(Image i);
-	String updateImage(Image i);
+	boolean updateImage(Image i);
 	String updateImageStatus(String imageID, String dogId, String status);
 	Optional<Image> getUnassignedImage(String userid);
 	boolean deleteImage(String id);
