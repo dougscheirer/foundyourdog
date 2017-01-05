@@ -114,7 +114,7 @@ class ResetPassword extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	isOpen: state.login.status === "reset_pwd"
+	isOpen: state.login.show_auth === "reset_pwd"
 })
 
 const mapDispatchToProps = (dispatch, props) => ({

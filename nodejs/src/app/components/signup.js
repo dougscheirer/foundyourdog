@@ -133,7 +133,7 @@ Signup.propTypes = {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	isOpen: state.login.status === 'signup'
+	isOpen: state.login.show_auth === 'signup'
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
