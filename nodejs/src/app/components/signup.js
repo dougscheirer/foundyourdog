@@ -10,7 +10,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import { showLogin, resetPassword, signUp, auth_post } from '../actions';
+import { showLogin, resetPassword, signUp } from '../actions';
 import spinner from '../../spinner.svg';
 import toastr from 'toastr';
 

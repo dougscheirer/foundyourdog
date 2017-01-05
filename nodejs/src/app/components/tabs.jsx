@@ -45,6 +45,7 @@ export class TabContainer extends Component {
 		const tabList = this.getTabList(this.props.children);
 		const activeTabObj = this.renderActiveTab()
 		// this generates a warning
+		// eslint-disable-next-line
 		const { activeTab, ...rest } = this.props
 
 		return (

@@ -1,5 +1,8 @@
 package com.foundyourdog.app;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,17 +24,25 @@ public class CloudinaryOpts {
 	}
 	
 	public CloudinaryOpts() {
-		this.apiSecret = ConfigConsts.getCloudinaryApiSecret();
-		this.cloudName = ConfigConsts.getCloudinaryName();
-		this.apiKey = ConfigConsts.getCloudinaryApiKey();
+		String baseUrl = ConfigConsts.getCloudinaryURL();
+		if (baseUrl == null || baseUrl.isEmpty()) {
+			logger.info("Cloudinary is disabled, missing configuration options");
+			return;
+		}
 		
+		// format is cloudinary://api_key:api_secret@name
+		Pattern pat = Pattern.compile("cloudinary://([^:]+):([^@]+)@(.*)");
+		Matcher match = pat.matcher(baseUrl);
+		if (match.find()) {
+			this.apiKey = match.group(1);
+			this.apiSecret = match.group(2);
+			this.cloudName = match.group(3);
+		} else {
+			logger.info("Malformed CLOUDINARY_URL, aborting.  Cloudinary is disabled");
+		}
+
+		logger.info("Using cloudinary '" + this.cloudName + "'");
 		this.uploadUrl = "https://api.cloudinary.com/v1_1/" + cloudName + "/upload";
 		this.apiUrl = "https://api.cloudinary.com/v1_1/" + cloudName + "/";
-		
-		// if any of these are missing, things will fail
-		if (isMissing(apiSecret) || isMissing(cloudName) || isMissing(apiKey)) {
-			logger.info("Cloudinary is disabled, missing configuration options");
-			this.apiSecret = this.cloudName = this.apiKey = this.uploadUrl = this.apiUrl = "";
-		}
 	}
 }

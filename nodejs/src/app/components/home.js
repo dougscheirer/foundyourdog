@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import './home.css';
 
 const Home = React.createClass({
+
   render: function() {
     const style = "jumbotron homemain";
     return (
