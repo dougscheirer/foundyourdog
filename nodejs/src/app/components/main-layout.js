@@ -23,7 +23,17 @@ class MainLayout extends Component {
   }
 
   devTools() {
-    return (process.env.NODE_ENV === 'development') ? <DevTools /> : <div></div>
+    return (process.env.NODE_ENV === 'development' && !!this.state.devTools) ? <DevTools /> : <div></div>
+  }
+
+  toggleClick(e) {
+    e.preventDefault()
+    this.setState({devTools: !!!this.state.devTools})
+  }
+
+  toggleDevTools() {
+    if (process.env.NODE_ENV !== 'development') return (<div></div>)
+    return (<li><a href="#" onClick={ this.toggleClick.bind(this) }>devtools</a></li>)
   }
 
   render() {
@@ -52,6 +62,7 @@ class MainLayout extends Component {
             <div id="navbar" className="navbar-collapse collapse">
               <ul className="nav navbar-nav">
                 <li><Link to="/">Home</Link></li>
+                { this.toggleDevTools() }
               </ul>
               <AuthNavbar authenticated={false} />
             </div>

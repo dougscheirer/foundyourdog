@@ -34,10 +34,17 @@ a:hover {
 }
 
 .homemain {
-  margin-left: 30%;
-  margin-right: 30%;
+  margin-left: 15%;
+  margin-right: 15%;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+.homemain img {
+  margin-top: 15px;
+}
+.homemain p {
+  text-align: center;
 }
 
 .form-group {
