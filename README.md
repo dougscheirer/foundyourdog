@@ -12,6 +12,8 @@ nodejs/npm start									: start the frontend assuming the backend will be proxi
 Handy configurables (.env):
 	PORT
 		port to run the java backend on
+	HOST
+		hostname for the upload URL generation
 	DATABASE_URL='postgres://postgres:pa55word@localhost:5432/foundyourdog_dev'
 		URL for postgres
 	BASIC_AUTH='admin:pizza'
@@ -21,9 +23,7 @@ Handy configurables (.env):
 		in production environments or heroku, this may not be the publicly exposed port if proxying is used
 	SENDGRID_API_KEY
 		API key for emailing through sendgrid (default is to use SMTP to localhost:1025, i.e. mailcatcher)
-	CLOUDINARY_API_SECRET
-	CLOUDINARY_NAME
-	CLOUDINARY_API_KEY
+	CLOUDINARY_URL
 		For production or heroku, the Cloudinary info for image management.  Default is local storage in uploads/images
 	ASSUME_HTTPS
 		For link generation, ignore the actual scheme used and assume it should be HTTPS (e.g. proxying on heroku)

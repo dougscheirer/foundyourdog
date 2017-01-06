@@ -240,118 +240,116 @@ class NewFormBase extends Component {
 	  	}];
 
       return (
-        	<div>
-	        	<form className="form-horizontal" action="new" method="post">
+        <div>
+	       	<form className="form-horizontal" action="new" method="post">
 					<fieldset>
+						<legend style={{textAlign: "center"}}>{ this.props.title }</legend>
+	    			<div style={{ marginLeft: "15px"}}>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="date">Date when it happened</label>
+							  <div className="col-md-4">
+			  				    <DateField  dateFormat="YYYY-MM-DD HH:mm:ss" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
+							  </div>
+							</div>
 
-					<legend style={{textAlign: "center"}}>{ this.props.title }</legend>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="name">Name</label>
+							  <div className="col-md-4">
+							  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
 
-    			<div>
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="date">Date when it happened</label>
-				  <div className="col-md-4">
-  				    <DateField  dateFormat="YYYY-MM-DD HH:mm:ss" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
-				  </div>
-				</div>
+							  </div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="name">Name</label>
-				  <div className="col-md-4">
-				  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="primary_type">Breed</label>
+							  <div className="col-md-4">
+								  <select style={{ width: "45%", display: "inline", marginRight: "15px" }} className="form-control" id="primary_type" ref="primary_type" placeholder="Best guess at a breed">
+								    { this.dog_primary_type_options() }
+								  </select>
+								  <select style={{ width: "45%", display: "inline" }} className="form-control" id="secondary_type" ref="secondary_type">
+								    { this.dog_secondary_type_options() }
+								  </select>
+							  </div>
+							</div>
 
-				  </div>
-				</div>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="primary_color">Color</label>
+							  <div className="col-md-4">
+								  <select style={{ width: "45%", display: "inline", marginRight: "15px" }} className="form-control" id="primary_color" ref="primary_color">
+								    { this.dog_primary_color_options() }
+								  </select>
+								  <select style={{ width: "45%", display: "inline" }} className="form-control" ref="secondary_color" id="secondary_color">
+								    { this.dog_secondary_color_options() }
+								  </select>
+								</div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="primary_type">Breed</label>
-				  <div className="col-md-4">
-					  <select className="form-control" id="primary_type" ref="primary_type" placeholder="Best guess at a breed">
-					    { this.dog_primary_type_options() }
-					  </select>
-					  <select className="form-control" id="secondary_type" ref="secondary_type">
-					    { this.dog_secondary_type_options() }
-					  </select>
-				  </div>
-				</div>
+							<div className="form-group">
+								<label className="col-md-4 control-label" htmlFor="coat_type">Coat</label>
+							  <div className="col-md-4">
+								  <select style={{ width: "45%" }} className="form-control" ref="coat_type" id="coat_type">
+								    { this.dog_coat_options() }
+								  </select>
+							  </div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="primary_color">Color</label>
-				  <div className="col-md-4">
-					  <select className="form-control" id="primary_color" ref="primary_color">
-					    { this.dog_primary_color_options() }
-					  </select>
-					  <select className="form-control" ref="secondary_color" id="secondary_color">
-					    { this.dog_secondary_color_options() }
-					  </select>
-					</div>
-				</div>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
+							  <div className="col-md-4">
+							    <label className="radio-inline" htmlFor="gender">
+							      <input name="gender" type="radio" ref="gender" value="M" defaultChecked="true" />
+							      M
+							    </label>
+							    <label className="radio-inline" htmlFor="gender">
+							      <input name="gender" type="radio" ref="gender" value="F" />
+							      F
+							    </label>
+							  </div>
+							</div>
 
-				<div className="form-group">
-					<label className="col-md-4 control-label" htmlFor="coat_type">Coat</label>
-				  <div className="col-md-4">
-					  <select className="form-control" ref="coat_type" id="coat_type">
-					    { this.dog_coat_options() }
-					  </select>
-				  </div>
-				</div>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="uploadPhoto">Add Photo</label>
+							  <div className="col-md-4">
+							  	{ this.upload_or_preview() }
+			                  </div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="gender">Gender</label>
-				  <div className="col-md-4">
-				    <label className="radio-inline" htmlFor="gender">
-				      <input name="gender" type="radio" ref="gender" value="M" defaultChecked="true" />
-				      M
-				    </label>
-				    <label className="radio-inline" htmlFor="gender">
-				      <input name="gender" type="radio" ref="gender" value="F" />
-				      F
-				    </label>
-				  </div>
-				</div>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
+							  <div className="col-md-4">
+							  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
+							  </div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="uploadPhoto">Add Photo</label>
-				  <div className="col-md-4">
-				  	{ this.upload_or_preview() }
-                  </div>
-				</div>
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
+							  <div className="col-md-4">
+							  <input name="other_info" ref="other_info" type="text" placeholder="anything additional you want to add" className="form-control input-md" />
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="breeding_status">Breeding status</label>
-				  <div className="col-md-4">
-				  <input ref="breeding_status" name="breeding_status" type="text" placeholder="intact, fixed, or unknown" className="form-control input-md" />
-				  </div>
-				</div>
+							  </div>
+							</div>
 
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="other_info">Other info</label>
-				  <div className="col-md-4">
-				  <input name="other_info" ref="other_info" type="text" placeholder="anything additional you want to add" className="form-control input-md" />
+							<div className="form-group">
+							  <label className="col-md-4 control-label" htmlFor="submit"></label>
+							  <div className="col-md-4">
+							    <button id="submit" onClick={this.handleValidateAndSubmit} name="submit" className="btn btn-primary">Send report</button>
+							  </div>
+							</div>
 
-				  </div>
-				</div>
-
-				<div className="form-group">
-				  <label className="col-md-4 control-label" htmlFor="submit"></label>
-				  <div className="col-md-4">
-				    <button id="submit" onClick={this.handleValidateAndSubmit} name="submit" className="btn btn-primary">Send report</button>
-				  </div>
-				</div>
-
-	    		<div className="form-group">
-	    			<label className="col-md-4 control-label" htmlFor="reportMap">Report location</label>
-	    			<div className="col-md-4 report-map">
-	        		<SimpleMap
-	                  ref={(map) => this.map = map}
-	                  center={center}
-	                  markers={markers} />
-	                </div>
-                 </div>
-				</div>
-			</fieldset>
-			</form>
-		</div>);
-    }
+				    		<div className="form-group">
+				    			<label className="col-md-4 control-label" htmlFor="reportMap">Report location</label>
+				    			<div className="col-md-4 report-map">
+				        		<SimpleMap
+				                  ref={(map) => this.map = map}
+				                  center={center}
+				                  markers={markers} />
+				                </div>
+			                 </div>
+							</div>
+					</fieldset>
+					</form>
+				</div>);
+  }
 }
 
 const mapFoundStateToProps = (state, myprops) => ({

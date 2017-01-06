@@ -23,13 +23,13 @@ const DevTools = createDevTools(
 export default DevTools;
 
 export const logger = store => next => action => {
-  console.log('dispatching', action)
+  // for debugging help
   let result = next(action)
-  console.log('next state', store.getState())
   return result
 }
 
 export const crashReporter = store => next => action => {
+  // handle our own exceptions
   try {
     return next(action)
   } catch (err) {

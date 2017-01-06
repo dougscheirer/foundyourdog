@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import { loginRequired, sendMessage, showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
 import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } from './helpers'
+import { browserHistory } from 'react-router'
 
 class ShowInfoCard extends Component {
 
@@ -29,6 +30,12 @@ class ShowInfoCard extends Component {
 		e.preventDefault();
 		this.props.sendMessage(this.props.incident_info.incident);
 		this.hideModal()
+	}
+
+	onResolve(e) {
+		e.preventDefault();
+		this.hideModal()
+		browserHistory.push("/reports/" + this.props.incident_info.incident.uuid)
 	}
 
 	getBreedingStatusRow(status) {
@@ -67,24 +74,16 @@ class ShowInfoCard extends Component {
 		return (this.props.login_status && this.props.login_data.uuid === id)
 	}
 
-	onResolve(e) {
-		if (!!e) e.preventDefault()
-	}
-
 	getContactControl(incident) {
 		const classes="btn btn-default "
 		let clickHandler = {}
 		let text = ""
 		if (this.isLoggedInUser(incident.reporter_id)) {
-			// provide the 'resolve report' button
-			clickHandler = this.onResolve.bind(this)
-			text = "Resolve incident"
+			return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ this.onResolve.bind(this) }>Resolve incident</button>)
 		} else {
-			clickHandler = this.onContact.bind(this)
-			text = "Contact finder"
+			return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ this.onContact.bind(this) }>Contact finder</button>)
 		}
 
-		return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ clickHandler }>{ text }</button>)
 	}
 
 	render() {
