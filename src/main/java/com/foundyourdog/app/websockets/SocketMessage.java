@@ -16,7 +16,7 @@ public class SocketMessage {
 	// user message is a SocketUserMessage (popups)
 
 	public enum TYPE {
-		PING, PONG, REGISTER, USER_MESSAGE, NEW_MESSAGE
+		PING, PONG, REGISTER, SYSTEM_MESSAGE, USER_MESSAGE, NEW_MESSAGE
 	}
 
 	public SocketMessage(TYPE type, ObjectNode jsondata) {

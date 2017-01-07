@@ -105,9 +105,9 @@ public class WebsocketHandler {
 
 	public static void updateWebsocketMap(String cookie, DetailUser user) {
 		// for debugging, send a message
-		SocketUserMessage umsg = new SocketUserMessage("Your websocket entry was updated",
+		SocketUserMessage umsg = new SocketUserMessage("Websocket entry updated",
 				5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
-		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
+		SocketMessage msg = new SocketMessage(SocketMessage.TYPE.SYSTEM_MESSAGE, umsg.toJson());
 		Stream<Entry<Session, WSSessionData>> entries = websocketMap.entrySet().stream()
 				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().sessionID.equals(cookie));
 		logger.debug("request modified entry for " + cookie + "/" + user.getHandle());
@@ -137,8 +137,11 @@ public class WebsocketHandler {
 			case PING:
 				sendPong(user);
 				break;
-			case USER_MESSAGE: // for debugging
+			case SYSTEM_MESSAGE: // for debugging
 				broadcastMessage(msg);
+				break;
+			case USER_MESSAGE: // for debugging
+				// broadcastMessage(msg);
 				break;
 			default:
 				logger.error("Received unhandled message type:" + message);
@@ -153,7 +156,7 @@ public class WebsocketHandler {
 		try {
 			SocketUserMessage umsg = new SocketUserMessage("You logged out of another session",
 					5000, SocketUserMessage.DISPLAY_TYPE.MESSAGE, false);
-			SocketMessage msg = new SocketMessage(SocketMessage.TYPE.USER_MESSAGE, umsg.toJson());
+			SocketMessage msg = new SocketMessage(SocketMessage.TYPE.SYSTEM_MESSAGE, umsg.toJson());
 			websocketMap.entrySet().stream()
 				.filter(map -> map.getKey().isOpen()).filter(map -> map.getValue().userID.equals(u.getUuid()))
 				.forEach(entry -> {

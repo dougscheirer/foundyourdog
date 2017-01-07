@@ -11,6 +11,7 @@ class ReportSummary extends Component {
 
 	state = {
 		report_id: this.props.params.reportId,
+		resolve: this.props.resolve
 	}
 
 	componentDidMount() {
@@ -38,8 +39,6 @@ class ReportSummary extends Component {
 		if (this.isLoggedInUser(report.incident.reporter_id)) {
 			return (<span>
 								<Link to="/profile">You</Link>
-								<button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-trash"></button>
-								<button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-edit"></button>
 							</span>)
 		}
 
@@ -63,6 +62,57 @@ class ReportSummary extends Component {
 		} else {
 			return "unknown"
 		}
+	}
+
+	doNothing() {
+	}
+
+	resolve(e) {
+		if (!!e) e.preventDefault()
+		this.setState({resolve: true})
+	}
+
+	resolutionControls(report) {
+		if (!!report.incident.resolution) {
+			return (<div>{ report.incident.resolution }</div>)
+		} else {
+			const disabled = !!!this.isLoggedInUser(report.incident.reporter_id)
+			const primary = (!!this.state.resolve) ? "" : "btn-primary"
+			const classes = "btn " + primary + (!!disabled ? "disabled" : "")
+			const bind = (disabled) ? this.doNothing.bind(this) : this.resolve.bind(this)
+
+			return (<div><button className={ classes } onClick={ bind } >Resolve incident</button></div>)
+		}
+	}
+
+	hideResolveDialog() {
+		this.setState({resolve: false})
+	}
+
+	resolveAction(props) {
+		console.log(props)
+	}
+
+	hideResolve() {
+		this.setState({resolve: false})
+	}
+
+	resolveForm(report) {
+		return (<form>
+				<div>
+					<label>This incidient is resolved because</label>
+					<select>
+						<option value="pizza">I ate some pizza</option>
+						<option value="pie">I ate some pie</option>
+					</select>
+				</div>
+				<div>
+					<label>Additional information</label>
+					<input type="text" className="form-control" name="additional_info" ref="additional_info" placeholder="Other important details" />
+				</div>
+				<a href="#" onClick={ this.hideResolve.bind(this) }>Cancel</a>&nbsp;
+				<button type="submit" name="resolve-btn" className="btn btn-primary" id="resolve-btn" value="Resolve" onClick={ this.resolve.bind(this) }>Resolve</button>
+			</form>)
 	}
 
 	render() {
@@ -91,9 +141,7 @@ class ReportSummary extends Component {
 					<div className="row">
 						<div className="col-md-6">
 							<div className="report-map" style={{margin:"auto"}}>
-								<SimpleMap
-								center={center}
-								markers={markers} />
+								<SimpleMap center={center} markers={markers} />
 							</div>
 						</div>
 						<div className="col-md-6">
@@ -103,12 +151,26 @@ class ReportSummary extends Component {
 				<div className="row">
 					<div className="col-md-6">
 						<table className="table" width="100%">
-							<thead><tr><th>Report details</th></tr></thead>
+							<thead>
+								<tr>
+									<th>Report details</th>
+									<th><button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-trash"></button>
+										<button style={{float:"right"}} className="btn btn-default glyphicon glyphicon-edit"></button>
+									</th>
+								</tr>
+							</thead>
 							<tbody>
 								<tr><td>Date</td><td>{ humanTimestamp(report.incident.incident_date) }</td></tr>
 								<tr><td>Status</td><td>{ report.incident.state }</td></tr>
-								<tr><td>Resolution</td><td>{ report.incident.resolution }</td></tr>
 								<tr><td>Reporter</td><td>{ this.formatReporterField(report) }</td></tr>
+								<tr><td>Resolution</td><td>{ this.resolutionControls(report) }</td></tr>
+							</tbody>
+						</table>
+						<table>
+							<tbody>
+								<tr><td>
+									{ !!this.state.resolve ? this.resolveForm(report) : <div></div> }
+								</td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -122,7 +184,7 @@ class ReportSummary extends Component {
 								<tr><td>Coat</td><td>{ coatDescription(report.dog.primary_color, report.dog.secondary_color, report.dog.coat_type) }</td></tr>
 								<tr><td>Breeding status</td><td>{ report.dog.intact }</td></tr>
 								<tr><td>Name</td><td>{ report.dog.name }</td></tr>
-								<tr><td>Added on</td><td>{ Date(report.dog.added_date) }</td></tr>
+								<tr><td>Added on</td><td>{ humanTimestamp(report.dog.added_date) }</td></tr>
 								<tr><td>Tags</td><td>{ report.dog.tags }</td></tr>
 								<tr><td>Owner</td><td>{ this.formatOwnerField(report) }</td></tr>
 							</tbody>
@@ -139,9 +201,17 @@ class ReportSummary extends Component {
 		login_data: auth_user(state)
 	});
 
+	const mapResolveStateToProps = (state, myprops) => ({
+		report_detail: 	state.incidents.report_detail,
+		login_status: logged_in(state),
+		login_data: auth_user(state),
+		resolve: true
+	});
+
 	const mapDispatchToProps = (dispatch, props) => ({
 		onLoadReport: (id) => { dispatch(getReportInfo(id)); },
 		sendMessage: (incident) => { dispatch(sendMessage(incident.reporter_id, incident)) }
 	});
 
-	export default ReportSummary = connect(mapStateToProps, mapDispatchToProps)(ReportSummary);
+	export default ReportSummary 			= connect(mapStateToProps, mapDispatchToProps)(ReportSummary);
+	export const ReportResolveSummary = connect(mapResolveStateToProps, mapDispatchToProps)(ReportSummary);

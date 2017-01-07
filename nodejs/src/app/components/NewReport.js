@@ -248,14 +248,14 @@ class NewFormBase extends Component {
 							<div className="form-group">
 							  <label className="col-md-4 control-label" htmlFor="date">Date when it happened</label>
 							  <div className="col-md-4">
-			  				    <DateField  dateFormat="YYYY-MM-DD HH:mm:ss" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
+			  				    <DateField dateFormat="YYYY-MM-DD HH:mm:ss" defaultValue={new Date()} ref="date" name="date" type="text" placeholder="datepicker" required="" />
 							  </div>
 							</div>
 
 							<div className="form-group">
 							  <label className="col-md-4 control-label" htmlFor="name">Name</label>
 							  <div className="col-md-4">
-							  <input name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
+							  <input style={{width: "45%", display: "inline"}} name="name" ref="name" type="text" placeholder={ name_placeholder } className="form-control input-md" />
 
 							  </div>
 							</div>

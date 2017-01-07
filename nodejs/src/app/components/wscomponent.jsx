@@ -81,6 +81,16 @@ class WSComponent extends Component {
     }
   }
 
+  toastMessage(data) {
+      if (data.broadcast) {
+        const options = { "timeout" : data.duration || 5000, "closeButton" : true }
+        toastr.success(data.message, "BROADCAST MESSAGE", options)
+      }
+      else {
+        const options = { "timeOut": data.duration || 0, "closeButton" : true }
+        toastr.info(data.message, "USER MESSAGE", options)
+      }
+  }
   // our message format is:
   // { type: (type of message),
   //   data: { ...depends on type }
@@ -99,16 +109,15 @@ class WSComponent extends Component {
           this.props.clearPostLoginActions();
         });
         break;
+      case "SYSTEM_MESSAGE":
+        if (process.env.NODE_ENV === 'development') {
+          this.toastMessage(result.data)
+          console.log(result.data)
+        }
+        break
       case "USER_MESSAGE":
-        if (result.data.broadcast) {
-          const options = { "timeout" : result.data.duration || 5000, "closeButton" : true }
-          toastr.success(result.data.message, "BROADCAST MESSAGE", options)
-        }
-        else {
-          const options = { "timeOut": result.data.duration || 0, "closeButton" : true }
-          toastr.info(result.data.message, "USER MESSAGE", options)
-        }
-        break;
+        this.toastMessage(result.data)
+        break
       case "NEW_MESSAGE":
         // display a toast if the meesage fromHandle is not you
         if (!!this.props.login_data && !!result.data.fromHandle && this.props.login_data.handle !== result.data.fromHandle) {

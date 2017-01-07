@@ -33,9 +33,9 @@ class ShowInfoCard extends Component {
 	}
 
 	onResolve(e) {
-		e.preventDefault();
+		e.preventDefault()
 		this.hideModal()
-		browserHistory.push("/reports/" + this.props.incident_info.incident.uuid)
+		browserHistory.push("/reports/" + this.props.incident_info.incident.uuid + "/resolve")
 	}
 
 	getBreedingStatusRow(status) {
@@ -76,8 +76,6 @@ class ShowInfoCard extends Component {
 
 	getContactControl(incident) {
 		const classes="btn btn-default "
-		let clickHandler = {}
-		let text = ""
 		if (this.isLoggedInUser(incident.reporter_id)) {
 			return (<button style={{marginLeft: "20px"}} className={ classes } onClick={ this.onResolve.bind(this) }>Resolve incident</button>)
 		} else {
@@ -106,40 +104,42 @@ class ShowInfoCard extends Component {
 		const image = this.imageOrEmpty(incident_info);
 
 		return (
-			<Modal isOpen={!!incident_info} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
-				<ModalHeader>
-					<ModalClose onClick={ this.hideModal.bind(this) }/>
-					<ModalTitle>Info for &quot;{ !!dog.name ? dog.name : "unknown" }&quot;</ModalTitle>
-				</ModalHeader>
-				<ModalBody>
-					<div>
-						{ image }
-					</div>
-					<div>
-						<p></p>
-						<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
-							{ " on " }<strong>{ humanTimestamp(incident.incident_date) }</strong>
-							{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
-							{ this.getContactControl(incident) }
-						</p>
-						<table className="table">
-							<thead>
-								<tr><th>Dog profile</th></tr>
-							</thead>
-							<tbody>
-								{ this.getNameRow(dog.name) }
-								<tr><td>Breed</td><td>{ optionalColor(dog.primary_type, dog.secondary_type) }</td></tr>
-								<tr><td>Coat</td><td>{ coatDescription(dog.primary_color, dog.secondary_color, dog.coat_type) }</td></tr>
-								{ this.getBreedingStatusRow(dog.intact) }
-								<tr><td>Reported on</td><td>{ humanTimestamp(incident.incident_date) }</td></tr>
-								<tr><td></td><td>{ dog.tags }</td></tr>
-							</tbody>
-						</table>
-					</div>
-				</ModalBody>
-				<ModalFooter>
-				</ModalFooter>
-			</Modal>);
+			<div>
+				<Modal isOpen={!!incident_info && !!!this.state.resolve} onRequestHide={ this.hideModal.bind(this) } dialogStyles={dialogStyles}>
+					<ModalHeader>
+						<ModalClose onClick={ this.hideModal.bind(this) }/>
+						<ModalTitle>Info for &quot;{ !!dog.name ? dog.name : "unknown" }&quot;</ModalTitle>
+					</ModalHeader>
+					<ModalBody>
+						<div>
+							{ image }
+						</div>
+						<div>
+							<p></p>
+							<p>Reported <strong>{ incident.state === 'found' ? "found" : "lost" }</strong>
+								{ " on " }<strong>{ humanTimestamp(incident.incident_date) }</strong>
+								{!!incident.resolution ? "(" + incident.resolution + ")" : ""}
+								{ this.getContactControl(incident) }
+							</p>
+							<table className="table">
+								<thead>
+									<tr><th>Dog profile</th></tr>
+								</thead>
+								<tbody>
+									{ this.getNameRow(dog.name) }
+									<tr><td>Breed</td><td>{ optionalColor(dog.primary_type, dog.secondary_type) }</td></tr>
+									<tr><td>Coat</td><td>{ coatDescription(dog.primary_color, dog.secondary_color, dog.coat_type) }</td></tr>
+									{ this.getBreedingStatusRow(dog.intact) }
+									<tr><td>Reported on</td><td>{ humanTimestamp(incident.incident_date) }</td></tr>
+									<tr><td></td><td>{ dog.tags }</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</ModalBody>
+					<ModalFooter>
+					</ModalFooter>
+				</Modal>
+			</div>);
 	}
 }
 

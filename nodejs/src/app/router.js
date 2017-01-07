@@ -13,7 +13,7 @@ import Signup from './components/signup';
 import Login from './components/login';
 import Feedback from './components/feedback';
 import { EditReport, NewFound, NewLost } from "./components/NewReport";
-import ReportSummary from './components/report_summary'
+import ReportSummary, { ReportResolveSummary } from './components/report_summary'
 import ProfileLayout from './components/profile-layout'
 import Conversation from './components/conversation'
 import ResetPasswordForm from './components/reset_password_form'
@@ -65,8 +65,9 @@ export default class Routes extends Component {
       </Route>
 
       <Route path="reports">
-        <Route path="edit/:reportId" component={EditReport} />
+        <Route path=":reportId/edit" component={EditReport} />
         <Route path=":reportId" component={ReportSummary} />
+        <Route path=":reportId/resolve" component={ReportResolveSummary} />
       </Route>
 
       <Route path="dogs">
