@@ -130,3 +130,11 @@ a:hover {
 .jumbotron p {
   margin-top: 15px;
 }
+
+.resolve-form {
+  border: solid;
+  border-color: lightseagreen;
+  border-width: 0.2em;
+  border-radius: 0.4em;
+  padding: 5px;
+}

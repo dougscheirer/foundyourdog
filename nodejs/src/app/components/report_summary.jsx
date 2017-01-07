@@ -98,21 +98,45 @@ class ReportSummary extends Component {
 	}
 
 	resolveForm(report) {
-		return (<form>
-				<div>
-					<label>This incidient is resolved because</label>
-					<select>
-						<option value="pizza">I ate some pizza</option>
-						<option value="pie">I ate some pie</option>
-					</select>
-				</div>
-				<div>
-					<label>Additional information</label>
-					<input type="text" className="form-control" name="additional_info" ref="additional_info" placeholder="Other important details" />
-				</div>
-				<a href="#" onClick={ this.hideResolve.bind(this) }>Cancel</a>&nbsp;
-				<button type="submit" name="resolve-btn" className="btn btn-primary" id="resolve-btn" value="Resolve" onClick={ this.resolve.bind(this) }>Resolve</button>
-			</form>)
+		return (<form className="form-horizontal resolve-form">
+							<fieldset>
+								<div className="form-group">
+									<label className="col-md-4 control-label" htmlFor="resolve_reason">This incident is resolved because</label>
+								  <div className="col-md-8">
+								    <select id="resolve_reason" name="resolve_reason" className="form-control">
+								      <option value="1">the owner contacted me here</option>
+								      <option value="2">the owner contacted me directly</option>
+								      <option value="">I saw a "lost dog" poster</option>
+								      <option value="">(just close it)</option>
+								    </select>
+								  </div>
+								</div>
+								<div className="form-group">
+								  <label className="col-md-4 control-label" htmlFor="contact_user">Contact user</label>
+								  <div className="col-md-8">
+								    <select id="contact_user" name="contact_user" className="form-control">
+								      <option value="1">(some user from conversations list)</option>
+								      <option value="2">I don&#39;t know</option>
+								    </select>
+								  </div>
+								</div>
+								<div className="form-group">
+								  <label className="col-md-4 control-label" htmlFor="additional_info">Additional information</label>
+								  <div className="col-md-8">
+								    <textarea className="form-control" id="additional_info" name="additional_info" 
+								    					placeholder="anything relevant you want to add"></textarea>
+								  </div>
+								</div>
+								<div className="form-group">
+									<label className="col-md-4" htmlFor="resolve-btn"></label>
+								  <div className="col-md-8">
+										<a style={{marginRight: "30px"}} href="#" onClick={ this.hideResolve.bind(this) }>Cancel</a>
+										<button type="submit" name="resolve-btn" className="btn btn-primary" 
+														id="resolve-btn" value="Resolve" onClick={ this.resolve.bind(this) }>Resolve</button>
+									</div>
+								</div>
+							</fieldset>
+						</form>)
 	}
 
 	render() {
