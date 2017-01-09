@@ -27,8 +27,8 @@ public class GetIncidentDetailHandler extends AbstractRequestHandler<EmptyPayloa
 		// return everything required for the report, the report itself, the dog info, and the image info
 		ReportDetail details = new ReportDetail();
 		Optional<Incident> i = model.getIncident(reportID);
-		Optional<Dog> d = null;
-		Optional<Image> img = null;
+		Optional<Dog> d = Optional.empty();
+		Optional<Image> img = Optional.empty();
 		
 		if (i.isPresent()) {
 			d = model.getDog(i.get().getDog_id());	

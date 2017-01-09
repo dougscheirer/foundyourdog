@@ -31,7 +31,7 @@ class ProfileLayout extends Component {
 				</div>)
 
 		// not logged in?
-		if (!!!this.props.login_status)
+		if (!!!this.props.logged_in)
 			return (<LoginView />)
 
 		// figure out the active tab by the last in the url path
@@ -55,7 +55,8 @@ class ProfileLayout extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-	login_status : logged_in(state),
+	logged_in : logged_in(state),
+	waiting_login: waiting_login(state),
 	waiting_login: waiting_login(state)
 })
 

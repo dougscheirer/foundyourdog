@@ -11,16 +11,16 @@ insert into users (uuid, email, handle, password_hash, confirmation_token, confi
 insert into users (uuid, email, handle, password_hash, confirmation_token, confirmed, signup_date, confirm_date, phone1, inapp_notifications) values
 				  ('5', 'doug+5@dscheirer.com', 'doug5', '+cciti4rI+LS2Oh5gwG8avOqlm6OuHbG', '', true, '09/30/2016', '09/30/2016', '925.228.4325', true);
 
-insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
-				      ('1', '1', 37.9688918, -122.1025406, '1', '09/26/2016', 'lost', null);
-insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
-				      ('2', '2', 37.9698918, -122.1025506, '2', '09/27/2016', 'found', null);
-insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
-				      ('3', '3', 37.9708918, -122.1025606, '3', '09/28/2016', 'lost', null);
-insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
-				      ('4', '4', 37.9718918, -122.1025706, '4', '09/29/2016', 'found', null);
-insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state, resolution_id) values
-				      ('5', '5', 37.9728918, -122.1025806, '5', '09/30/2016', 'lost', null);
+insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state) values
+				      ('1', '1', 37.9688918, -122.1025406, '1', '09/26/2016', 'lost');
+insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state) values
+				      ('2', '2', 37.9698918, -122.1025506, '2', '09/27/2016', 'found');
+insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state) values
+				      ('3', '3', 37.9708918, -122.1025606, '3', '09/28/2016', 'lost');
+insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state) values
+				      ('4', '4', 37.9718918, -122.1025706, '4', '09/29/2016', 'found');
+insert into incidents (uuid, reporter_id, map_latitude, map_longitude, dog_id, incident_date, state) values
+				      ('5', '5', 37.9728918, -122.1025806, '5', '09/30/2016', 'lost');
 
 /* TODO: include secondarys and coat types */
 insert into dogs (uuid, primary_type, primary_color, gender, intact, owner_id, tags, name, added_date) values

@@ -27,7 +27,8 @@ export { getReportInfo,
 		 getIncidentInfo,
 		 getDogIncidents,
 		 getUserReports,
-		 submitReportForm } from './incidents'
+		 submitReportForm,
+		 getContactList } from './incidents'
 
 export { uploadImage,
 		 uploadReportImage,

@@ -14,7 +14,9 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 
+import com.foundyourdog.app.handlers.incidents.model.ContactUser;
 import com.foundyourdog.app.handlers.incidents.model.IncidentBrief;
+import com.foundyourdog.app.handlers.incidents.model.ResolveData;
 import com.foundyourdog.app.handlers.messages.model.DetailMessage;
 import com.foundyourdog.app.handlers.users.ResetPassword;
 import com.foundyourdog.app.handlers.users.model.DetailUser;
@@ -109,11 +111,16 @@ public class Sql2oModel implements Model {
 		try (Connection conn = sql2o.open()) {
 			List<IncidentBrief> incidents = conn
 					.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, "
-							+ "resolution_id, reporter_id, D.uuid as dog_id, D.name as dog_name, "
-							+ "D.gender as dog_gender, " + "D.primary_type as dog_primary_type, "
-							+ "D.secondary_type as dog_secondary_type, " + "D.primary_color as dog_primary_color, "
-							+ "D.secondary_color as dog_secondary_color, " + "D.coat_type as dog_coat_type "
-							+ "from incidents I " + "inner join dogs D on D.uuid=I.dog_id where I.state=:state "
+							+ "R.reason as resolution, reporter_id, D.uuid as dog_id, D.name as dog_name, "
+							+ "D.gender as dog_gender, " 
+							+ "D.primary_type as dog_primary_type, "
+							+ "D.secondary_type as dog_secondary_type, " 
+							+ "D.primary_color as dog_primary_color, "
+							+ "D.secondary_color as dog_secondary_color, " 
+							+ "D.coat_type as dog_coat_type "
+							+ "from incidents I " 
+							+ "inner join dogs D on D.uuid=I.dog_id where I.state=:state "
+							+ "inner join resolutions"
 							+ "order by I.incident_date desc")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;
@@ -372,14 +379,17 @@ public class Sql2oModel implements Model {
 	public List<IncidentBrief> getUserIncidents(String userId, String type) {
 		try (Connection conn = sql2o.open()) {
 			List<IncidentBrief> incidents = conn.createQuery(
-					"select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, resolution_id, "
+					// TODO: need to invert this query to select by unresolved/resolved, 
+					// start with from resolutions, then join incidents
+					"select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, R.reason as resolution, "
 							+ "reporter_id, D.uuid as dog_id, D.name as dog_name, " + "D.gender as dog_gender, "
 							+ "D.coat_type as dog_coat_type, " + "D.primary_type as dog_primary_type, "
 							+ "D.secondary_type as dog_secondary_type, " + "D.primary_color as dog_primary_color, "
 							+ "D.secondary_color as dog_secondary_color "
-							+ "from incidents I inner join dogs D on D.uuid=I.dog_id "
-							+ "where reporter_id=:userId and resolution_id is "
-							+ (type.equals("open") ? "null" : "not null"))
+							+ "from incidents I "
+							+ "inner join dogs D on D.uuid=I.dog_id "
+							+ "inner join resolutions R on R.incident_id=I.uuid "
+							+ "where reporter_id=:userId")
 					.addParameter("userId", userId).executeAndFetch(IncidentBrief.class);
 			return incidents;
 		} catch (Sql2oException e) {
@@ -547,5 +557,44 @@ public class Sql2oModel implements Model {
 			logger.error(e.getLocalizedMessage());
 		}
 		return -1;
+	}
+
+	@Override
+	public List<ContactUser> getContactList(String reportID, String excludeUserId) {
+		try (Connection conn = sql2o.open()) {
+			List<ContactUser> users = 
+					conn.createQuery(
+							"select DISTINCT(U.uuid), U.handle from users U INNER JOIN messages M ON (M.sender_id=U.uuid OR M.receiver_id=U.uuid) WHERE M.incident_id=:report_id AND U.uuid!=:exclude_id")
+					.addParameter("report_id", reportID)
+					.addParameter("exclude_id", excludeUserId)
+					.executeAndFetch(ContactUser.class);
+			return users;
+		} catch (Sql2oException e) {
+			logger.error(e.getLocalizedMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public boolean resolveIncident(String reportID, ResolveData value) {
+		try (Connection conn = sql2o.open()) {
+			// create a resolve incident, then update the incident report
+			String uuid = UUID.randomUUID().toString();
+			conn.createQuery(
+					"INSERT INTO resolutions (uuid, incident_id, dog_id, dog_id_owner, resolve_date, reason, additional_info) "
+					+ "VALUES(:uuid, :incident_id, :dog_id, :dog_id_owner, :resolve_date, :reason, :additional_info)")
+				.addParameter("uuid", uuid)
+				.addParameter("incident_id", uuid)
+				.addParameter("dog_id", uuid)
+				.addParameter("dog_id_owner", uuid)
+				.addParameter("resolve_date", uuid)
+				.addParameter("reason", uuid)
+				.addParameter("additional_info", uuid)
+			.executeUpdate();
+			// now update the incident
+		} catch (Sql2oException e) {
+			logger.error(e.getLocalizedMessage());
+		}
+		return false;
 	}
 }

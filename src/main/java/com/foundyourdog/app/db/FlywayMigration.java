@@ -7,7 +7,7 @@ public class FlywayMigration {
       Flyway flyway = new Flyway();
       
       flyway.setDataSource(DBConnection.getUrl(), DBConnection.getUser(), DBConnection.getPassword());
-      String action = (args.length == 0) ? "migrate" : "clean";
+      String action = (args.length == 0) ? "migrate" : args[0];
       switch (action) {
         case "clean":
           flyway.clean();
@@ -15,6 +15,9 @@ public class FlywayMigration {
         case "migrate":
           flyway.migrate();
           break;
+        case "repair":
+            flyway.repair();
+            break;
         default:
           System.out.println("No flyway action");
       }

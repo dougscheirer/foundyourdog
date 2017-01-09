@@ -3,7 +3,10 @@ package com.foundyourdog.app.model;
 import java.util.List;
 import java.util.Optional;
 
+import com.foundyourdog.app.handlers.Answer;
+import com.foundyourdog.app.handlers.incidents.model.ContactUser;
 import com.foundyourdog.app.handlers.incidents.model.IncidentBrief;
+import com.foundyourdog.app.handlers.incidents.model.ResolveData;
 import com.foundyourdog.app.handlers.messages.model.DetailMessage;
 import com.foundyourdog.app.handlers.users.ResetPassword;
 import com.foundyourdog.app.handlers.users.model.DetailUser;
@@ -57,4 +60,8 @@ public interface Model {
 	int getUnreadMessages(String receiver_id);
 
 	boolean markConversation(String incident_id, String id1, String id2, String curUserId, int ordinal_start, boolean read);
+
+	List<ContactUser> getContactList(String reportID, String excludeUserId);
+
+	boolean resolveIncident(String reportID, ResolveData value);
 }

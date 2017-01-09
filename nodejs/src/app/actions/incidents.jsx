@@ -5,10 +5,13 @@ export const getReportInfo = (id) => {
 			'/api/reports/' + id + "?host=" + window.location.host,
 			(res) => {
 				return {
-					type: 'REPORT_FETCHED',
-					result: res
-				}
-		})
+						type: 'REPORT_FETCHED',
+						result: res
+					}
+				},
+			(res) => {
+				return { type: 'REPORT_NOT_FOUND', result: res }
+			})
 }
 
 export const showIncidentInfo = (incident) => {
@@ -34,6 +37,15 @@ export const getDogIncidents = ( type, location, zoom ) => {
 		        })
 }
 
+export const getContactList = (id) => {
+	return auth_fetch('/api/auth/contacts?incident=' + id,
+		(res) => {
+			return {
+				type: 'INCIDENT_CONTACTS',
+				contacts: res
+			}
+		})
+}
 export const getUserReports = (type) => {
 	return auth_fetch('/api/auth/reports?type=' + type + '&user=current',
 			(res) => {
@@ -46,10 +58,15 @@ export const getUserReports = (type) => {
 			)
 }
 
-
 export const submitReportForm = (url, form, post) => {
 	return auth_post(url, form, (res) => {
 			post(res)
 			return { type: 'REPORT_SUBMITTED'}
+	})
+}
+
+export const resolveIncident = (id, form) => {
+	return auth_post('/api/auth/reports/' + id + '/resolve', form, (res) => {
+		return { type: 'INCIDENT_RESOLVED' }
 	})
 }

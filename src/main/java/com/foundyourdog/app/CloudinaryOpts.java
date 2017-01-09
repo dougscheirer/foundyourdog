@@ -19,10 +19,6 @@ public class CloudinaryOpts {
 	
 	final static Logger logger = LoggerFactory.getLogger(CloudinaryOpts.class);
 
-	private boolean isMissing(String s) {
-		return s == null || s.isEmpty();
-	}
-	
 	public CloudinaryOpts() {
 		String baseUrl = ConfigConsts.getCloudinaryURL();
 		if (baseUrl == null || baseUrl.isEmpty()) {

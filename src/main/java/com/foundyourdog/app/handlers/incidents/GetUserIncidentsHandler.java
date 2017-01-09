@@ -13,9 +13,9 @@ import com.foundyourdog.app.model.Model;
 
 import spark.Request;
 
-public class GetUserIncidents extends AbstractRequestHandler<EmptyPayload> {
+public class GetUserIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {
 
-	public GetUserIncidents(Model model) {
+	public GetUserIncidentsHandler(Model model) {
 		super(EmptyPayload.class, model);
 	}
 

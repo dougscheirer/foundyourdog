@@ -15,7 +15,7 @@ public class IncidentBrief implements Validatable {
 	private float map_longitude;
 	private Timestamp incident_date;
 	private String state;
-	private String resolution_id;
+	private String resolution;
 	private String reporter_id;
 
 	// these come from the dog query

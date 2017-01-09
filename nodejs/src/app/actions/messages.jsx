@@ -55,7 +55,7 @@ export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
 export const getConversation = (incident_id, msg_id, from_ordinal, success, err_fn) => {
 	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
 		(res) => {
-			success(res)
+			if (!!success) success(res)
 			return {
 				type: 'CONVERSATION',
 				incident: incident_id,

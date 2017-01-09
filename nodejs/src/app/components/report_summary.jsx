@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import spinner from '../../spinner.svg'
 import { Link } from 'react-router'
-import { getReportInfo, sendMessage } from '../actions'
+import { resolveIncident, getReportInfo, sendMessage, getContactList } from '../actions'
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
@@ -11,7 +11,8 @@ class ReportSummary extends Component {
 
 	state = {
 		report_id: this.props.params.reportId,
-		resolve: this.props.resolve
+		resolve: this.props.resolve,
+		resolve_reason: "app_contact"
 	}
 
 	componentDidMount() {
@@ -19,6 +20,7 @@ class ReportSummary extends Component {
 			report_id: this.props.params.reportId,
 		});
 		this.props.onLoadReport(this.props.params.reportId);
+		this.props.getContactList(this.props.params.reportId);
 	}
 
 	isLoggedInUser(id) {
@@ -69,7 +71,13 @@ class ReportSummary extends Component {
 
 	resolve(e) {
 		if (!!e) e.preventDefault()
-		this.setState({resolve: true})
+		// form validation?
+		const resolveForm = {
+			reason: this.refs.resolve_reason.value,
+			contact_user: this.refs.contact_user.value,
+			additional_info: this.refs.additional_info.value
+		}
+		this.props.doResolve(this.props.report_detail.incident.uuid, resolveForm)
 	}
 
 	resolutionControls(report) {
@@ -97,33 +105,80 @@ class ReportSummary extends Component {
 		this.setState({resolve: false})
 	}
 
+	resolveOptions(report) {
+		if (report.incident.state === "lost") {
+      return [<option key="0" value="app_contact">the finder contacted me here</option>,
+							<option key="1" value="foreign_contact">the finder contacted me directly</option>,
+							<option key="2" value="flyer">I saw a &quot;found dog&quot; poster</option>,
+							<option key="3" value="shelter">I found it at a shelter/rescue organization</option>,
+							<option key="4" value="no_response">(just close it)</option>]
+		} else {
+      return [<option key="0" value="app_contact">the owner contacted me here</option>,
+							<option key="1" value="foreign_contact">the owner contacted me directly</option>,
+							<option key="2" value="flyer">I saw a &quot;lost dog&quot; poster</option>,
+							<option key="3" value="shelter">I took the animal to a shelter/rescue organization</option>,
+							<option key="4" value="no_response">(just close it)</option>]
+		}
+	}
+
+	contactsControl() {
+		if (!!this.props.incident_contacts) {
+			return (<select ref="contact_user" id="contact_user" name="contact_user" className="form-control">
+			      { this.props.incident_contacts.map((v, k) => {
+			      		return <option key={k} value={v.uuid}>{v.handle}</option>
+			      })}
+			      <option key="0" value="0">I don&#39;t know</option>
+			  </select>)
+		} else {
+			return (<select id="contact_user" name="contact_user" className="form-control" disabled>
+			      <option value="1">(loading contacts)</option>
+			    </select>)
+		}
+	}
+
+	resolveUserOptions(report) {
+		if (this.state.resolve_reason && this.state.resolve_reason === "app_contact") {
+			return (<div className="form-group">
+			  <label className="col-md-4 control-label" htmlFor="contact_user">Contact user</label>
+			  <div className="col-md-8">
+			  	{ this.contactsControl() }
+			  </div>
+			</div>)
+		} else {
+			return (<div className="form-group">
+			  <label className="col-md-4 control-label" disabled htmlFor="contact_user">Contact user</label>
+			  <div className="col-md-8">
+			    <select id="contact_user" name="contact_user" disabled className="form-control">
+			      <option value="0"></option>
+			    </select>
+			  </div>
+			</div>)
+		}
+	}
+
+	change(e) {
+		this.setState({resolve_reason : this.refs.resolve_reason.value})
+		if (this.refs.resolve_reason.value === "app_contact") {
+			this.props.getContactList(this.props.report_detail.incident.uuid)
+		}
+	}
+
 	resolveForm(report) {
 		return (<form className="form-horizontal resolve-form">
 							<fieldset>
 								<div className="form-group">
-									<label className="col-md-4 control-label" htmlFor="resolve_reason">This incident is resolved because</label>
+									<label className="col-md-4 control-label" htmlFor="resolve_reason">This is resolved because</label>
 								  <div className="col-md-8">
-								    <select id="resolve_reason" name="resolve_reason" className="form-control">
-								      <option value="1">the owner contacted me here</option>
-								      <option value="2">the owner contacted me directly</option>
-								      <option value="">I saw a "lost dog" poster</option>
-								      <option value="">(just close it)</option>
+								    <select ref="resolve_reason" id="resolve_reason" name="resolve_reason" className="form-control" onChange={ this.change.bind(this) }>
+								    	{ this.resolveOptions(report) }
 								    </select>
 								  </div>
 								</div>
-								<div className="form-group">
-								  <label className="col-md-4 control-label" htmlFor="contact_user">Contact user</label>
-								  <div className="col-md-8">
-								    <select id="contact_user" name="contact_user" className="form-control">
-								      <option value="1">(some user from conversations list)</option>
-								      <option value="2">I don&#39;t know</option>
-								    </select>
-								  </div>
-								</div>
+								{ this.resolveUserOptions(report) }
 								<div className="form-group">
 								  <label className="col-md-4 control-label" htmlFor="additional_info">Additional information</label>
 								  <div className="col-md-8">
-								    <textarea className="form-control" id="additional_info" name="additional_info" 
+								    <textarea style={{resize: "vertical"}} className="form-control" id="additional_info" name="additional_info"
 								    					placeholder="anything relevant you want to add"></textarea>
 								  </div>
 								</div>
@@ -131,7 +186,7 @@ class ReportSummary extends Component {
 									<label className="col-md-4" htmlFor="resolve-btn"></label>
 								  <div className="col-md-8">
 										<a style={{marginRight: "30px"}} href="#" onClick={ this.hideResolve.bind(this) }>Cancel</a>
-										<button type="submit" name="resolve-btn" className="btn btn-primary" 
+										<button type="submit" name="resolve-btn" className="btn btn-primary"
 														id="resolve-btn" value="Resolve" onClick={ this.resolve.bind(this) }>Resolve</button>
 									</div>
 								</div>
@@ -145,6 +200,13 @@ class ReportSummary extends Component {
 			return (
 				<div>
 				<p><img src={spinner} alt="spinner" /> Fetching report data...</p>
+				</div>)
+		}
+
+		if (!!report.error) {
+			return (
+				<div>
+				<p>{ report.error }</p>
 				</div>)
 		}
 
@@ -174,7 +236,7 @@ class ReportSummary extends Component {
 				</div>
 				<div className="row">
 					<div className="col-md-6">
-						<table className="table" width="100%">
+						<table className="table" width="100%" style={{marginBottom: "0px"}}>
 							<thead>
 								<tr>
 									<th>Report details</th>
@@ -229,12 +291,15 @@ class ReportSummary extends Component {
 		report_detail: 	state.incidents.report_detail,
 		login_status: logged_in(state),
 		login_data: auth_user(state),
+		incident_contacts: state.incidents.contacts,
 		resolve: true
 	});
 
 	const mapDispatchToProps = (dispatch, props) => ({
 		onLoadReport: (id) => { dispatch(getReportInfo(id)); },
-		sendMessage: (incident) => { dispatch(sendMessage(incident.reporter_id, incident)) }
+		sendMessage: (incident) => { dispatch(sendMessage(incident.reporter_id, incident)) },
+		getContactList: (id) => { dispatch(getContactList(id)) },
+		doResolve: (id, form) => { dispatch(resolveIncident(id, form)) }
 	});
 
 	export default ReportSummary 			= connect(mapStateToProps, mapDispatchToProps)(ReportSummary);

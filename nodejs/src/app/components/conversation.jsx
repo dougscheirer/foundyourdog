@@ -58,6 +58,23 @@ class Conversation extends Component {
 		browserHistory.push("/profile/messages")
 	}
 
+	onResolve(e) {
+		e.preventDefault()
+		browserHistory.push("/reports/" + this.props.params.incident + "/resolve")
+	}
+
+	isLoggedInUser(id) {
+		return (this.props.login_data && this.props.login_data.uuid === id)
+	}
+
+	getContactControl(incident) {
+		if (this.isLoggedInUser(this.props.conversation.conversation.reporter_id)) {
+			return (<button style={{marginLeft: "20px", float: "right"}} className="btn btn-primary" onClick={ this.onResolve.bind(this) }>Resolve incident</button>)
+		} else {
+			return (<div></div>)
+		}
+
+	}
 	backToMessages() {
 		return (<div className="row">
 				<div className="col-sm-3"></div>
@@ -66,6 +83,7 @@ class Conversation extends Component {
 						<span className="glyphicon glyphicon-chevron-left back-to-messages" />
 						<span>Back to messages</span>
 					</a>
+					{ this.getContactControl(this.props.params.incident) }
 				</div>
 			</div>)
 	}

@@ -11,6 +11,7 @@ import com.foundyourdog.app.handlers.EmptyPayload;
 import com.foundyourdog.app.handlers.messages.model.Conversation;
 import com.foundyourdog.app.handlers.users.model.DetailUser;
 import com.foundyourdog.app.model.Model;
+import com.foundyourdog.app.model.Incident;
 import com.foundyourdog.app.model.Message;
 import spark.Request;
 
@@ -37,9 +38,10 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 
 		if (incident_id == null || message_id == null)
 			return new Answer(404);
-
+		Optional<Incident> incident = model.getIncident(incident_id);
 		Optional<Message> message = model.getMessage(message_id);
-		if (!message.isPresent())
+		
+		if (!message.isPresent() || !incident.isPresent())
 			return new Answer(404);
 
 		// validate that the logged in user is the sender or receiver (or an admin)
@@ -58,7 +60,7 @@ public class GetConversationHandler extends AbstractRequestHandler<EmptyPayload>
 		// get the conversation
 		List<Message> data = model.getConversation(incident_id, message.get().getReceiver_id(), message.get().getSender_id(), ordinal_start);
 		
-		return new Answer(200, dataToJson(new Conversation(data, partner.get())));
+		return new Answer(200, dataToJson(new Conversation(data, partner.get(), incident.get().getReporter_id())));
 	}
 
 }

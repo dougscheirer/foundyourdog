@@ -30,9 +30,11 @@ import com.foundyourdog.app.handlers.images.ImageUploadFileHandler;
 import com.foundyourdog.app.handlers.images.ImageUploadHandler;
 import com.foundyourdog.app.handlers.images.ImageUploadUpdateHandler;
 import com.foundyourdog.app.handlers.incidents.CreateIncidentReportHandler;
+import com.foundyourdog.app.handlers.incidents.GetIncidentContactsHandler;
 import com.foundyourdog.app.handlers.incidents.GetIncidentDetailHandler;
 import com.foundyourdog.app.handlers.incidents.GetIncidentsHandler;
-import com.foundyourdog.app.handlers.incidents.GetUserIncidents;
+import com.foundyourdog.app.handlers.incidents.GetUserIncidentsHandler;
+import com.foundyourdog.app.handlers.incidents.ResolveIncidentHandler;
 import com.foundyourdog.app.handlers.messages.CreateMessageHandler;
 import com.foundyourdog.app.handlers.messages.DeleteMessageHandler;
 import com.foundyourdog.app.handlers.messages.GetConversationHandler;
@@ -181,7 +183,9 @@ public class Main {
 		// put("/api/users/:id", new UpdateUserHandler(model));
 		// delete("/api/users/:id", new DeleteUserHandler(model));
 
-		get("/api/auth/reports", new GetUserIncidents(model));
+		get("/api/auth/reports", new GetUserIncidentsHandler(model));
+
+		get("/api/auth/contacts", new GetIncidentContactsHandler(model));
 
 		get("/api/dogs/lost", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.LOST, model));
 		get("/api/dogs/found", new GetIncidentsHandler(GetIncidentsHandler.IncidentType.FOUND, model));
@@ -189,6 +193,7 @@ public class Main {
 		post("/api/auth/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/auth/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		get("/api/reports/:id", new GetIncidentDetailHandler(model));
+		post("/api/reports/:id/resolve", new ResolveIncidentHandler(model));
 
 		// complicated, but here goes:
 		// "new" - start the process, create the DB entry, return enough info to xfer the file in the next step

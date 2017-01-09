@@ -7,7 +7,12 @@ export const incidents = (state = initialState, action) => {
 			return { ...state,
 				report_detail: action.result
 			}
+		case 'REPORT_NOT_FOUND':
+			return { ...state,
+				report_detail: { error: action.result }
+			}
 		case 'SHOW_INCIDENT_INFO':
+		case 'INCIDENT_RESOLVED':
 			return { ...state,
 				incident_info: action.incident_info
 			}
@@ -17,6 +22,10 @@ export const incidents = (state = initialState, action) => {
 			incidents[action.filter] = action.incidents
 			return { ...state,
 				incidents: incidents }
+		case 'INCIDENT_CONTACTS':
+			return { ...state,
+				contacts: action.contacts
+			}
 		case 'USER_REPORTS':
 			if (action.filter === 'open') {
 				return { ...state,
