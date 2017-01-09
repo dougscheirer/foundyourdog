@@ -56,7 +56,6 @@ class ProfileLayout extends Component {
 
 const mapStateToProps = (state, myprops) => ({
 	logged_in : logged_in(state),
-	waiting_login: waiting_login(state),
 	waiting_login: waiting_login(state)
 })
 
