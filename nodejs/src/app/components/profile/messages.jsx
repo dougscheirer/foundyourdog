@@ -3,7 +3,7 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import { connect } from 'react-redux'
 import { getUserMessages } from '../../actions'
-import { auth_user, logged_in, humanTimestamp } from '../helpers'
+import { getUserData, logged_in, humanTimestamp } from '../helpers'
 import { browserHistory } from 'react-router'
 
 class MessagePanel extends Component {
@@ -113,7 +113,7 @@ class Messages extends Component {
 
 const mapStateToProps = (state, myprops) => ({
 	logged_in : logged_in(state),
-	login_data : auth_user(state),
+	login_data : getUserData(state),
 	unreadMessages : state.messages.myUnreadMessages,
 	readMessages : state.messages.myReadMessages
 });

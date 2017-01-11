@@ -5,7 +5,7 @@ import { resolveIncident, getReportInfo, sendMessage, getContactList } from '../
 import { connect } from 'react-redux'
 import SimpleMap from './simple_map'
 import no_image from '../../noimage.svg'
-import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } from './helpers'
+import { logged_in, getUserData, humanTimestamp, optionalColor, coatDescription } from './helpers'
 
 class ReportSummary extends Component {
 
@@ -284,13 +284,13 @@ class ReportSummary extends Component {
 	const mapStateToProps = (state, myprops) => ({
 		report_detail: 	state.incidents.report_detail,
 		login_status: logged_in(state),
-		login_data: auth_user(state)
+		login_data: getUserData(state)
 	});
 
 	const mapResolveStateToProps = (state, myprops) => ({
 		report_detail: 	state.incidents.report_detail,
 		login_status: logged_in(state),
-		login_data: auth_user(state),
+		login_data: getUserData(state),
 		incident_contacts: state.incidents.contacts,
 		resolve: true
 	});

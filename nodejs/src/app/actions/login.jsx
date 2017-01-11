@@ -95,36 +95,39 @@ export const loginRequired = (postLoginAction) => {
 	}
 }
 
-export const auth_method = (url, method, fn_complete, fn_err, body) => {
+export const auth_method = (url, optionsIn) => {
+	// options: method, success, error, body
+	const options = (!!optionsIn ? optionsIn : {})
 	return dispatch => {
-		const headers = (typeof body === "string") ? { 'Content-Type': 'application/json' } : undefined
+		const headers = !!options.headers ? options.headers :
+											(typeof body === "string") ? { 'Content-Type': 'application/json' } : undefined
 		requires_login(
 			dispatch,
-			() =>	{ return fetch(url, { method: method, credentials: 'include', body: body, headers: headers})},
-			(res) => { return fn_complete(res) },
+			() =>	{ return fetch(url, { method: options.method, credentials: 'include', body: options.body, headers: headers})},
+			(res) => { return options.success(res) },
 			(res) => {
-				if (!!!fn_err)
+				if (!!!options.error)
 					res.text().then((res) => console.log("auth_method error: " + res))
 				else
-					fn_err(res)
+					options.error(res)
 			})
 		}
 }
 
-export const auth_fetch = (url, fn_complete, fn_err) => {
-	return auth_method(url, "GET", fn_complete, fn_err)
+export const auth_fetch = (url, options) => {
+	return auth_method(url, { ...options, method: "GET"} )
 }
 
-export const auth_post = (url, data, fn_complete, fn_err) => {
-	return auth_method(url, "POST", fn_complete, fn_err, data)
+export const auth_post = (url, options) => {
+	return auth_method(url, { ...options, method: "POST" })
 }
 
-export const auth_put = (url, data, fn_complete, fn_err) => {
-	return auth_method(url, "PUT", fn_complete, fn_err, data)
+export const auth_put = (url, options) => {
+	return auth_method(url, { ...options, method: "PUT"})
 }
 
-export const auth_delete = (url, fn_complete, fn_err) => {
-	return auth_method(url, "DELETE", fn_complete, fn_err)
+export const auth_delete = (url, options) => {
+	return auth_method(url, { ...options, method: "DELETE" })
 }
 
 // login is not technically required here, it's just a check

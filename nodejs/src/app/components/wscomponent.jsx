@@ -9,7 +9,7 @@ import { newMessage,
 import cookie from 'react-cookie'
 import Websocket from './websocket';
 import toastr from 'toastr'
-import { auth_user, processPostLoginActions } from './helpers'
+import { getUserData, processPostLoginActions } from './helpers'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
 
@@ -165,7 +165,7 @@ class WSComponent extends Component {
 }
 
 const mapStateToProps = (state, myprops) => ({
-    login_data : auth_user(state),
+    login_data : getUserData(state),
     conversation: state.messages.conversation,
     postLoginActions: state.login.post_login_actions
 })
