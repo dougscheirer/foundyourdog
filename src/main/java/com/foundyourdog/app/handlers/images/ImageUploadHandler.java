@@ -26,7 +26,7 @@ public class ImageUploadHandler extends AbstractRequestHandler<EmptyPayload> {
 	}
 
 	private boolean usingCloudinary() {
-		return !this.cloudinaryOpts.getApiKey().isEmpty();
+		return this.cloudinaryOpts != null && this.cloudinaryOpts.getApiKey() != null && this.cloudinaryOpts.getApiKey().isEmpty();
 	}
 
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml,

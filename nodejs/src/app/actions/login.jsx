@@ -63,7 +63,13 @@ export const requires_login = (dispatch, fetch_func, process_func, error_func) =
 					break;
 				case 403: // forbidden, login will not help
 				default:
-					if (!!error_func) error_func(res)
+					if (!!error_func) {
+						// if there is an error handler, handle the error
+						// if something is returned, assume we need to dispatch it
+						const retVal = error_func(res)
+						if (!!retVal)
+							dispatch(retVal)
+					}
 					break;
 			}
 		})
@@ -106,10 +112,12 @@ export const auth_method = (url, optionsIn) => {
 			() =>	{ return fetch(url, { method: options.method, credentials: 'include', body: options.body, headers: headers})},
 			(res) => { return options.success(res) },
 			(res) => {
-				if (!!!options.error)
+				if (!!!options.error) {
 					res.text().then((res) => console.log("auth_method error: " + res))
+					return undefined
+				}
 				else
-					options.error(res)
+					return options.error(res)
 			})
 		}
 }

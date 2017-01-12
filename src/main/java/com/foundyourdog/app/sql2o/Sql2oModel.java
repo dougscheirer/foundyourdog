@@ -109,9 +109,10 @@ public class Sql2oModel implements Model {
 	@Override
 	public List<IncidentBrief> getAllIncidents(boolean lost) {
 		try (Connection conn = sql2o.open()) {
+			// TODO: to filter out closed incidents, select from resolutions, join on incidents
 			List<IncidentBrief> incidents = conn
 					.createQuery("select I.uuid as uuid, map_latitude, map_longitude, incident_date, state, "
-							+ "R.reason as resolution, reporter_id, D.uuid as dog_id, D.name as dog_name, "
+							+ "reporter_id, D.uuid as dog_id, D.name as dog_name, "
 							+ "D.gender as dog_gender, " 
 							+ "D.primary_type as dog_primary_type, "
 							+ "D.secondary_type as dog_secondary_type, " 
@@ -120,7 +121,6 @@ public class Sql2oModel implements Model {
 							+ "D.coat_type as dog_coat_type "
 							+ "from incidents I " 
 							+ "inner join dogs D on D.uuid=I.dog_id where I.state=:state "
-							+ "inner join resolutions"
 							+ "order by I.incident_date desc")
 					.addParameter("state", (lost) ? "lost" : "found").executeAndFetch(IncidentBrief.class);
 			return incidents;

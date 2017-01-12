@@ -193,7 +193,7 @@ public class Main {
 		post("/api/auth/lost/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.LOST));
 		post("/api/auth/found/new", new CreateIncidentReportHandler(model, GetIncidentsHandler.IncidentType.FOUND));
 		get("/api/reports/:id", new GetIncidentDetailHandler(model));
-		post("/api/reports/:id/resolve", new ResolveIncidentHandler(model));
+		post("/api/auth/reports/:id/resolve", new ResolveIncidentHandler(model));
 
 		// complicated, but here goes:
 		// "new" - start the process, create the DB entry, return enough info to xfer the file in the next step

@@ -49,9 +49,11 @@ export const uploadImage = (file) => {
 						.then((res) => {
 							if (!!res)
 								dispatch(auth_put('/api/auth/report/images/' + imageObj.uuid,
-									JSON.stringify({ ...imageObj, upload_location_response: res.secure_url }), (res) => {
-										return getUnassignedImages()
-							}))
+									{ body: JSON.stringify({ ...imageObj, upload_location_response: res.secure_url }),
+									  success: (res) => {
+													return getUnassignedImages()
+										}
+									}))
 						})
 				}
 			}))

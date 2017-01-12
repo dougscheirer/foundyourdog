@@ -9,7 +9,7 @@ export const getReportInfo = (id) => {
 						result: res
 					}
 			},
-			error: (res) => {
+			error: (res, dispatch) => {
 				return { type: 'REPORT_NOT_FOUND', result: res }
 			}
 		})
@@ -67,16 +67,20 @@ export const getUserReports = (type) => {
 }
 
 export const submitReportForm = (url, form, post) => {
-	return auth_post(url, form, (res) => {
-			post(res)
-			return { type: 'REPORT_SUBMITTED'}
-	})
+	return auth_post(url,
+		{
+			body: form,
+			success: (res) => {
+				post(res)
+				return { type: 'REPORT_SUBMITTED'}
+			}
+		})
 }
 
 export const resolveIncident = (id, form) => {
-	return auth_post('/api/auth/reports/' + id + '/resolve', 
-		{ 
-			body: form, 
+	return auth_post('/api/auth/reports/' + id + '/resolve',
+		{
+			body: form,
 			success: (res) => {
 				return { type: 'INCIDENT_RESOLVED' }
 			}

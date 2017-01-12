@@ -25,6 +25,9 @@ public class GetIncidentsHandler extends AbstractRequestHandler<EmptyPayload> {
 	@Override
 	protected Answer processImpl(EmptyPayload value, Map<String, String> urlParams, boolean shouldReturnHtml, Request request) {
 		List<IncidentBrief> incidents = model.getAllIncidents(lost);
+		if (incidents == null) {
+			return new Answer(500, "Server error");
+		}
 		return Answer.ok(dataToJson(incidents));
 	}
 }
