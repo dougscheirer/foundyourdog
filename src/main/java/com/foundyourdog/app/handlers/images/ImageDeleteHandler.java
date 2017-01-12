@@ -54,39 +54,43 @@ public class ImageDeleteHandler extends AbstractRequestHandler<EmptyPayload> {
 
 		// delete the image file
 		String loc = image.get().getImage_location();
-		if (loc.startsWith("/")) {
-			Path path = Paths.get(loc + "/" + imageID);
-			try {
-				Files.delete(path);
-			} catch (NoSuchFileException e) {
-				logger.error(e.getMessage());
-			} catch (IOException e) {
-				logger.error(e.getMessage());
+		if (loc != null) {
+			if (loc.startsWith("/")) {
+				Path path = Paths.get(loc + "/" + imageID);
+				try {
+					Files.delete(path);
+				} catch (NoSuchFileException e) {
+					logger.error(e.getMessage());
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+				}
+			} else {
+				// cloudinary, attempt the admin delete api
+				String deleteUrl = this.opts.getApiUrl() + "resources/image/tags/imageID:" + imageID;
+				try {
+					URL url = new URL(deleteUrl);
+					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+					httpCon.setRequestMethod("DELETE");
+					// basic auth encode the api key:api secret
+					String preAuth = opts.getApiKey() + ":" + opts.getApiSecret();
+					String auth = Base64.getEncoder().encodeToString(preAuth.getBytes()); 
+					httpCon.setRequestProperty("Authorization", auth);
+					httpCon.connect();
+					if (httpCon.getResponseCode() != 200) {
+						logger.error("Error deleting " + imageID + ": (" + httpCon.getResponseCode() + ") " + httpCon.getResponseMessage());
+					} else {
+						logger.debug("Deleted " + imageID + " OK: " + httpCon.getResponseMessage());
+					}
+				} catch (ProtocolException e) {
+					logger.error(e.getMessage());
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+				}
 			}
 		} else {
-			// cloudinary, attempt the admin delete api
-			String deleteUrl = this.opts.getApiUrl() + "resources/image/tags/imageID:" + imageID;
-			try {
-				URL url = new URL(deleteUrl);
-				HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-				httpCon.setRequestMethod("DELETE");
-				// basic auth encode the api key:api secret
-				String preAuth = opts.getApiKey() + ":" + opts.getApiSecret();
-				String auth = Base64.getEncoder().encodeToString(preAuth.getBytes()); 
-				httpCon.setRequestProperty("Authorization", auth);
-				httpCon.connect();
-				if (httpCon.getResponseCode() != 200) {
-					logger.error("Error deleting " + imageID + ": (" + httpCon.getResponseCode() + ") " + httpCon.getResponseMessage());
-				} else {
-					logger.debug("Deleted " + imageID + " OK: " + httpCon.getResponseMessage());
-				}
-			} catch (ProtocolException e) {
-				logger.error(e.getMessage());
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-			}
+			logger.error("Image location is null, skipping delete resource");
 		}
-
+		
 		// also clean up the DB
 		model.deleteImage(imageID);
 		return new Answer(200);

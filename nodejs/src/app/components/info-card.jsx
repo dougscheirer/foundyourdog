@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import { loginRequired, sendMessage, showIncidentInfo } from '../actions';
 import no_image from '../../noimage.svg'
-import { logged_in, auth_user, humanTimestamp, optionalColor, coatDescription } from './helpers'
+import { logged_in, getUserData, humanTimestamp, optionalColor, coatDescription } from './helpers'
 import { browserHistory } from 'react-router'
 
 class ShowInfoCard extends Component {
@@ -146,7 +146,7 @@ class ShowInfoCard extends Component {
 const mapStateToProps = (state, ownProps) => ({
 	incident_info: state.incidents.incident_info,
 	login_status: logged_in(state),
-	login_data: auth_user(state)
+	login_data: getUserData(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

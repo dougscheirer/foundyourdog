@@ -9,7 +9,7 @@ export function logged_in(state) {
   return (state.login.status === "success")
 }
 
-export function auth_user(state) {
+export function getUserData(state) {
   return (logged_in(state)) ? state.login.data : undefined
 }
 

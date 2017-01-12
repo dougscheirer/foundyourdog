@@ -3,7 +3,7 @@ import { postMessage, getConversation, markConversation, clearConversation } fro
 import { connect } from 'react-redux'
 import './chat.css'
 import loading from './loading.svg'
-import { auth_user, waiting_login, humanDaytime } from './helpers'
+import { getUserData, waiting_login, humanDaytime } from './helpers'
 import moment from 'moment'
 import { LoginView } from './login'
 import { browserHistory } from 'react-router'
@@ -179,7 +179,7 @@ class Conversation extends Component {
 const mapStateToProps = (state, myprops) => ({
 	conversation: state.messages.conversation,
 	waiting_login: waiting_login(state),
-	login_data: auth_user(state),
+	login_data: getUserData(state),
   new_message_data: state.messages.new_message_data
 })
 

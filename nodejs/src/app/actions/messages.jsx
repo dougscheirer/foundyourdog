@@ -12,6 +12,7 @@ export const getUserMessages = (type) => {
 				})
 }
 
+// TODO: options here?
 export const sendMessage = (userid, incident, reply_to) => {
 	return {
 		type: 'SEND_MESSAGE',
@@ -23,11 +24,14 @@ export const postMessage = (data) => {
 	if (typeof data !== "string") {
 		data = JSON.stringify(data)
 	}
-	return auth_post('/api/auth/message', data,
-			(res) => {
+	return auth_post('/api/auth/message',
+		{
+			body: data,
+			success: (res) => {
 				toastr.success("Message sent");
 			  	return {type: 'MESSAGE_SENT', result: res}
-			})
+			}
+		})
 }
 
 export const clearConversation = () => {
@@ -36,33 +40,38 @@ export const clearConversation = () => {
 	}
 }
 
+// TODO: options here
 export const markConversation = (incident_id, msg_id, from_ordinal, read) => {
-	return auth_post('/api/auth/mark?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal + "&read="+read, undefined,
-		(res) => {
-			return {
-				type: 'UNREAD_MESSAGES',
-				unread: res.unread
-			}
-		},
-		(res) => {
-			return {
-				type: 'UNREAD_MESSAGES',
-				unread: -1
+	return auth_post('/api/auth/mark?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal + "&read="+read,
+		{ success: (res) => {
+				return {
+					type: 'UNREAD_MESSAGES',
+					unread: res.unread
+				}
+			},
+			error: (res) => {
+				return {
+					type: 'UNREAD_MESSAGES',
+					unread: -1
+				}
 			}
 		})
 }
 
+// TODO: options here
 export const getConversation = (incident_id, msg_id, from_ordinal, success, err_fn) => {
 	return auth_fetch('/api/auth/conversation?incident=' + incident_id + "&msg=" + msg_id + "&ordinal=" + from_ordinal,
-		(res) => {
+		{ success: (res) => {
 			if (!!success) success(res)
-			return {
-				type: 'CONVERSATION',
-				incident: incident_id,
-				message: msg_id,
-				conversation: res
-			}
-		}, err_fn)
+				return {
+					type: 'CONVERSATION',
+					incident: incident_id,
+					message: msg_id,
+					conversation: res
+				}
+			},
+			error: err_fn
+		})
 }
 
 export const newMessage = (msg_data, ordinal_start) => {

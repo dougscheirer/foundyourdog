@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { showSignup, showLogin, logout } from '../actions';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router'
-import { logged_in, auth_user } from './helpers'
+import { logged_in, getUserData } from './helpers'
 
 class AuthNavbar extends Component {
     static propTypes = {
@@ -56,7 +56,7 @@ class AuthNavbar extends Component {
 
 const mapStateToProps = (state, myprops) => ({
   authenticated: logged_in(state),
-  userInfo : auth_user(state),
+  userInfo : getUserData(state),
   unread: state.messages.unread
 });
 
